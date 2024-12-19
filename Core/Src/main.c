@@ -112,8 +112,7 @@ void gpsReadTask(void* argument);
   * @brief  The application entry point.
   * @retval int
   */
-int main(void)
-{
+int main(void) {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -188,8 +187,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -201,15 +199,13 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
-{
+void SystemClock_Config(void) {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
-  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
-  {
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK) {
     Error_Handler();
   }
 
@@ -221,8 +217,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
@@ -235,8 +230,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
     Error_Handler();
   }
 }
@@ -246,8 +240,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_LPTIM1_Init(void)
-{
+static void MX_LPTIM1_Init(void) {
   /* USER CODE BEGIN LPTIM1_Init 0 */
 
   /* USER CODE END LPTIM1_Init 0 */
@@ -264,8 +257,7 @@ static void MX_LPTIM1_Init(void)
   hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
   hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
   hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
-  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
-  {
+  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK) {
     Error_Handler();
   }
   /* USER CODE BEGIN LPTIM1_Init 2 */
@@ -278,8 +270,7 @@ static void MX_LPTIM1_Init(void)
   * @param None
   * @retval None
   */
-static void MX_SPI1_Init(void)
-{
+static void MX_SPI1_Init(void) {
   /* USER CODE BEGIN SPI1_Init 0 */
 
   /* USER CODE END SPI1_Init 0 */
@@ -302,8 +293,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CRCPolynomial = 7;
   hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
   hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
+  if (HAL_SPI_Init(&hspi1) != HAL_OK) {
     Error_Handler();
   }
   /* USER CODE BEGIN SPI1_Init 2 */
@@ -316,8 +306,7 @@ static void MX_SPI1_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USART1_UART_Init(void)
-{
+static void MX_USART1_UART_Init(void) {
   /* USER CODE BEGIN USART1_Init 0 */
 
   /* USER CODE END USART1_Init 0 */
@@ -335,8 +324,7 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
+  if (HAL_UART_Init(&huart1) != HAL_OK) {
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
@@ -349,8 +337,7 @@ static void MX_USART1_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
-{
+static void MX_USART2_UART_Init(void) {
   /* USER CODE BEGIN USART2_Init 0 */
 
   /* USER CODE END USART2_Init 0 */
@@ -368,8 +355,7 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
+  if (HAL_UART_Init(&huart2) != HAL_OK) {
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
@@ -382,8 +368,7 @@ static void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_GPIO_Init(void)
-{
+static void MX_GPIO_Init(void) {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
   /* USER CODE END MX_GPIO_Init_1 */
@@ -434,65 +419,55 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if (GPIO_Pin == DIO0_Pin)
-  {
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  if (GPIO_Pin == DIO0_Pin) {
     rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
   }
-  else if (GPIO_Pin == DIO1_Pin)
-  {
+  else if (GPIO_Pin == DIO1_Pin) {
     rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
   }
-  else if (GPIO_Pin == DIO5_Pin)
-  {
+  else if (GPIO_Pin == DIO5_Pin) {
     rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
   }
 }
 
-static uint32_t get_precision_tick()
-{
+static uint32_t get_precision_tick() {
   __disable_irq();
   uint32_t precision_tick = lptim_tick_msb | HAL_LPTIM_ReadCounter(&hlptim1);
   __enable_irq();
   return precision_tick;
 }
 
-void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef* hlptim)
-{
-  lptim_tick_msb += 0x10000;
+void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef* hlptim) {
+  if (hlptim->Instance == LPTIM1) {
+    lptim_tick_msb += 0x10000;
+  }
 }
 
-static void precision_sleep_until(uint32_t target_ticks)
-{
-  while (true)
-  {
+static void precision_sleep_until(uint32_t target_ticks) {
+  while (true) {
     uint32_t start_ticks = get_precision_tick();
-    if (start_ticks > target_ticks)
-    {
+    if (start_ticks > target_ticks) {
       break;
     }
 
     uint32_t ticks_to_sleep = target_ticks - start_ticks;
 
     // Only use sleep for at least 10 ticks.
-    if (ticks_to_sleep >= 10)
-    {
+    if (ticks_to_sleep >= 10) {
       // Calculate required value of compare register for the sleep minus a small buffer time to compensate
       // for any ticks that occur while we perform this calculation.
       uint32_t compare = (start_ticks & 0xffff) + ticks_to_sleep - 2;
 
       // If the counter auto-reloads we will be woken up anyway.
-      if (compare > 0xffff)
-      {
+      if (compare > 0xffff) {
         HAL_SuspendTick();
         HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
         HAL_ResumeTick();
 
         // Otherwise, set compare register and use the compare match interrupt to wake up in time.
       }
-      else
-      {
+      else {
         __HAL_LPTIM_COMPARE_SET(&hlptim1, compare);
         while (!__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_CMPOK));
         __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_CMPM);
@@ -503,8 +478,7 @@ static void precision_sleep_until(uint32_t target_ticks)
         __HAL_LPTIM_DISABLE_IT(&hlptim1, LPTIM_IT_CMPM);
       }
     }
-    else
-    {
+    else {
       break;
     }
 
@@ -513,13 +487,11 @@ static void precision_sleep_until(uint32_t target_ticks)
   }
 }
 
-static uint8_t random_int(uint8_t max)
-{
+static uint8_t random_int(uint8_t max) {
   return 0; // Use ADC other means of obtaining a random number.
 }
 
-static uint8_t get_battery_level()
-{
+static uint8_t get_battery_level() {
   return 0xff; // 0xff = Unknown battery level.
 }
 
@@ -532,12 +504,10 @@ static uint8_t get_battery_level()
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void* argument)
-{
+void StartDefaultTask(void* argument) {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-  for (;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END 5 */
@@ -550,12 +520,10 @@ void StartDefaultTask(void* argument)
 * @retval None
 */
 /* USER CODE END Header_loraTxTask */
-void loraTxTask(void* argument)
-{
+void loraTxTask(void* argument) {
   /* USER CODE BEGIN loraTxTask */
   /* Infinite loop */
-  for (;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END loraTxTask */
@@ -568,12 +536,10 @@ void loraTxTask(void* argument)
 * @retval None
 */
 /* USER CODE END Header_gpsReadTask */
-void gpsReadTask(void* argument)
-{
+void gpsReadTask(void* argument) {
   /* USER CODE BEGIN gpsReadTask */
   /* Infinite loop */
-  for (;;)
-  {
+  for (;;) {
     osDelay(1);
   }
   /* USER CODE END gpsReadTask */
@@ -587,13 +553,11 @@ void gpsReadTask(void* argument)
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6)
-  {
+  if (htim->Instance == TIM6) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -605,14 +569,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-void Error_Handler(void)
-{
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1)
-  {
-  }
+  while (1) {}
   /* USER CODE END Error_Handler_Debug */
 }
 
