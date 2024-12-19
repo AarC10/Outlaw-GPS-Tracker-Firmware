@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "rfm95.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +41,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+LPTIM_HandleTypeDef hlptim1;
+
 SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
@@ -51,24 +53,40 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for loraTx */
 osThreadId_t loraTxHandle;
 const osThreadAttr_t loraTx_attributes = {
   .name = "loraTx",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for gpsRead */
 osThreadId_t gpsReadHandle;
 const osThreadAttr_t gpsRead_attributes = {
   .name = "gpsRead",
   .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t)osPriorityLow,
 };
 /* USER CODE BEGIN PV */
+static uint32_t get_precision_tick();
+static void precision_sleep_until(uint32_t target_ticks);
+static uint8_t random_int(uint8_t max);
+static uint8_t get_battery_level();
 
+rfm95_handle_t rfm95_handle = {
+  // ... see example above
+  .precision_tick_frequency = 32768,
+  .precision_tick_drift_ns_per_s = 5000,
+  .receive_mode = RFM95_RECEIVE_MODE_RX12,
+  .get_precision_tick = get_precision_tick,
+  .precision_sleep_until = precision_sleep_until,
+  .random_int = random_int,
+  .get_battery_level = get_battery_level
+};
+
+volatile uint32_t lptim_tick_msb = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,12 +95,12 @@ static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART1_UART_Init(void);
-void StartDefaultTask(void *argument);
-void loraTxTask(void *argument);
-void gpsReadTask(void *argument);
+static void MX_LPTIM1_Init(void);
+void StartDefaultTask(void* argument);
+void loraTxTask(void* argument);
+void gpsReadTask(void* argument);
 
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,7 +114,6 @@ void gpsReadTask(void *argument);
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -122,6 +139,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+  MX_LPTIM1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -210,8 +228,8 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+    | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -224,13 +242,44 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief LPTIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM1_Init(void)
+{
+  /* USER CODE BEGIN LPTIM1_Init 0 */
+
+  /* USER CODE END LPTIM1_Init 0 */
+
+  /* USER CODE BEGIN LPTIM1_Init 1 */
+
+  /* USER CODE END LPTIM1_Init 1 */
+  hlptim1.Instance = LPTIM1;
+  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
+  hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
+  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /* USER CODE END LPTIM1_Init 2 */
+}
+
+/**
   * @brief SPI1 Initialization Function
   * @param None
   * @retval None
   */
 static void MX_SPI1_Init(void)
 {
-
   /* USER CODE BEGIN SPI1_Init 0 */
 
   /* USER CODE END SPI1_Init 0 */
@@ -260,7 +309,6 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
-
 }
 
 /**
@@ -270,7 +318,6 @@ static void MX_SPI1_Init(void)
   */
 static void MX_USART1_UART_Init(void)
 {
-
   /* USER CODE BEGIN USART1_Init 0 */
 
   /* USER CODE END USART1_Init 0 */
@@ -295,7 +342,6 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 2 */
 
   /* USER CODE END USART1_Init 2 */
-
 }
 
 /**
@@ -305,7 +351,6 @@ static void MX_USART1_UART_Init(void)
   */
 static void MX_USART2_UART_Init(void)
 {
-
   /* USER CODE BEGIN USART2_Init 0 */
 
   /* USER CODE END USART2_Init 0 */
@@ -330,7 +375,6 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
-
 }
 
 /**
@@ -341,40 +385,40 @@ static void MX_USART2_UART_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, SPI1_CS_Pin|LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, SPI1_CS_Pin | LED2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, L80_RST_Pin|RFM_RST_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, L80_RST_Pin | RFM_RST_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : DIP3_Pin DIP1_Pin */
-  GPIO_InitStruct.Pin = DIP3_Pin|DIP1_Pin;
+  GPIO_InitStruct.Pin = DIP3_Pin | DIP1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SPI1_CS_Pin L80_RST_Pin LED2_Pin RFM_RST_Pin */
-  GPIO_InitStruct.Pin = SPI1_CS_Pin|L80_RST_Pin|LED2_Pin|RFM_RST_Pin;
+  GPIO_InitStruct.Pin = SPI1_CS_Pin | L80_RST_Pin | LED2_Pin | RFM_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DIO3_Pin DIO4_Pin DIO0_Pin DIO1_Pin */
-  GPIO_InitStruct.Pin = DIO3_Pin|DIO4_Pin|DIO0_Pin|DIO1_Pin;
+  GPIO_InitStruct.Pin = DIO3_Pin | DIO4_Pin | DIO0_Pin | DIO1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DIO2_Pin DIO5_Pin */
-  GPIO_InitStruct.Pin = DIO2_Pin|DIO5_Pin;
+  GPIO_InitStruct.Pin = DIO2_Pin | DIO5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -385,11 +429,99 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(DIP4_GPIO_Port, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == DIO0_Pin)
+  {
+    rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO0);
+  }
+  else if (GPIO_Pin == DIO1_Pin)
+  {
+    rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO1);
+  }
+  else if (GPIO_Pin == DIO5_Pin)
+  {
+    rfm95_on_interrupt(&rfm95_handle, RFM95_INTERRUPT_DIO5);
+  }
+}
+
+static uint32_t get_precision_tick()
+{
+  __disable_irq();
+  uint32_t precision_tick = lptim_tick_msb | HAL_LPTIM_ReadCounter(&hlptim1);
+  __enable_irq();
+  return precision_tick;
+}
+
+void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef* hlptim)
+{
+  lptim_tick_msb += 0x10000;
+}
+
+static void precision_sleep_until(uint32_t target_ticks)
+{
+  while (true)
+  {
+    uint32_t start_ticks = get_precision_tick();
+    if (start_ticks > target_ticks)
+    {
+      break;
+    }
+
+    uint32_t ticks_to_sleep = target_ticks - start_ticks;
+
+    // Only use sleep for at least 10 ticks.
+    if (ticks_to_sleep >= 10)
+    {
+      // Calculate required value of compare register for the sleep minus a small buffer time to compensate
+      // for any ticks that occur while we perform this calculation.
+      uint32_t compare = (start_ticks & 0xffff) + ticks_to_sleep - 2;
+
+      // If the counter auto-reloads we will be woken up anyway.
+      if (compare > 0xffff)
+      {
+        HAL_SuspendTick();
+        HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+        HAL_ResumeTick();
+
+        // Otherwise, set compare register and use the compare match interrupt to wake up in time.
+      }
+      else
+      {
+        __HAL_LPTIM_COMPARE_SET(&hlptim1, compare);
+        while (!__HAL_LPTIM_GET_FLAG(&hlptim1, LPTIM_FLAG_CMPOK));
+        __HAL_LPTIM_CLEAR_FLAG(&hlptim1, LPTIM_FLAG_CMPM);
+        __HAL_LPTIM_ENABLE_IT(&hlptim1, LPTIM_IT_CMPM);
+        HAL_SuspendTick();
+        HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+        HAL_ResumeTick();
+        __HAL_LPTIM_DISABLE_IT(&hlptim1, LPTIM_IT_CMPM);
+      }
+    }
+    else
+    {
+      break;
+    }
+
+    // Busy wait until we have reached the target.
+    while (get_precision_tick() < target_ticks);
+  }
+}
+
+static uint8_t random_int(uint8_t max)
+{
+  return 0; // Use ADC other means of obtaining a random number.
+}
+
+static uint8_t get_battery_level()
+{
+  return 0xff; // 0xff = Unknown battery level.
+}
 
 /* USER CODE END 4 */
 
@@ -400,11 +532,11 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+void StartDefaultTask(void* argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
     osDelay(1);
   }
@@ -418,11 +550,11 @@ void StartDefaultTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_loraTxTask */
-void loraTxTask(void *argument)
+void loraTxTask(void* argument)
 {
   /* USER CODE BEGIN loraTxTask */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
     osDelay(1);
   }
@@ -436,11 +568,11 @@ void loraTxTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_gpsReadTask */
-void gpsReadTask(void *argument)
+void gpsReadTask(void* argument)
 {
   /* USER CODE BEGIN gpsReadTask */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
     osDelay(1);
   }
@@ -455,12 +587,13 @@ void gpsReadTask(void *argument)
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
+  if (htim->Instance == TIM6)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
