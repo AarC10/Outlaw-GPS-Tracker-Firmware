@@ -1,0 +1,6 @@
+board:
+  name: outaw
+  full_name: Outlaw GPS Tracker
+  vendor: Wild West Rocketry
+  socs:
+    - name: stm32f103x8

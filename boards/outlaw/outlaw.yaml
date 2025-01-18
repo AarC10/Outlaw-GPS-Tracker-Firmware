@@ -1,0 +1,18 @@
+identifier: outlaw
+name: Outlaw GPS Tracker
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 20
+flash: 128
+supported:
+  - gpio
+  - spi
+  - adc
+  - dma
+  - nvs
+  - counter
+vendor: st
