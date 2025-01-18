@@ -3,6 +3,4 @@
 
 menu "Custom libraries"
 
-rsource "custom/Kconfig"
-
 endmenu
