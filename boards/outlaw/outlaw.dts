@@ -14,31 +14,39 @@
 	compatible = "st,stm32f103";
 
 	chosen {
-		zephyr,console = &usart2;
-		zephyr,shell-uart = &usart2;
+		zephyr,console = &usart1;
+		zephyr,shell-uart = &usart1;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 	};
 
 	leds: leds {
 		compatible = "gpio-leds";
-		green_led_2: led_2 {
-			gpios = <&gpioa 5 GPIO_ACTIVE_HIGH>;
+		led: led {
+			gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
 			label = "User LD2";
 		};
 	};
 
 	gpio_keys {
 		compatible = "gpio-keys";
-		user_button: button {
-			label = "User";
-			gpios = <&gpioc 13 GPIO_ACTIVE_LOW>;
+		dip1: dip1 {
+			label = "DIP 1";
+			gpios = <&gpiod 0 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_0>;
+		};
+
+		dip2: dip2 {
+			label = "DIP 2";
+			gpios = <&gpioc 15 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
 
 	aliases {
-		led0 = &green_led_2;
+		dbg-uart = &usart1;
+		gps-uart = &usart2;
+		led0 = &led;
 		sw0 = &user_button;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
@@ -70,6 +78,7 @@
 	adc-prescaler = <2>;
 };
 
+// DEBUG UART
 &usart1 {
 	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
 	pinctrl-names = "default";
@@ -77,6 +86,7 @@
 	status = "okay";
 };
 
+// GPS UART
 &usart2 {
 	pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
 	pinctrl-names = "default";
@@ -84,31 +94,26 @@
 	status = "okay";
 };
 
-&usart3 {
-	pinctrl-0 = <&usart3_tx_pb10 &usart3_rx_pb11>;
-	pinctrl-names = "default";
-	current-speed = <115200>;
-};
-
-&i2c1 {
-	pinctrl-0 = <&i2c1_scl_remap1_pb8 &i2c1_sda_remap1_pb9>;
-	pinctrl-names = "default";
-	status = "okay";
-	clock-frequency = <I2C_BITRATE_FAST>;
-};
-
 &spi1 {
 	pinctrl-0 = <&spi1_sck_master_pa5 &spi1_miso_master_pa6 &spi1_mosi_master_pa7>;
 	pinctrl-names = "default";
-	cs-gpios = <&gpiob 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+	cs-gpios = <&gpiob 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 	status = "okay";
-};
 
-&spi2 {
-	pinctrl-0 = <&spi2_nss_master_pb12 &spi2_sck_master_pb13
-		     &spi2_miso_master_pb14 &spi2_mosi_master_pb15>;
-	pinctrl-names = "default";
-	status = "okay";
+	lora0: lora0@0 {
+        compatible = "semtech,sx1276";
+        reg = <0>;
+        reset-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
+        dio-gpios = <&gpiob 14 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+                    <&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+                    <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+                    <&gpioa 8 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+                    <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+                    <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+        power-amplifier-output = "pa-boost";
+        spi-max-frequency = <125000>;
+        status = "okay";
+    };
 };
 
 &timers1 {
