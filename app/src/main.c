@@ -9,6 +9,7 @@
 #include <zephyr/drivers/gnss.h>
 #include <zephyr/drivers/lora.h>
 #include <zephyr/smf.h>
+#include <zephyr/drivers/gpio.h>
 
 #define NOFIX "NOFIX"
 
@@ -76,6 +77,8 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 // ******************************************** //
 // *             State Machine                * //
 // ******************************************** //
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios);
+static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET_OR(DT_ALIAS(pin_sw), gpios);
 
 
 static const struct smf_state states[];
@@ -86,23 +89,40 @@ struct s_object {
     struct smf_ctx ctx;
 } smf_obj;
 
-static void transmitter_entry(void* o) {
+static void check_for_transition(void*) {
+    static int last_pin_state = -1;
+    const int current_pin_state = gpio_pin_get_dt(&pin_sw);
+    if (last_pin_state != current_pin_state) {
+        last_pin_state = current_pin_state;
+
+        if (current_pin_state == 0) {
+            smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
+        } else {
+            smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
+        }
+    }
+}
+
+static void transmitter_entry(void*) {
     lora_configuration.tx = true;
     lora_config(lora_dev, &lora_configuration);
+    gpio_pin_set_dt(&led, 0);
 }
 
-static void receiver_entry(void* o) {
+static void receiver_entry(void*) {
     lora_configuration.tx = false;
     lora_config(lora_dev, &lora_configuration);
+    gpio_pin_set_dt(&led, 1);
 }
 
-static void receiver_run(void* o) {
+static void receiver_run(void*) {
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
+    check_for_transition(NULL);
 }
 
 
 static const struct smf_state states[] = {
-    [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
+    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
 

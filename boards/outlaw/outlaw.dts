@@ -47,6 +47,7 @@
 		dbg-uart = &usart1;
 		gnss-uart = &usart2;
 		lora = &lora0;
+		pin-sw = &dip1;
 		gnss = &maxm10s;
 		led0 = &led;
 		watchdog0 = &iwdg;
