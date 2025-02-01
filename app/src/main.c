@@ -77,8 +77,8 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 // ******************************************** //
 // *             State Machine                * //
 // ******************************************** //
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios);
-static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET_OR(DT_ALIAS(pin_sw), gpios);
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
 
 static const struct smf_state states[];
