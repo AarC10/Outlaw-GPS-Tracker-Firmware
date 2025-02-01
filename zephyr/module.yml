@@ -8,6 +8,4 @@ build:
     board_root: .
     dts_root: .
 runners:
-  # Additional runners, Zephyr will import these when discovering
-  # subclasses of the `ZephyrBinaryRunner` class.
   - file: scripts/example_runner.py
