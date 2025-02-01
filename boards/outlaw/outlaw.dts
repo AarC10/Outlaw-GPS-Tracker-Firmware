@@ -45,8 +45,8 @@
 
 	aliases {
 		dbg-uart = &usart1;
-		gps-uart = &usart2;
-		gps = &maxm10s;
+		gnss-uart = &usart2;
+		gnss = &maxm10s;
 		led0 = &led;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
