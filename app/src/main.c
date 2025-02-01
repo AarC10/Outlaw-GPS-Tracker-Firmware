@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(main);
 // ******************************************** //
 // *                LoRa                      * //
 // ******************************************** //
+
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
 
 static struct lora_modem_config lora_configuration = {
@@ -60,6 +61,7 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 // ******************************************** //
 // *                GNSS                      * //
 // ******************************************** //
+
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
@@ -74,9 +76,11 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
     }
 }
+
 // ******************************************** //
 // *             State Machine                * //
 // ******************************************** //
+
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
@@ -129,7 +133,6 @@ static const struct smf_state states[] = {
 // ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
-
 
 int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
