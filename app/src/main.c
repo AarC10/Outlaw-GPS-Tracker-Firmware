@@ -7,8 +7,10 @@
 #include <zephyr/logging/log.h>
 
 
-int main(void)
-{
+
+
+
+int main(void) {
 
 }
 
