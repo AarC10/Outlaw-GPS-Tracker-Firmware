@@ -63,7 +63,7 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 // ******************************************** //
 
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-function"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
 #pragma GCC diagnostic pop
     if (!lora_configuration.tx) return;
