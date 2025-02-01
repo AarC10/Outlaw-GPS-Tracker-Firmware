@@ -98,7 +98,7 @@ struct s_object {
     struct smf_ctx ctx;
 } smf_obj;
 
-static void check_for_transition(void*) {
+static void check_for_transition() {
     static int last_pin_state = -1;
     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
     if (last_pin_state != current_pin_state) {
@@ -118,6 +118,11 @@ static void transmitter_entry(void*) {
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
 }
 
+static void transmitter_run(void*) {
+    k_msleep(1000);
+    check_for_transition();
+}
+
 static void receiver_entry(void*) {
     lora_configuration.tx = false;
     lora_config(lora_dev, &lora_configuration);
@@ -126,12 +131,12 @@ static void receiver_entry(void*) {
 
 static void receiver_run(void*) {
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
-    check_for_transition(NULL);
+    check_for_transition();
 }
 
 
 static const struct smf_state states[] = {
-    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
+    [transmitter] = SMF_CREATE_STATE(transmitter_entry, transmitter_run, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
 
@@ -147,7 +152,6 @@ int main(void) {
         if (ret) {
             LOG_WRN("SMF returned non-zero status: %d", ret);
         }
-        k_msleep(1000);
     }
 
     return 0;
