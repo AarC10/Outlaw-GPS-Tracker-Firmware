@@ -12,8 +12,12 @@
 #include <zephyr/drivers/gpio.h>
 
 #define NOFIX "NOFIX"
+
 #define TRANSMITTER_LOGIC_LEVEL 1
+#define TRANSMITTER_LED_LEVEL 0
+
 #define RECEIVER_LOGIC_LEVEL 0
+#define RECEIVER_LED_LEVEL 1
 
 LOG_MODULE_REGISTER(main);
 
@@ -111,13 +115,13 @@ static void check_for_transition(void*) {
 static void transmitter_entry(void*) {
     lora_configuration.tx = true;
     lora_config(lora_dev, &lora_configuration);
-    gpio_pin_set_dt(&led, 0);
+    gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
 }
 
 static void receiver_entry(void*) {
     lora_configuration.tx = false;
     lora_config(lora_dev, &lora_configuration);
-    gpio_pin_set_dt(&led, 1);
+    gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
 }
 
 static void receiver_run(void*) {
