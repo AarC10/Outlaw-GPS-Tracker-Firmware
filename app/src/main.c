@@ -13,8 +13,10 @@
 #define NOFIX "NOFIX"
 
 LOG_MODULE_REGISTER(main);
-GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 
+// ******************************************** //
+// *                LoRa                      * //
+// ******************************************** //
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
 
 static struct lora_modem_config lora_configuration = {
@@ -28,26 +30,6 @@ static struct lora_modem_config lora_configuration = {
     .iq_inverted = false,
     .public_network = false,
 };
-
-static const struct smf_state states[];
-
-enum demo_state { transmitter, receiver };
-
-struct s_object {
-    struct smf_ctx ctx;
-} smf_obj;
-
-static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
-    if (!lora_configuration.tx) return;
-
-    if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        LOG_INF("Fix acquired!");
-        lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
-    } else {
-        LOG_INF("No fix acquired!");
-        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
-    }
-}
 
 static void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                                   void* user_data) {
@@ -74,6 +56,35 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
     }
 }
 
+// ******************************************** //
+// *                GNSS                      * //
+// ******************************************** //
+GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
+#pragma GCC diagnostic pop
+    if (!lora_configuration.tx) return;
+
+    if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
+        LOG_INF("Fix acquired!");
+        lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
+    } else {
+        LOG_INF("No fix acquired!");
+        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+    }
+}
+// ******************************************** //
+// *             State Machine                * //
+// ******************************************** //
+
+
+static const struct smf_state states[];
+
+enum demo_state { transmitter, receiver };
+
+struct s_object {
+    struct smf_ctx ctx;
+} smf_obj;
 
 static void transmitter_entry(void* o) {
     lora_configuration.tx = true;
@@ -94,6 +105,11 @@ static const struct smf_state states[] = {
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
+
+// ******************************************** //
+// *                  Main                    * //
+// ******************************************** //
+
 
 int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
