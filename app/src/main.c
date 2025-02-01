@@ -12,6 +12,8 @@
 #include <zephyr/drivers/gpio.h>
 
 #define NOFIX "NOFIX"
+#define TRANSMITTER_LOGIC_LEVEL 1
+#define RECEIVER_LOGIC_LEVEL 0
 
 LOG_MODULE_REGISTER(main);
 
@@ -84,7 +86,6 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
-
 static const struct smf_state states[];
 
 enum demo_state { transmitter, receiver };
@@ -99,9 +100,9 @@ static void check_for_transition(void*) {
     if (last_pin_state != current_pin_state) {
         last_pin_state = current_pin_state;
 
-        if (current_pin_state == 0) {
+        if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
-        } else {
+        } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
             smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
         }
     }
