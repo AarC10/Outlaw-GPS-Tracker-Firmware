@@ -11,7 +11,7 @@
 
 / {
 	model = "Outlaw GPS Tracker";
-	compatible = "st,stm32f103";
+	compatible = "st,stm32f103xe";
 
 	chosen {
 		zephyr,console = &usart1;
@@ -47,7 +47,6 @@
 		dbg-uart = &usart1;
 		gps-uart = &usart2;
 		led0 = &led;
-		sw0 = &user_button;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 	};
