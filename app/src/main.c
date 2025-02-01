@@ -66,10 +66,10 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
         break;
     }
     case strlen(NOFIX):
-        LOG_INF("No fix acquired!");
+        LOG_INF("\tNo fix acquired!");
         break;
     default:
-        LOG_INF("Received data: %s", data);
+        LOG_INF("\tReceived data: %s", data);
         break;
     }
 }
