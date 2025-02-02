@@ -59,21 +59,20 @@
 	status = "okay";
 };
 
-&clk_hse {
-	hse-bypass;
+&clk_hsi {
 	clock-frequency = <DT_FREQ_M(8)>;
 	status = "okay";
 };
 
 &pll {
-	mul = <9>;
-	clocks = <&clk_hse>;
+	mul = <12>;
+	clocks = <&clk_hsi>;
 	status = "okay";
 };
 
 &rcc {
 	clocks = <&pll>;
-	clock-frequency = <DT_FREQ_M(72)>;
+	clock-frequency = <DT_FREQ_M(48)>;
 	ahb-prescaler = <1>;
 	apb1-prescaler = <2>;
 	apb2-prescaler = <1>;
@@ -84,7 +83,7 @@
 &usart1 {
 	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
 	pinctrl-names = "default";
-	current-speed = <115200>;
+	current-speed = <4800>;
 	status = "okay";
 };
 
@@ -100,6 +99,17 @@
         compatible = "gnss-nmea-generic";
     };
 };
+
+//zephyr_udc0: &usbotg_fs {
+//	pinctrl-0 = <&usb_otg_fs_dm_pa11 &usb_otg_fs_dp_pa12>;
+//	pinctrl-names = "default";
+//	status = "okay";
+//
+//	cdc_acm_uart0: cdc_acm_uart0 {
+//		compatible = "zephyr,cdc-acm-uart";
+//		label = "CDC_ACM_0";
+//	};
+//};
 
 &spi1 {
 	pinctrl-0 = <&spi1_sck_master_pa5 &spi1_miso_master_pa6 &spi1_mosi_master_pa7>;

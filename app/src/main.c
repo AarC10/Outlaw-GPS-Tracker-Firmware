@@ -43,23 +43,23 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
                                   void* user_data) {
     if (lora_configuration.tx) return;
 
-    LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
+    printk("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
 
     switch (size) {
     case sizeof(struct gnss_data): {
         struct gnss_data* gnss_data = (struct gnss_data*)data;
-        LOG_INF("\tLatitude: %lld", gnss_data->nav_data.latitude);
-        LOG_INF("\tLongitude: %lld", gnss_data->nav_data.longitude);
-        LOG_INF("\tBearing: %u", gnss_data->nav_data.bearing);
-        LOG_INF("\tSpeed: %u", gnss_data->nav_data.speed);
-        LOG_INF("\tAltitude: %d", gnss_data->nav_data.altitude);
+        printk("\tLatitude: %lld", gnss_data->nav_data.latitude);
+        printk("\tLongitude: %lld", gnss_data->nav_data.longitude);
+        printk("\tBearing: %u", gnss_data->nav_data.bearing);
+        printk("\tSpeed: %u", gnss_data->nav_data.speed);
+        printk("\tAltitude: %d", gnss_data->nav_data.altitude);
         break;
     }
     case strlen(NOFIX):
-        LOG_INF("\tNo fix acquired!");
+        printk("\tNo fix acquired!");
         break;
     default:
-        LOG_INF("\tReceived data: %s", data);
+        printk("\tReceived data: %s", data);
         break;
     }
 }
@@ -68,20 +68,21 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 // *                GNSS                      * //
 // ******************************************** //
 
-GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 #pragma GCC diagnostic ignored "-Wunused-function"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
 #pragma GCC diagnostic pop
     if (!lora_configuration.tx) return;
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        LOG_INF("Fix acquired!");
+        printk("Fix acquired!");
         lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
     } else {
-        LOG_INF("No fix acquired!");
+        printk("No fix acquired!");
         lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
     }
 }
+GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
+
 
 // ******************************************** //
 // *             State Machine                * //
@@ -145,8 +146,9 @@ int main(void) {
     while (true) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
-            LOG_WRN("SMF returned non-zero status: %d", ret);
+            printk("SMF returned non-zero status: %d", ret);
         }
+        printk("Looped");
         k_msleep(1000);
     }
 
