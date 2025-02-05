@@ -65,14 +65,14 @@
 };
 
 &pll {
-	mul = <12>;
+	mul = <2>;
 	clocks = <&clk_hsi>;
 	status = "okay";
 };
 
 &rcc {
 	clocks = <&pll>;
-	clock-frequency = <DT_FREQ_M(48)>;
+	clock-frequency = <DT_FREQ_M(8)>;
 	ahb-prescaler = <1>;
 	apb1-prescaler = <2>;
 	apb2-prescaler = <1>;
@@ -133,34 +133,23 @@
     };
 };
 
-&timers1 {
-	st,prescaler = <10000>;
-	status = "okay";
+//&iwdg {
+//	status = "okay";
+//};
 
-	pwm1: pwm {
-		status = "okay";
-		pinctrl-0 = <&tim1_ch1_pwm_out_pa8>;
-		pinctrl-names = "default";
-	};
-};
-
-&iwdg {
-	status = "okay";
-};
-
-&rtc {
-	clocks = <&rcc STM32_CLOCK_BUS_APB1 0x10000000>,
-		 <&rcc STM32_SRC_LSI RTC_SEL(2)>;
-	status = "okay";
-};
+//&rtc {
+//	clocks = <&rcc STM32_CLOCK_BUS_APB1 0x10000000>,
+//		 <&rcc STM32_SRC_LSI RTC_SEL(2)>;
+//	status = "okay";
+//};
 
 &die_temp {
 	status = "okay";
 };
 
-&dma1 {
-	status = "okay";
-};
+//&dma1 {
+//	status = "okay";
+//};
 
 &flash0 {
 	partitions {

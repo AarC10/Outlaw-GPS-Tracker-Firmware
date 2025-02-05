@@ -43,23 +43,23 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
                                   void* user_data) {
     if (lora_configuration.tx) return;
 
-    printk("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
+    LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
 
     switch (size) {
     case sizeof(struct gnss_data): {
         struct gnss_data* gnss_data = (struct gnss_data*)data;
-        printk("\tLatitude: %lld", gnss_data->nav_data.latitude);
-        printk("\tLongitude: %lld", gnss_data->nav_data.longitude);
-        printk("\tBearing: %u", gnss_data->nav_data.bearing);
-        printk("\tSpeed: %u", gnss_data->nav_data.speed);
-        printk("\tAltitude: %d", gnss_data->nav_data.altitude);
+        LOG_INF("\tLatitude: %lld", gnss_data->nav_data.latitude);
+        LOG_INF("\tLongitude: %lld", gnss_data->nav_data.longitude);
+        LOG_INF("\tBearing: %u", gnss_data->nav_data.bearing);
+        LOG_INF("\tSpeed: %u", gnss_data->nav_data.speed);
+        LOG_INF("\tAltitude: %d", gnss_data->nav_data.altitude);
         break;
     }
     case strlen(NOFIX):
-        printk("\tNo fix acquired!");
+        LOG_INF("\tNo fix acquired!");
         break;
     default:
-        printk("\tReceived data: %s", data);
+        LOG_INF("\tReceived data: %s", data);
         break;
     }
 }
@@ -74,13 +74,14 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
     if (!lora_configuration.tx) return;
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        printk("Fix acquired!");
+        LOG_INF("Fix acquired!");
         lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
     } else {
-        printk("No fix acquired!");
+        LOG_INF("No fix acquired!");
         lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
     }
 }
+
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 
 
@@ -142,13 +143,12 @@ static const struct smf_state states[] = {
 
 int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
-
     while (true) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
-            printk("SMF returned non-zero status: %d", ret);
+            LOG_INF("SMF returned non-zero status: %d", ret);
         }
-        printk("Looped");
+        LOG_INF("Looped");
         k_msleep(1000);
     }
 
