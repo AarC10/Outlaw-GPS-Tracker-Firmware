@@ -53,6 +53,10 @@
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 	};
+
+	zephyr,user {
+        io-channels = <&adc1 0>;
+    };
 };
 
 &adc1 {
