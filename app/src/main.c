@@ -103,6 +103,7 @@ struct s_object {
 static void check_for_transition(void*) {
     static int last_pin_state = -1;
     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
+    LOG_INF("Pin state: %d", current_pin_state);
     if (last_pin_state != current_pin_state) {
         last_pin_state = current_pin_state;
 
@@ -148,7 +149,6 @@ int main(void) {
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
         }
-        LOG_INF("Looped");
         k_msleep(1000);
     }
 
