@@ -146,25 +146,6 @@ static const struct smf_state states[] = {
 int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 
-    // struct adc_dt_spec adc_spec = ADC_DT_SPEC_GET(DT_NODELABEL(adc0));
-    struct adc_dt_spec adc_spec = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 0);
-    uint16_t adc_value = 0;
-
-    const struct adc_sequence sequence = {
-        .channels = BIT(0),
-        .buffer = &adc_value,
-        .buffer_size = sizeof(adc_value),
-        .resolution = 12,
-    };
-
-    while (true) {
-        adc_read_dt(&adc_spec, sequence);
-        printk("%d\n", adc_value);
-
-
-    }
-
-
     while (true) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
