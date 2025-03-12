@@ -11,6 +11,7 @@
 #include <zephyr/smf.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #define NOFIX "NOFIX"
 
@@ -91,7 +92,7 @@ GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 // ******************************************** //
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
-static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
+// static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
 static const struct smf_state states[];
 
@@ -101,20 +102,20 @@ struct s_object {
     struct smf_ctx ctx;
 } smf_obj;
 
-static void check_for_transition(void*) {
-    static int last_pin_state = -1;
-    const int current_pin_state = gpio_pin_get_dt(&pin_sw);
-    LOG_INF("Pin state: %d", current_pin_state);
-    if (last_pin_state != current_pin_state) {
-        last_pin_state = current_pin_state;
-
-        if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
-            smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
-        } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
-            smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
-        }
-    }
-}
+// static void check_for_transition(void*) {
+//     static int last_pin_state = -1;
+//     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
+//     LOG_INF("Pin state: %d", current_pin_state);
+//     if (last_pin_state != current_pin_state) {
+//         last_pin_state = current_pin_state;
+//
+//         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
+//             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
+//         } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
+//             smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
+//         }
+//     }
+// }
 
 static void transmitter_entry(void*) {
     lora_configuration.tx = true;
@@ -129,16 +130,7 @@ static void receiver_entry(void*) {
 }
 
 static void receiver_run(void*) {
-    // lora_recv_async(lora_dev, lora_receive_callback, NULL);
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
-    uint8_t data[255];
-    int16_t rssi;
-    int8_t snr;
-    memset(&data, 0, sizeof(data));
-
-    LOG_INF("Waiting for data...");
-    lora_recv(lora_dev, data, sizeof(data), K_FOREVER, &rssi, &snr);
-    // check_for_transition(NULL);
 }
 
 
