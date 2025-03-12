@@ -135,14 +135,15 @@ static void receiver_run(void*) {
 
 
 static const struct smf_state states[] = {
-    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
+    // [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
+    // TODO: V2 currently has a floating pin, making it impossible to detect the state of the pin properly
+    [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
 
 // ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
-
 int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 
@@ -151,6 +152,10 @@ int main(void) {
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
         }
+
+        // Blink the LED
+        gpio_pin_toggle_dt(&led);
+
         k_msleep(1000);
     }
 
