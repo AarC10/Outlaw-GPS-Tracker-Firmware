@@ -1,2 +1,7 @@
 # Copyright (c) 2024 Aaron Chan
 # SPDX-License-Identifier: Apache-2.0
+
+# Note this should be configured by pins
+config DEFAULT_RECEIVE_MODE
+    bool "Startup defaults to receive mode"
+    default n

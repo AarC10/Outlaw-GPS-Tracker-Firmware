@@ -129,8 +129,16 @@ static void receiver_entry(void*) {
 }
 
 static void receiver_run(void*) {
+    // lora_recv_async(lora_dev, lora_receive_callback, NULL);
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
-    check_for_transition(NULL);
+    uint8_t data[255];
+    int16_t rssi;
+    int8_t snr;
+    memset(&data, 0, sizeof(data));
+
+    LOG_INF("Waiting for data...");
+    lora_recv(lora_dev, data, sizeof(data), K_FOREVER, &rssi, &snr);
+    // check_for_transition(NULL);
 }
 
 
@@ -145,17 +153,17 @@ static const struct smf_state states[] = {
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
+#ifdef CONFIG_DEFAULT_RECEIVE_MODE
+    smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
+#else
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
+#endif
 
     while (true) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
         }
-
-        // Blink the LED
-        gpio_pin_toggle_dt(&led);
-
         k_msleep(1000);
     }
 
