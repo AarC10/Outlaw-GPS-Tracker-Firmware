@@ -1,0 +1,1 @@
+Failed to launch West executable 'west': Cannot run program "west" (in directory "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/app/build"): error=2, No such file or directory

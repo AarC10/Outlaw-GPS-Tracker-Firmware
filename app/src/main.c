@@ -89,7 +89,6 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 
-
 // ******************************************** //
 // *             State Machine                * //
 // ******************************************** //
