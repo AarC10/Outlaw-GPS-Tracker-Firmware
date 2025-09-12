@@ -18,6 +18,7 @@ manifest:
         # strictly needed by the application.
         name-allowlist:
           - cmsis
+          - cmsis_6
           - hal_stm32
           - loramac-node
           - hal_st
