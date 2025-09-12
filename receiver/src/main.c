@@ -15,13 +15,6 @@
 
 #define NOFIX "NOFIX"
 
-#define TRANSMITTER_LOGIC_LEVEL 1
-#define TRANSMITTER_LED_LEVEL 0
-
-#define RECEIVER_LOGIC_LEVEL 0
-#define RECEIVER_LED_LEVEL 1
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
-
 LOG_MODULE_REGISTER(main);
 
 // ******************************************** //
@@ -29,21 +22,10 @@ LOG_MODULE_REGISTER(main);
 // ******************************************** //
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
 
-static struct lora_modem_config lora_configuration = {
-    .frequency = 903000000,
-    .bandwidth = BW_125_KHZ,
-    .datarate = SF_12,
-    .coding_rate = CR_4_5,
-    .preamble_len = 8,
-    .tx_power = 20,
-    .tx = false,
-    .iq_inverted = false,
-    .public_network = false,
-};
 
 static void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                                   void* user_data) {
-    if (lora_configuration.tx) return;
+    const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
     LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
 
@@ -56,6 +38,8 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
         LOG_INF("\tBearing: %u", gnss_data_local.nav_data.bearing);
         LOG_INF("\tSpeed: %u", gnss_data_local.nav_data.speed);
         LOG_INF("\tAltitude: %d", gnss_data_local.nav_data.altitude);
+        gpio_pin_toggle_dt(&led);
+
         break;
     }
     case strlen(NOFIX):
@@ -68,15 +52,23 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 }
 
 static void receiver_entry() {
-    lora_configuration.tx = false;
+    struct lora_modem_config lora_configuration = {
+        .frequency = 903000000,
+        .bandwidth = BW_125_KHZ,
+        .datarate = SF_12,
+        .coding_rate = CR_4_5,
+        .preamble_len = 8,
+        .tx_power = 20,
+        .tx = false,
+        .iq_inverted = false,
+        .public_network = false,
+    };
     lora_config(lora_dev, &lora_configuration);
-    gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
 }
 
 static void receiver_run() {
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
 }
-
 
 // ******************************************** //
 // *                  Main                    * //
