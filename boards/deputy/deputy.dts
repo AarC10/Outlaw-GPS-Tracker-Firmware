@@ -108,13 +108,14 @@
 	status = "okay";
 };
 
-// GPS UART
+// USB UART
 &usart2 {
 	pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
 	pinctrl-names = "default";
 	current-speed = <9600>;
 	status = "okay";
 
+	// We are lying here to avoid any potential compile errors
 	maxm10s: ublox-maxm10s {
         status = "okay";
         compatible = "gnss-nmea-generic";
