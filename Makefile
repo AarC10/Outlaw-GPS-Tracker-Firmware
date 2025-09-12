@@ -3,6 +3,9 @@ all:
 radio:
 	west build -b radio_module app -p auto --build-dir build-radio-radio_mod
 
+deputy:
+	west build -b deputy app -p auto
+
 outlaw-rcv:
 	west build -b outlaw app -p auto -DCONFIG_DEFAULT_RECEIVE_MODE=y
 radio-rcv:
