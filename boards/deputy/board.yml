@@ -3,4 +3,4 @@ board:
   full_name: Deputy Receiver
   vendor: Wild West Rocketry
   socs:
-    - name: stm32f103xe
+    - name: stm32f030x8
