@@ -15,43 +15,40 @@
 
 #define NOFIX "NOFIX"
 
-LOG_MODULE_REGISTER(main);
 
 // ******************************************** //
 // *                LoRa                      * //
 // ******************************************** //
-static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
-
 
 static void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                                   void* user_data) {
     const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
-    LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
+    printk("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
 
     switch (size) {
     case sizeof(struct gnss_data): {
         struct gnss_data gnss_data_local;
         memcpy(&gnss_data_local, data, sizeof(gnss_data_local));
-        LOG_INF("\tLatitude: %lld", gnss_data_local.nav_data.latitude);
-        LOG_INF("\tLongitude: %lld", gnss_data_local.nav_data.longitude);
-        LOG_INF("\tBearing: %u", gnss_data_local.nav_data.bearing);
-        LOG_INF("\tSpeed: %u", gnss_data_local.nav_data.speed);
-        LOG_INF("\tAltitude: %d", gnss_data_local.nav_data.altitude);
+        printk("\tLatitude: %lld", gnss_data_local.nav_data.latitude);
+        printk("\tLongitude: %lld", gnss_data_local.nav_data.longitude);
+        printk("\tBearing: %u", gnss_data_local.nav_data.bearing);
+        printk("\tSpeed: %u", gnss_data_local.nav_data.speed);
+        printk("\tAltitude: %d", gnss_data_local.nav_data.altitude);
         gpio_pin_toggle_dt(&led);
 
         break;
     }
     case strlen(NOFIX):
-        LOG_INF("\tNo fix acquired!");
+        printk("\tNo fix acquired!");
         break;
     default:
-        LOG_INF("\tReceived data: %s", data);
+        printk("\tReceived data: %s", data);
         break;
     }
 }
 
-static void receiver_entry() {
+static void receiver_entry(const struct device *dev) {
     struct lora_modem_config lora_configuration = {
         .frequency = 903000000,
         .bandwidth = BW_125_KHZ,
@@ -63,21 +60,23 @@ static void receiver_entry() {
         .iq_inverted = false,
         .public_network = false,
     };
-    lora_config(lora_dev, &lora_configuration);
+    lora_config(dev, &lora_configuration);
 }
 
-static void receiver_run() {
-    lora_recv_async(lora_dev, lora_receive_callback, NULL);
+static void receiver_run(const struct device *dev) {
+    lora_recv_async(dev, lora_receive_callback, NULL);
 }
 
 // ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
-    receiver_entry();
+    const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
+
+    receiver_entry(lora_dev);
 
     while (true) {
-        receiver_run();
+        receiver_run(lora_dev);
         k_msleep(1000);
     }
 
