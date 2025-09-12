@@ -50,12 +50,13 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 
     switch (size) {
     case sizeof(struct gnss_data): {
-        struct gnss_data* gnss_data = (struct gnss_data*)data;
-        LOG_INF("\tLatitude: %lld", gnss_data->nav_data.latitude);
-        LOG_INF("\tLongitude: %lld", gnss_data->nav_data.longitude);
-        LOG_INF("\tBearing: %u", gnss_data->nav_data.bearing);
-        LOG_INF("\tSpeed: %u", gnss_data->nav_data.speed);
-        LOG_INF("\tAltitude: %d", gnss_data->nav_data.altitude);
+        struct gnss_data gnss_data_local;
+        memcpy(&gnss_data_local, data, sizeof(gnss_data_local));
+        LOG_INF("\tLatitude: %lld", gnss_data_local.nav_data.latitude);
+        LOG_INF("\tLongitude: %lld", gnss_data_local.nav_data.longitude);
+        LOG_INF("\tBearing: %u", gnss_data_local.nav_data.bearing);
+        LOG_INF("\tSpeed: %u", gnss_data_local.nav_data.speed);
+        LOG_INF("\tAltitude: %d", gnss_data_local.nav_data.altitude);
         break;
     }
     case strlen(NOFIX):
