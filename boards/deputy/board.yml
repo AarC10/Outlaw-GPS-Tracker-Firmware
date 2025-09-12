@@ -2,5 +2,11 @@ board:
   name: deputy
   full_name: Deputy Receiver
   vendor: Wild West Rocketry
+  revision:
+    format: number
+    default: "1"
+    revisions:
+      - name: "1"
+      - name: "2"
   socs:
     - name: stm32f030x8
