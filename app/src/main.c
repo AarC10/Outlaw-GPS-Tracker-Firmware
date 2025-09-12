@@ -20,6 +20,7 @@
 
 #define RECEIVER_LOGIC_LEVEL 0
 #define RECEIVER_LED_LEVEL 1
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 LOG_MODULE_REGISTER(main);
 
@@ -30,12 +31,12 @@ LOG_MODULE_REGISTER(main);
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
 
 static struct lora_modem_config lora_configuration = {
-    .frequency = 915000000,
+    .frequency = 903000000,
     .bandwidth = BW_125_KHZ,
     .datarate = SF_12,
     .coding_rate = CR_4_5,
     .preamble_len = 8,
-    .tx_power = 13,
+    .tx_power = 20,
     .tx = false,
     .iq_inverted = false,
     .public_network = false,
@@ -81,6 +82,7 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
     } else {
         LOG_INF("No fix acquired!");
         lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+        gpio_pin_toggle_dt(&led);
     }
 }
 
@@ -91,7 +93,6 @@ GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 // *             State Machine                * //
 // ******************************************** //
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 // static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
 static const struct smf_state states[];
