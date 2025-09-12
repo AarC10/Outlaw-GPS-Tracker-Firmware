@@ -23,7 +23,7 @@
 	leds: leds {
 		compatible = "gpio-leds";
 		led: led {
-			gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpiob 12 GPIO_ACTIVE_HIGH>;
 			label = "User LD2";
 		};
 	};
