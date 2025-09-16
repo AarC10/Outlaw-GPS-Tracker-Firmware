@@ -5,3 +5,15 @@
 config DEFAULT_RECEIVE_MODE
     bool "Startup defaults to receive mode"
     default n
+
+config GPS_TRANSMIT_INTERVAL
+    int "Time interval (in seconds) to transmit GPS data"
+    default 5
+
+config TIMESLOT
+    int "Time slot (in seconds) to wait before next transmission"
+    default 0
+
+config LORA_FREQUENCY
+    int "LoRa frequency in Hz"
+    default 915000000
