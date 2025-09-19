@@ -24,6 +24,20 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 LOG_MODULE_REGISTER(main);
 
+typedef struct {
+    uint8_t node_id;
+    float latitude;
+    float longitude;
+    uint16_t altitude;
+    uint16_t satellites_cnt;
+    uint32_t speed;
+} lora_payload_t;
+
+static lora_payload_t payload;
+
+static void tx_timer_handler(struct k_timer *timer_id);
+K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
+
 // ******************************************** //
 // *                LoRa                      * //
 // ******************************************** //
@@ -122,12 +136,14 @@ static void transmitter_entry(void*) {
     lora_configuration.tx = true;
     lora_config(lora_dev, &lora_configuration);
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
+    k_timer_start(&tx_timer, K_SECONDS(5), K_SECONDS(5));
 }
 
 static void receiver_entry(void*) {
     lora_configuration.tx = false;
     lora_config(lora_dev, &lora_configuration);
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
+    k_timer_stop(&tx_timer);
 }
 
 static void receiver_run(void*) {
@@ -141,6 +157,21 @@ static const struct smf_state states[] = {
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
+
+// GNSS data storage for transmission
+static struct gnss_data latest_gnss_data;
+
+
+static void tx_timer_handler(struct k_timer *timer_id) {
+    if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
+        LOG_INF("Fix acquired! (Timer)");
+        lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
+    } else {
+        LOG_INF("No fix acquired! (Timer)");
+        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+        gpio_pin_toggle_dt(&led);
+    }
+}
 
 // ******************************************** //
 // *                  Main                    * //
