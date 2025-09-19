@@ -15,6 +15,17 @@
 
 #define NOFIX "NOFIX"
 
+typedef struct {
+    uint8_t node_id;
+    float latitude;
+    float longitude;
+    uint16_t altitude;
+    uint16_t satellites_cnt;
+    uint32_t speed;
+} lora_payload_t;
+
+static lora_payload_t payload;
+
 
 // ******************************************** //
 // *                LoRa                      * //
@@ -39,6 +50,16 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 
         break;
     }
+    case sizeof(struct lora_payload_t):
+        lora_payload_t lora_payload_local;
+        memcpy(&lora_payload_local, data, sizeof(lora_payload_local));
+        printk("\tNode ID: %d", lora_payload_local.node_id);
+        printk("\tLatitude: %f", lora_payload_local.latitude);
+        printk("\tLongitude: %f", lora_payload_local.longitude);
+        printk("\tAltitude: %d", lora_payload_local.altitude);
+        printk("\tSatellites: %d", lora_payload_local.satellites_cnt);
+        printk("\tSpeed: %d", lora_payload_local.speed);
+        break;
     case strlen(NOFIX):
         printk("\tNo fix acquired!");
         break;
