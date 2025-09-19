@@ -72,7 +72,6 @@ static void receiver_run(const struct device *dev) {
 // ******************************************** //
 int main(void) {
     const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
-
     receiver_entry(lora_dev);
 
     while (true) {
