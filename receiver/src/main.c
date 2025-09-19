@@ -50,12 +50,12 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 
         break;
     }
-    case sizeof(struct lora_payload_t):
+    case sizeof(lora_payload_t):
         lora_payload_t lora_payload_local;
         memcpy(&lora_payload_local, data, sizeof(lora_payload_local));
         printk("\tNode ID: %d", lora_payload_local.node_id);
-        printk("\tLatitude: %f", lora_payload_local.latitude);
-        printk("\tLongitude: %f", lora_payload_local.longitude);
+        printk("\tLatitude: %f", (double) lora_payload_local.latitude);
+        printk("\tLongitude: %f", (double) lora_payload_local.longitude);
         printk("\tAltitude: %d", lora_payload_local.altitude);
         printk("\tSatellites: %d", lora_payload_local.satellites_cnt);
         printk("\tSpeed: %d", lora_payload_local.speed);
