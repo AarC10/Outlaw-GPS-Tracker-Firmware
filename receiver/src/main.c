@@ -91,7 +91,11 @@ int main(void) {
     lora_config(lora_dev, &lora_configuration);
 
     while (true) {
-        lora_recv_async(lora_dev, lora_receive_callback, NULL);
+        printk("Listening for LoRa packets...\n");
+        int ret = lora_recv(lora_dev, (uint8_t*)&payload, sizeof(payload), K_FOREVER, NULL, NULL);
+        if (ret < 0) {
+            printk("lora_recv_async failed: %d\n", ret);
+        }
         k_msleep(1000);
     }
 

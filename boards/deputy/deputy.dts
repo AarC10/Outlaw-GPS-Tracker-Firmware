@@ -28,35 +28,14 @@
 		};
 	};
 
-	gpio_keys {
-		compatible = "gpio-keys";
-		dip1: dip1 {
-			label = "DIP 1";
-			gpios = <&gpiod 0 GPIO_ACTIVE_LOW>;
-			zephyr,code = <INPUT_KEY_0>;
-		};
-
-		dip2: dip2 {
-			label = "DIP 2";
-			gpios = <&gpioc 15 GPIO_ACTIVE_LOW>;
-			zephyr,code = <INPUT_KEY_0>;
-		};
-	};
-
 	aliases {
 		dbg-uart = &usart1;
 		gnss-uart = &usart2;
 		lora = &lora0;
-		pin-sw = &dip1;
-		gnss = &maxm10s;
 		led0 = &led;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 	};
-
-	zephyr,user {
-        io-channels = <&adc1 0>;
-    };
 };
 
 &pll {
@@ -88,12 +67,6 @@
 	pinctrl-names = "default";
 	current-speed = <9600>;
 	status = "okay";
-
-	// We are lying here to avoid any potential compile errors
-	maxm10s: ublox-maxm10s {
-        status = "okay";
-        compatible = "gnss-nmea-generic";
-    };
 };
 
 //zephyr_udc0: &usbotg_fs {
