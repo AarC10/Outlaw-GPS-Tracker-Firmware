@@ -50,7 +50,7 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
 
         break;
     }
-    case sizeof(lora_payload_t):
+    case sizeof(lora_payload_t): {
         lora_payload_t lora_payload_local;
         memcpy(&lora_payload_local, data, sizeof(lora_payload_local));
         printk("\tNode ID: %d", lora_payload_local.node_id);
@@ -60,6 +60,7 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
         printk("\tSatellites: %d", lora_payload_local.satellites_cnt);
         printk("\tSpeed: %d", lora_payload_local.speed);
         break;
+    }
     case strlen(NOFIX):
         printk("\tNo fix acquired!");
         break;
@@ -69,34 +70,28 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
     }
 }
 
-static void receiver_entry(const struct device *dev) {
-    struct lora_modem_config lora_configuration = {
-        .frequency = 903000000,
-        .bandwidth = BW_125_KHZ,
-        .datarate = SF_12,
-        .coding_rate = CR_4_5,
-        .preamble_len = 8,
-        .tx_power = 20,
-        .tx = false,
-        .iq_inverted = false,
-        .public_network = false,
-    };
-    lora_config(dev, &lora_configuration);
-}
+static struct lora_modem_config lora_configuration = {
+    .frequency = 903000000,
+    .bandwidth = BW_125_KHZ,
+    .datarate = SF_12,
+    .coding_rate = CR_4_5,
+    .preamble_len = 8,
+    .tx_power = 20,
+    .tx = false,
+    .iq_inverted = false,
+    .public_network = false,
+};
 
-static void receiver_run(const struct device *dev) {
-    lora_recv_async(dev, lora_receive_callback, NULL);
-}
 
 // ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
     const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
-    receiver_entry(lora_dev);
+    lora_config(lora_dev, &lora_configuration);
 
     while (true) {
-        receiver_run(lora_dev);
+        lora_recv_async(lora_dev, lora_receive_callback, NULL);
         k_msleep(1000);
     }
 
