@@ -97,8 +97,8 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
         const lora_payload_t payload = {
             .node_id = 0,
-            .latitude = (float) (data->nav_data.latitude / 1e7),
-            .longitude = (float) (data->nav_data.longitude / 1e7),
+            .latitude = (float)(data->nav_data.latitude / 1e7),
+            .longitude = (float)(data->nav_data.longitude / 1e7),
             .altitude = (uint16_t)(data->nav_data.altitude / 100),
             .speed = (uint16_t)(data->nav_data.speed / 100),
             .satellites_cnt = data->info.satellites_cnt,
@@ -108,12 +108,10 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
             LOG_INF("Sending GPS transmission");
             lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
             pps_counter = 0;
-
         } else if (pps_counter > TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
             pps_counter = 0;
         }
-
     } else {
         LOG_INF("No fix acquired! Counter: %d", no_fix_counter);
 
@@ -197,20 +195,27 @@ static void pps_callback(const struct device* dev, struct gpio_callback* cb, uin
 }
 
 static int pps_init(void) {
-    if (!device_is_ready(pps.port)) {
-        LOG_ERR("PPS GPIO device not ready");
-        return -ENODEV;
+    if (!gpio_is_ready_dt(&pps)) {
+        LOG_ERR("button device %s is not ready\n",
+               pps.port->name);
+        return 0;
     }
+
     int ret = gpio_pin_configure_dt(&pps, GPIO_INPUT);
     if (ret != 0) {
-        LOG_ERR("Failed to configure PPS pin");
-        return ret;
+        LOG_ERR("failed to configure %s pin %d\n",
+               ret, pps.port->name, pps.pin);
+        return 0;
     }
-    ret = gpio_pin_interrupt_configure_dt(&pps, GPIO_INT_EDGE_RISING);
+
+    ret = gpio_pin_interrupt_configure_dt(&pps,
+                                          GPIO_INT_EDGE_TO_ACTIVE);
     if (ret != 0) {
-        LOG_ERR("Failed to configure PPS interrupt");
-        return ret;
+        LOG_ERR("failed to configure interrupt on %s pin %d\n",
+               ret, pps.port->name, pps.pin);
+        return 0;
     }
+
     gpio_init_callback(&pps_cb_data, pps_callback, BIT(pps.pin));
     gpio_add_callback(pps.port, &pps_cb_data);
     LOG_INF("PPS GPIO interrupt configured");
@@ -222,6 +227,7 @@ static int pps_init(void) {
 // ******************************************** //
 
 int main(void) {
+    // Remove interrupt-based PPS logic
     int pps_status = pps_init();
     if (pps_status != 0) {
         LOG_ERR("PPS initialization failed: %d", pps_status);
@@ -233,7 +239,16 @@ int main(void) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 #endif
 
+    int last_pps_state = 0;
     while (true) {
+        // Poll PPS pin
+        int current_pps_state = gpio_pin_get_dt(&pps);
+        if (current_pps_state > 0 && last_pps_state == 0) {
+            ++pps_counter;
+            LOG_INF("PPS triggered (polled)");
+        }
+        last_pps_state = current_pps_state;
+
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
