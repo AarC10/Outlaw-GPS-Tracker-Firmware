@@ -39,7 +39,7 @@ static lora_payload_t payload;
 volatile int pps_counter = 0;
 volatile int no_fix_counter = 0;
 
-static void tx_timer_handler(struct k_timer *timer_id);
+static void tx_timer_handler(struct k_timer* timer_id);
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 
 // ******************************************** //
@@ -99,15 +99,17 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         LOG_INF("Fix acquired!");
 
         no_fix_counter = 0;
+        pps_counter = 0;
+
+
         static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
         if (TX_INTERVAL == pps_counter) {
             LOG_INF("Sending GPS transmission");
             lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
-            pps_counter = 0;
         } else if (pps_counter < TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
-            pps_counter = 0;
         }
+
     } else {
         LOG_INF("No fix acquired!");
 
@@ -181,7 +183,7 @@ static const struct smf_state states[] = {
 static struct gnss_data latest_gnss_data;
 
 
-static void tx_timer_handler(struct k_timer *timer_id) {
+static void tx_timer_handler(struct k_timer* timer_id) {
     if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired! (Timer)");
         lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
@@ -200,7 +202,7 @@ static const struct gpio_dt_spec pps = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
 static struct gpio_callback pps_cb_data;
 static volatile bool pps_triggered = false;
 
-static void pps_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins) {
+static void pps_callback(const struct device* dev, struct gpio_callback* cb, uint32_t pins) {
     ++pps_counter;
     LOG_INF("PPS triggered");
 }
