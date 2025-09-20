@@ -174,9 +174,49 @@ static void tx_timer_handler(struct k_timer *timer_id) {
 }
 
 // ******************************************** //
+// *                  PPS                     * //
+// ******************************************** //
+
+static const struct gpio_dt_spec pps = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
+static struct gpio_callback pps_cb_data;
+static volatile bool pps_triggered = false;
+
+static void pps_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins) {
+    pps_triggered = true;
+    // Optionally, trigger LoRa transmission or set a flag for timeslotting here
+    LOG_INF("PPS pulse detected");
+}
+
+static int pps_init(void) {
+    if (!device_is_ready(pps.port)) {
+        LOG_ERR("PPS GPIO device not ready");
+        return -ENODEV;
+    }
+    int ret = gpio_pin_configure_dt(&pps, GPIO_INPUT);
+    if (ret != 0) {
+        LOG_ERR("Failed to configure PPS pin");
+        return ret;
+    }
+    ret = gpio_pin_interrupt_configure_dt(&pps, GPIO_INT_EDGE_RISING);
+    if (ret != 0) {
+        LOG_ERR("Failed to configure PPS interrupt");
+        return ret;
+    }
+    gpio_init_callback(&pps_cb_data, pps_callback, BIT(pps.pin));
+    gpio_add_callback(pps.port, &pps_cb_data);
+    LOG_INF("PPS GPIO interrupt configured");
+    return 0;
+}
+
+// ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
+    int pps_status = pps_init();
+    if (pps_status != 0) {
+        LOG_ERR("PPS initialization failed: %d", pps_status);
+    }
+
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
 #else
@@ -187,6 +227,19 @@ int main(void) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
+        }
+        if (pps_triggered) {
+            pps_triggered = false;
+            // Timeslotting logic: trigger LoRa transmission or set a flag
+            // Example: send latest GNSS data if fix is acquired
+            if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
+                LOG_INF("Fix acquired! (PPS)");
+                lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
+            } else {
+                LOG_INF("No fix acquired! (PPS)");
+                lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+                gpio_pin_toggle_dt(&led);
+            }
         }
         k_msleep(1000);
     }

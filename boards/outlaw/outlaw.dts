@@ -30,16 +30,10 @@
 
 	gpio_keys {
 		compatible = "gpio-keys";
-		dip1: dip1 {
-			label = "DIP 1";
-			gpios = <&gpiod 0 GPIO_ACTIVE_LOW>;
-			zephyr,code = <INPUT_KEY_0>;
-		};
-
-		dip2: dip2 {
-			label = "DIP 2";
-			gpios = <&gpioc 15 GPIO_ACTIVE_LOW>;
-			zephyr,code = <INPUT_KEY_0>;
+		pps: pps {
+			label = "GPS PPS";
+			gpios = <&gpiod 0 GPIO_ACTIVE_HIGH>;
+			zephyr,code = <INPUT_KEY_1>;
 		};
 	};
 
@@ -47,11 +41,11 @@
 		dbg-uart = &usart1;
 		gnss-uart = &usart2;
 		lora = &lora0;
-		pin-sw = &dip1;
 		gnss = &maxm10s;
 		led0 = &led;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
+		pps = &pps;
 	};
 
 	zephyr,user {
