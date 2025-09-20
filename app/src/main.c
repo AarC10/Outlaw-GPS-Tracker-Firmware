@@ -37,9 +37,6 @@ typedef struct {
 volatile int pps_counter = 0;
 volatile int no_fix_counter = 0;
 
-static void tx_timer_handler(struct k_timer* timer_id);
-K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
-
 // ******************************************** //
 // *                LoRa                      * //
 // ******************************************** //
@@ -188,16 +185,6 @@ static const struct smf_state states[] = {
 static struct gnss_data latest_gnss_data;
 
 
-static void tx_timer_handler(struct k_timer* timer_id) {
-    if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        LOG_INF("Fix acquired! (Timer)");
-        lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
-    } else {
-        LOG_INF("No fix acquired! (Timer)");
-        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
-        gpio_pin_toggle_dt(&led);
-    }
-}
 
 // ******************************************** //
 // *                  PPS                     * //
