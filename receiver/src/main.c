@@ -91,12 +91,12 @@ int main(void) {
     lora_config(lora_dev, &lora_configuration);
 
     while (true) {
-        printk("Listening for LoRa packets...\n");
-        int ret = lora_recv(lora_dev, (uint8_t*)&payload, sizeof(payload), K_FOREVER, NULL, NULL);
-        if (ret < 0) {
-            printk("lora_recv_async failed: %d\n", ret);
-        }
-        k_msleep(1000);
+        uint8_t buf[255];
+        int16_t rssi; int8_t snr;
+        int rc = lora_recv(lora_dev, buf, 255, K_SECONDS(10), &rssi, &snr);
+        printk("recv rc=%d\n", rc);
+        if (rc > 0) { printk("got %d bytes rssi=%d snr=%d\n", rc, rssi, snr); }
+
     }
 
     return 0;
