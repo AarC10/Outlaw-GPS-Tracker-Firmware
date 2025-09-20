@@ -220,11 +220,12 @@ class LiveMap:
 def main():
     ap = argparse.ArgumentParser(description="Live GPS map from Zephyr-style UART logs.")
     ap.add_argument("--port", required=True, help="Serial port (e.g., /dev/ttyUSB0)")
-    ap.add_argument("--baud", type=int, default=115200, help="Baud rate (default: 115200)")
+    ap.add_argument("--baud", type=int, default=9600, help="Baud rate (default: 9600)")
     ap.add_argument("--interval", type=float, default=0.5, help="Plot update period (s)")
     ap.add_argument("--max-points", type=int, default=3000, help="Trail length cap")
     ap.add_argument("--force-refresh", action="store_true",
                     help="Force basemap refresh every animation tick (slower; mostly for debugging)")
+    ap.add_argument("-L", "--logfile", type=str, default=None, help="Log GPS packets to this file")
     args = ap.parse_args()
 
     qfix = queue.Queue()
@@ -233,11 +234,23 @@ def main():
 
     live = LiveMap(max_points=args.max_points)
 
+    logfile = None
+    if args.logfile:
+        logfile = open(args.logfile, "a")
+
+    def fix_to_str(fix):
+        return (f"t={fix.t:.3f}, lat={fix.lat_deg:.9f}, lon={fix.lon_deg:.9f}, "
+                f"bearing={fix.bearing_md}, speed={fix.speed_raw}, alt={fix.alt_raw}")
+
     def on_timer(_frame):
         drained = 0
         try:
             while True:
                 fix = qfix.get_nowait()
+                print(fix_to_str(fix))
+                if logfile:
+                    logfile.write(fix_to_str(fix) + "\n")
+                    logfile.flush()
                 live.add_fix(fix)
                 drained += 1
         except queue.Empty:
@@ -254,6 +267,8 @@ def main():
     finally:
         sr.stop()
         sr.join(timeout=1.0)
+        if logfile:
+            logfile.close()
 
 if __name__ == "__main__":
     main()
