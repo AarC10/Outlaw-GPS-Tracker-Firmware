@@ -159,14 +159,12 @@ static void transmitter_entry(void*) {
     lora_configuration.tx = true;
     lora_config(lora_dev, &lora_configuration);
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
-    k_timer_start(&tx_timer, K_SECONDS(5), K_SECONDS(5));
 }
 
 static void receiver_entry(void*) {
     lora_configuration.tx = false;
     lora_config(lora_dev, &lora_configuration);
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
-    k_timer_stop(&tx_timer);
 }
 
 static void receiver_run(void*) {
@@ -180,11 +178,6 @@ static const struct smf_state states[] = {
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
-
-// GNSS data storage for transmission
-static struct gnss_data latest_gnss_data;
-
-
 
 // ******************************************** //
 // *                  PPS                     * //
