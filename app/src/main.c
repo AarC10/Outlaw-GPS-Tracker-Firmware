@@ -34,8 +34,6 @@ typedef struct {
     uint32_t speed;
 } lora_payload_t;
 
-static lora_payload_t payload;
-
 volatile int pps_counter = 0;
 volatile int no_fix_counter = 0;
 
@@ -101,11 +99,19 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         no_fix_counter = 0;
         pps_counter = 0;
 
-
         static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
+        const lora_payload_t payload = {
+            .node_id = 0,
+            .latitude = (float) (data->nav_data.latitude / 1e7),
+            .longitude = (float) (data->nav_data.longitude / 1e7),
+            .altitude = (uint16_t)(data->nav_data.altitude / 100),
+            .speed = (uint16_t)(data->nav_data.speed / 100),
+            .satellites_cnt = data->info.satellites_cnt,
+        };
+
         if (TX_INTERVAL == pps_counter) {
             LOG_INF("Sending GPS transmission");
-            lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
+            lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
         } else if (pps_counter < TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
         }
