@@ -91,7 +91,7 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
     if (!lora_configuration.tx) return;
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        LOG_INF("Fix acquired!");
+        LOG_INF("Fix acquired! Counter: %d", pps_counter);
 
         no_fix_counter = 0;
 
@@ -108,11 +108,13 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         if (TX_INTERVAL == pps_counter) {
             LOG_INF("Sending GPS transmission");
             lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
+            pps_counter = 0;
+
         } else if (pps_counter > TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
+            pps_counter = 0;
         }
 
-        pps_counter = 0;
     } else {
         LOG_INF("No fix acquired! Counter: %d", no_fix_counter);
 
