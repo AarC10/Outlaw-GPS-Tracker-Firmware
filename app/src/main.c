@@ -120,17 +120,8 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 
         if (no_fix_counter == CONFIG_GPS_TRANSMIT_INTERVAL) {
             LOG_INF("Transmitting NOFIX");
-            // lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+            lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
             no_fix_counter = 0;
-            const lora_payload_t payload = {
-                .node_id = 0,
-                .latitude = (float)(data->nav_data.latitude / 1e7),
-                .longitude = (float)(data->nav_data.longitude / 1e7),
-                .altitude = (uint16_t)(data->nav_data.altitude / 100),
-                .speed = (uint16_t)(data->nav_data.speed / 100),
-                .satellites_cnt = data->info.satellites_cnt,
-            };
-            lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
         }
     }
 }
@@ -180,8 +171,9 @@ static void receiver_entry(void*) {
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
 }
 
-static void receiver_run(void*) {
+static enum smf_state_result receiver_run(void*) {
     lora_recv_async(lora_dev, lora_receive_callback, NULL);
+    return SMF_EVENT_HANDLED;
 }
 
 
@@ -214,7 +206,7 @@ static int pps_init(void) {
 
     int ret = gpio_pin_configure_dt(&pps, GPIO_INPUT);
     if (ret != 0) {
-        LOG_ERR("failed to configure %s pin %d\n",
+        LOG_ERR("%d - failed to configure %s pin %d\n",
                ret, pps.port->name, pps.pin);
         return 0;
     }
