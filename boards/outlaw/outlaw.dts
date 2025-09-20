@@ -131,7 +131,7 @@
                     <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
                     <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
         power-amplifier-output = "pa-boost";
-        spi-max-frequency = <125000>;
+        spi-max-frequency = <DT_FREQ_M(10)>;
         status = "okay";
     };
 };

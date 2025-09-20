@@ -10,7 +10,6 @@
 #include <zephyr/drivers/lora.h>
 #include <zephyr/smf.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/drivers/adc.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <stdbool.h>
 

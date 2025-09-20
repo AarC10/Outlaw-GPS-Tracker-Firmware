@@ -1,19 +1,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
-# Kernel Options due to Low Memory (8k)
-CONFIG_MAIN_STACK_SIZE=1024
-CONFIG_IDLE_STACK_SIZE=200
-CONFIG_ISR_STACK_SIZE=512
-# Prevent Interrupt Vector Table in RAM
-CONFIG_SRAM_VECTOR_TABLE=n
-
-# Serial Drivers
+# enable uart driver
 CONFIG_SERIAL=y
-CONFIG_UART_INTERRUPT_DRIVEN=y
-# enable console
 CONFIG_CONSOLE=y
 CONFIG_UART_CONSOLE=y
 
-# GPIO Controller
+# enable GPIO
 CONFIG_GPIO=y
-CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC=48000000
+CONFIG_DEFAULT_RECEIVE_MODE=y
+CONFIG_LOG=y
+CONFIG_LOG_MODE_IMMEDIATE=y # RAM will overflow if we don't immediately flush logs
+#CONFIG_LORA_LOG_LEVEL_DBG=y
+#CONFIG_GPIO_LOG_LEVEL_DBG=y
+#CONFIG_SPI_LOG_LEVEL_DBG=y
