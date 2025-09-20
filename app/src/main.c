@@ -109,7 +109,6 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         } else if (pps_counter < TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
         }
-
     } else {
         LOG_INF("No fix acquired!");
 
