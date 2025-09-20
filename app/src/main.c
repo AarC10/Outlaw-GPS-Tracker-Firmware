@@ -94,7 +94,6 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         LOG_INF("Fix acquired!");
 
         no_fix_counter = 0;
-        pps_counter = 0;
 
         static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
         const lora_payload_t payload = {
@@ -109,9 +108,11 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
         if (TX_INTERVAL == pps_counter) {
             LOG_INF("Sending GPS transmission");
             lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
-        } else if (pps_counter < TX_INTERVAL) {
+        } else if (pps_counter > TX_INTERVAL) {
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
         }
+
+        pps_counter = 0;
     } else {
         LOG_INF("No fix acquired! Counter: %d", no_fix_counter);
 
@@ -220,16 +221,16 @@ static int pps_init(void) {
 // ******************************************** //
 
 int main(void) {
-    int pps_status = pps_init();
-    if (pps_status != 0) {
-        LOG_ERR("PPS initialization failed: %d", pps_status);
-    }
-
-#ifdef CONFIG_DEFAULT_RECEIVE_MODE
+//     int pps_status = pps_init();
+//     if (pps_status != 0) {
+//         LOG_ERR("PPS initialization failed: %d", pps_status);
+//     }
+//
+// #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
-#else
-    smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
-#endif
+// #else
+//     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
+// #endif
 
     while (true) {
         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
