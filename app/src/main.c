@@ -211,7 +211,7 @@ static int pps_init(void) {
     ret = gpio_pin_interrupt_configure_dt(&pps,
                                           GPIO_INT_EDGE_TO_ACTIVE);
     if (ret != 0) {
-        LOG_ERR("failed to configure interrupt on %s pin %d\n",
+        LOG_ERR("%d - failed to configure interrupt on %s pin %d\n",
                ret, pps.port->name, pps.pin);
         return 0;
     }
@@ -243,6 +243,9 @@ int main(void) {
     while (true) {
         // Poll PPS pin
         int current_pps_state = gpio_pin_get_dt(&pps);
+        LOG_INF("PIN STATE: %d", gpio_pin_get_dt(&pps));
+
+
         if (current_pps_state > 0 && last_pps_state == 0) {
             ++pps_counter;
             LOG_INF("PPS triggered (polled)");
@@ -253,7 +256,7 @@ int main(void) {
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
         }
-        k_msleep(100);
+        k_msleep(1);
     }
 
     return 0;
