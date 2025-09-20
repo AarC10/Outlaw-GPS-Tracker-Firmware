@@ -96,7 +96,6 @@ int main(void) {
         int rc = lora_recv(lora_dev, buf, 255, K_SECONDS(10), &rssi, &snr);
         printk("recv rc=%d\n", rc);
         if (rc > 0) { printk("got %d bytes rssi=%d snr=%d\n", rc, rssi, snr); }
-
     }
 
     return 0;

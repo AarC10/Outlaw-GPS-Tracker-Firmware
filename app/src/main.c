@@ -113,13 +113,15 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
             LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
         }
     } else {
-        LOG_INF("No fix acquired!");
+        LOG_INF("No fix acquired! Counter: %d", no_fix_counter);
 
         no_fix_counter++;
         gpio_pin_toggle_dt(&led);
 
         if (no_fix_counter == CONFIG_GPS_TRANSMIT_INTERVAL) {
+            LOG_INF("Transmitting NOFIX");
             lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+            no_fix_counter = 0;
         }
     }
 }
