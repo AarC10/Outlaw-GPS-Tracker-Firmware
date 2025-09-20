@@ -12,6 +12,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/logging/log_ctrl.h>
+#include <stdbool.h>
 
 #define NOFIX "NOFIX"
 
@@ -34,6 +35,9 @@ typedef struct {
 } lora_payload_t;
 
 static lora_payload_t payload;
+
+volatile int pps_counter = 0;
+volatile int no_fix_counter = 0;
 
 static void tx_timer_handler(struct k_timer *timer_id);
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
@@ -93,11 +97,26 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired!");
-        lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
+
+        no_fix_counter = 0;
+        static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
+        if (TX_INTERVAL == pps_counter) {
+            LOG_INF("Sending GPS transmission");
+            lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
+            pps_counter = 0;
+        } else if (pps_counter < TX_INTERVAL) {
+            LOG_INF("Missed transmission window, current pps_counter: %d", pps_counter);
+            pps_counter = 0;
+        }
     } else {
         LOG_INF("No fix acquired!");
-        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+
+        no_fix_counter++;
         gpio_pin_toggle_dt(&led);
+
+        if (no_fix_counter == CONFIG_GPS_TRANSMIT_INTERVAL) {
+            lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+        }
     }
 }
 
@@ -182,9 +201,8 @@ static struct gpio_callback pps_cb_data;
 static volatile bool pps_triggered = false;
 
 static void pps_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins) {
-    pps_triggered = true;
-    // Optionally, trigger LoRa transmission or set a flag for timeslotting here
-    LOG_INF("PPS pulse detected");
+    ++pps_counter;
+    LOG_INF("PPS triggered");
 }
 
 static int pps_init(void) {
@@ -211,6 +229,7 @@ static int pps_init(void) {
 // ******************************************** //
 // *                  Main                    * //
 // ******************************************** //
+
 int main(void) {
     int pps_status = pps_init();
     if (pps_status != 0) {
@@ -228,20 +247,7 @@ int main(void) {
         if (ret) {
             LOG_INF("SMF returned non-zero status: %d", ret);
         }
-        if (pps_triggered) {
-            pps_triggered = false;
-            // Timeslotting logic: trigger LoRa transmission or set a flag
-            // Example: send latest GNSS data if fix is acquired
-            if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-                LOG_INF("Fix acquired! (PPS)");
-                lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
-            } else {
-                LOG_INF("No fix acquired! (PPS)");
-                lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
-                gpio_pin_toggle_dt(&led);
-            }
-        }
-        k_msleep(1000);
+        k_msleep(100);
     }
 
     return 0;
