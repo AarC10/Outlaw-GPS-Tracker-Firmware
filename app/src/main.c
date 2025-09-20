@@ -94,18 +94,21 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 
         no_fix_counter = 0;
 
-        static const int TX_INTERVAL = CONFIG_GPS_TRANSMIT_INTERVAL + CONFIG_TIMESLOT;
-        const lora_payload_t payload = {
-            .node_id = 0,
-            .latitude = (float)(data->nav_data.latitude / 1e7),
-            .longitude = (float)(data->nav_data.longitude / 1e7),
-            .altitude = (uint16_t)(data->nav_data.altitude / 100),
-            .speed = (uint16_t)(data->nav_data.speed / 100),
-            .satellites_cnt = data->info.satellites_cnt,
-        };
+        int8_t seconds = data->utc.millisecond / 1000;
+        int8_t seconds_minus_timeslot = seconds - CONFIG_TIMESLOT;
+        int8_t mod = seconds_minus_timeslot % CONFIG_GPS_TRANSMIT_INTERVAL;
 
         if (TX_INTERVAL == pps_counter) {
             LOG_INF("Sending GPS transmission");
+            const lora_payload_t payload = {
+                .node_id = 0,
+                .latitude = (float)(data->nav_data.latitude / 1e7),
+                .longitude = (float)(data->nav_data.longitude / 1e7),
+                .altitude = (uint16_t)(data->nav_data.altitude / 100),
+                .speed = (uint16_t)(data->nav_data.speed / 100),
+                .satellites_cnt = data->info.satellites_cnt,
+            };
+
             lora_send_async(lora_dev, (uint8_t*)&payload, sizeof(lora_payload_t), NULL);
             pps_counter = 0;
         } else if (pps_counter > TX_INTERVAL) {
