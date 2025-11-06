@@ -68,6 +68,8 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
         printk("\tReceived data: %s", data);
         break;
     }
+
+    printk("\n");
 }
 
 static struct lora_modem_config lora_configuration = {
