@@ -91,12 +91,7 @@ int main(void) {
     lora_config(lora_dev, &lora_configuration);
 
     while (true) {
-        uint8_t buf[255];
-        int16_t rssi; int8_t snr;
-        int rc = lora_recv(lora_dev, buf, 255, K_SECONDS(10), &rssi, &snr);
-        printk("recv rc=%d\n", rc);
-        if (rc > 0) { printk("got %d bytes rssi=%d snr=%d\n", rc, rssi, snr); }
-
+        lora_recv_async(lora_dev, lora_receive_callback, NULL);
     }
 
     return 0;
