@@ -1,5 +1,8 @@
 all:
-	west build -b outlaw_gen2 app -p auto
+	west build -b outlaw_gen3 app -p auto
+
+gen3:
+	west build -b outlaw_gen3 app -p auto
 
 gen2:
 	west build -b outlaw_gen2 app -p auto

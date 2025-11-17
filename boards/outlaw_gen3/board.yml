@@ -1,0 +1,6 @@
+board:
+  name: outlaw_gen3
+  full_name: Outlaw GPS Tracker Gen 2
+  vendor: Wild West Rocketry
+  socs:
+    - name: stm32f103xe
