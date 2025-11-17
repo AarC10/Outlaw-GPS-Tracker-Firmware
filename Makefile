@@ -1,13 +1,17 @@
 all:
 	west build -b outlaw app -p auto
+
+gen2:
+	west build -b outlaw_gen2 app -p auto
+
 radio:
 	west build -b radio_module app -p auto --build-dir build-radio-radio_mod
 
 deputy:
 	west build -b deputy receiver -p auto
 
-outlaw-rcv:
-	west build -b outlaw app -p auto -DCONFIG_DEFAULT_RECEIVE_MODE=y
+gen2-rcv:
+	west build -b outlaw_gen2 app -p auto -DCONFIG_DEFAULT_RECEIVE_MODE=y
 radio-rcv:
 	west build -b radio_module app -p auto --build-dir build-radio-radio_mod -DCONFIG_DEFAULT_RECEIVE_MODE=y
 

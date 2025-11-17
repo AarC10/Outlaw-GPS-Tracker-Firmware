@@ -1,5 +1,5 @@
-identifier: outlaw
-name: Outlaw GPS Tracker
+identifier: outlaw_gen2
+name: Outlaw GPS Tracker Gen 2
 type: mcu
 arch: arm
 toolchain:
