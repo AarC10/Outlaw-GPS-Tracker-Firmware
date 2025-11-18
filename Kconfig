@@ -17,3 +17,5 @@ config TIMESLOT
 config LORA_FREQUENCY
     int "LoRa frequency in Hz"
     default 915000000
+
+rsource "lib/Kconfig"
