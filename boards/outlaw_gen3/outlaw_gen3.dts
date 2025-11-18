@@ -10,7 +10,7 @@
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
-	model = "Outlaw GPS Tracker Gen 2";
+	model = "Outlaw GPS Tracker Gen 3";
 	compatible = "st,stm32f103xe";
 
 	chosen {
