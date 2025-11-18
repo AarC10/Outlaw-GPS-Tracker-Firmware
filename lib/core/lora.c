@@ -1,5 +1,7 @@
 #include "core/lora.h"
 
+#include <stdbool.h>
+
 LOG_MODULE_REGISTER(lora);
 
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
@@ -17,7 +19,7 @@ static struct lora_modem_config lora_configuration = {
 };
 
 
-static void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
+void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                                   void* user_data) {
     if (lora_configuration.tx) return;
 
@@ -41,4 +43,8 @@ static void lora_receive_callback(const struct device* dev, uint8_t* data, uint1
         LOG_INF("\tReceived data: %s", data);
         break;
     }
+}
+
+bool lora_is_tx() {
+    return lora_configuration.tx;
 }

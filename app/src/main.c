@@ -53,7 +53,7 @@ K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 #pragma GCC diagnostic ignored "-Wunused-function"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
 #pragma GCC diagnostic pop
-    if (!lora_configuration.tx) return;
+    if (!lora_is_tx()) return;
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired!");
