@@ -1,5 +1,8 @@
 #include "core/lora.h"
 
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/lora.h>
 #include <stdbool.h>
 
 LOG_MODULE_REGISTER(lora);
@@ -47,4 +50,50 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
 
 bool lora_is_tx() {
     return lora_configuration.tx;
+}
+
+bool lora_set_tx() {
+    lora_configuration.tx = true;
+    if (lora_config(lora_dev, &lora_configuration) != 0) {
+        LOG_ERR("LoRa configuration failed");
+        return false;
+    }
+    return true;
+}
+
+bool lora_set_tx() {
+    lora_configuration.tx = false;
+    if (lora_config(lora_dev, &lora_configuration) != 0) {
+        LOG_ERR("LoRa configuration failed");
+        return false;
+    }
+    return true;
+}
+
+
+bool lora_init() {
+    if (!device_is_ready(lora_dev)) {
+        LOG_ERR("LoRa device not ready");
+        return false;
+    }
+
+    if (lora_config(lora_dev, &lora_configuration) != 0) {
+        LOG_ERR("LoRa configuration failed");
+        return false;
+    }
+
+    LOG_INF("LoRa initialized successfully");
+    return true;
+}
+
+bool lora_tx(uint8_t* data, uint32_t data_len) {
+    if (lora_send_async(lora_dev, data, data_len, NULL) != 0) {
+        LOG_ERR("LoRa send failed");
+        return false;
+    }
+    return true;
+}
+
+int lora_await_rx_packet() {
+    return lora_recv_async(lora_dev, lora_receive_callback, NULL);
 }

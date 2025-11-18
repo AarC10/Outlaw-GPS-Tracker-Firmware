@@ -57,10 +57,10 @@ static void gnss_data_callback(const struct device* dev, const struct gnss_data*
 
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired!");
-        lora_send_async(lora_dev, (uint8_t*)data, sizeof(*data), NULL);
+        lora_tx((uint8_t*)data, sizeof(*data));
     } else {
         LOG_INF("No fix acquired!");
-        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+        lora_tx(NOFIX, strlen(NOFIX));
         gpio_pin_toggle_dt(&led);
     }
 }
@@ -97,23 +97,20 @@ struct s_object {
 // }
 
 static void transmitter_entry(void*) {
-    lora_configuration.tx = true;
-    lora_config(lora_dev, &lora_configuration);
+    lora_set_tx();
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
     k_timer_start(&tx_timer, K_SECONDS(5), K_SECONDS(5));
 }
 
 static void receiver_entry(void*) {
-    lora_configuration.tx = false;
-    lora_config(lora_dev, &lora_configuration);
+    lora_set_rx();
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
     k_timer_stop(&tx_timer);
 }
 
 static void receiver_run(void*) {
-    lora_recv_async(lora_dev, lora_receive_callback, NULL);
+    lora_await_rx_packet();
 }
-
 
 static const struct smf_state states[] = {
     // [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
@@ -129,10 +126,10 @@ static struct gnss_data latest_gnss_data;
 static void tx_timer_handler(struct k_timer *timer_id) {
     if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired! (Timer)");
-        lora_send_async(lora_dev, (uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data), NULL);
+        lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));
     } else {
         LOG_INF("No fix acquired! (Timer)");
-        lora_send_async(lora_dev, NOFIX, strlen(NOFIX), NULL);
+        lora_tx(NOFIX, strlen(NOFIX));
         gpio_pin_toggle_dt(&led);
     }
 }
