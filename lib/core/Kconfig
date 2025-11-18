@@ -1,0 +1,4 @@
+config CORE
+  bool "Core"
+  help
+    This option enables core functionality for tracker software
