@@ -12,6 +12,8 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/logging/log_ctrl.h>
+#include <core/lora.h>
+
 
 #define NOFIX "NOFIX"
 
