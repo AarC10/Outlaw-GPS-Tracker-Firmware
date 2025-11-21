@@ -22,6 +22,7 @@
 
 	leds: leds {
 		compatible = "gpio-leds";
+
 		led: led {
 			gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
 			label = "User LD2";
@@ -30,6 +31,7 @@
 
 	gpio_keys {
 		compatible = "gpio-keys";
+
 		dip1: dip1 {
 			label = "DIP 1";
 			gpios = <&gpioa 0 GPIO_ACTIVE_LOW>;
@@ -61,21 +63,21 @@
 };
 
 &clk_hsi {
-	clock-frequency = <DT_FREQ_M(8)>;
 	status = "okay";
 };
 
 &pll {
-	mul = <2>;
+	div = <2>;
+	mul = <4>;
 	clocks = <&clk_hsi>;
 	status = "okay";
 };
 
 &rcc {
 	clocks = <&pll>;
-	clock-frequency = <DT_FREQ_M(8)>;
+	clock-frequency = <DT_FREQ_M(32)>;
 	ahb-prescaler = <1>;
-	apb1-prescaler = <2>;
+	apb1-prescaler = <1>;
 	apb2-prescaler = <1>;
 };
 
@@ -95,9 +97,9 @@
 	status = "okay";
 
 	maxm10s: ublox-maxm10s {
-        status = "okay";
-        compatible = "gnss-nmea-generic";
-    };
+		status = "okay";
+		compatible = "gnss-nmea-generic";
+	};
 };
 
 //zephyr_udc0: &usbotg_fs {
@@ -118,19 +120,19 @@
 	status = "okay";
 
 	lora0: lora0@0 {
-        compatible = "semtech,sx1276";
-        reg = <0>;
-        reset-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
-        dio-gpios = <&gpiob 14 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpioa 8 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpiob 6 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-        power-amplifier-output = "pa-boost";
-        spi-max-frequency = <DT_FREQ_M(10)>;
-        status = "okay";
-    };
+		compatible = "semtech,sx1276";
+		reg = <0>;
+		reset-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
+		dio-gpios = <&gpiob 14 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+					<&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+					<&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+					<&gpioa 8 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+					<&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
+					<&gpiob 6 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		power-amplifier-output = "pa-boost";
+		spi-max-frequency = <DT_FREQ_M(10)>;
+		status = "okay";
+	};
 };
 
 //&iwdg {
