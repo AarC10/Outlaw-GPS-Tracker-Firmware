@@ -24,16 +24,6 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 LOG_MODULE_REGISTER(main);
 
-typedef struct {
-    uint8_t node_id;
-    float latitude;
-    float longitude;
-    uint16_t altitude;
-    uint16_t satellites_cnt;
-    uint32_t speed;
-} lora_payload_t;
-
-static lora_payload_t payload;
 
 static void tx_timer_handler(struct k_timer* timer_id);
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
@@ -100,8 +90,10 @@ static void receiver_entry(void*) {
     k_timer_stop(&tx_timer);
 }
 
-static void receiver_run(void*) {
+static enum smf_state_result receiver_run(void*) {
     lora_await_rx_packet();
+
+    return SMF_EVENT_HANDLED;
 }
 
 static const struct smf_state states[] = {
