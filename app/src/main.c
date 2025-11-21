@@ -15,7 +15,6 @@
 #include <core/types.h>
 
 
-
 #define TRANSMITTER_LOGIC_LEVEL 1
 #define TRANSMITTER_LED_LEVEL 0
 
@@ -36,7 +35,7 @@ typedef struct {
 
 static lora_payload_t payload;
 
-static void tx_timer_handler(struct k_timer *timer_id);
+static void tx_timer_handler(struct k_timer* timer_id);
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 
 // ******************************************** //
@@ -116,7 +115,7 @@ static const struct smf_state states[] = {
 static struct gnss_data latest_gnss_data;
 
 
-static void tx_timer_handler(struct k_timer *timer_id) {
+static void tx_timer_handler(struct k_timer* timer_id) {
     if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired! (Timer)");
         lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));

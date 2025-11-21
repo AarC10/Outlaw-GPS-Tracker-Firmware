@@ -5,13 +5,13 @@
  */
 
 /dts-v1/;
-#include <st/f1/stm32f103X8.dtsi>
-#include <st/f1/stm32f103r(8-b)tx-pinctrl.dtsi>
+#include <st/f1/stm32l151Xb.dtsi>
+#include <st/f1/stm32l151r(c-b)tx-pinctrl.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
 	model = "Outlaw GPS Tracker Gen 3";
-	compatible = "st,stm32f103xe";
+	compatible = "st,stm32l151xb";
 
 	chosen {
 		zephyr,console = &usart1;
@@ -32,13 +32,13 @@
 		compatible = "gpio-keys";
 		dip1: dip1 {
 			label = "DIP 1";
-			gpios = <&gpiod 0 GPIO_ACTIVE_LOW>;
+			gpios = <&gpioa 0 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
 
 		dip2: dip2 {
 			label = "DIP 2";
-			gpios = <&gpioc 15 GPIO_ACTIVE_LOW>;
+			gpios = <&gpioa 1 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
@@ -135,19 +135,19 @@
 &spi1 {
 	pinctrl-0 = <&spi1_sck_master_pa5 &spi1_miso_master_pa6 &spi1_mosi_master_pa7>;
 	pinctrl-names = "default";
-	cs-gpios = <&gpiob 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+	cs-gpios = <&gpiob 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 	status = "okay";
 
 	lora0: lora0@0 {
         compatible = "semtech,sx1276";
         reg = <0>;
-        reset-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
+        reset-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
         dio-gpios = <&gpiob 14 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
                     <&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
                     <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
                     <&gpioa 8 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
                     <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-                    <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+                    <&gpiob 6 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
         power-amplifier-output = "pa-boost";
         spi-max-frequency = <DT_FREQ_M(10)>;
         status = "okay";
