@@ -43,6 +43,12 @@
 			gpios = <&gpioa 1 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
+
+		pps: pps {
+			label = "GNSS PPS";
+			gpios = <&gpiob 6 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_0>;
+		};
 	};
 
 	aliases {
