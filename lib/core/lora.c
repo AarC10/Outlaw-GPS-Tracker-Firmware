@@ -95,6 +95,24 @@ bool lora_tx(uint8_t* data, uint32_t data_len) {
     return true;
 }
 
+bool lora_send_no_fix_payload(uint8_t node_id) {
+    return lora_tx((uint8_t*)NOFIX, strlen(NOFIX));
+}
+
+bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) {
+    lora_payload_t payload;
+
+    payload.latitude_scaled = (int16_t)(gnss_data->nav_data.latitude / LAT_LON_SCALING_FACTOR);
+    payload.longitude_scaled = (int16_t)(gnss_data->nav_data.longitude / LAT_LON_SCALING_FACTOR);
+    payload.altitude = (uint16_t)(gnss_data->nav_data.altitude);
+    payload.speed = (uint16_t)(gnss_data->nav_data.speed);
+    payload.satellites_cnt = gnss_data->info.satellites_cnt;
+    payload.fix_status = gnss_data->info.fix_status;
+    payload.node_id = (uint8_t)node_id;
+
+    return lora_tx((uint8_t*)&payload, sizeof(payload));
+}
+
 int lora_await_rx_packet() {
     return lora_recv_async(lora_dev, lora_receive_callback, NULL);
 }
