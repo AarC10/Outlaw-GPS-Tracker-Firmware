@@ -1,8 +1,10 @@
 #include "core/lora.h"
+#include "core/types.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/lora.h>
+#include <zephyr/drivers/gnss.h>
 #include <stdbool.h>
 
 LOG_MODULE_REGISTER(lora);
@@ -61,7 +63,7 @@ bool lora_set_tx() {
     return true;
 }
 
-bool lora_set_tx() {
+bool lora_set_rx() {
     lora_configuration.tx = false;
     if (lora_config(lora_dev, &lora_configuration) != 0) {
         LOG_ERR("LoRa configuration failed");
@@ -69,7 +71,6 @@ bool lora_set_tx() {
     }
     return true;
 }
-
 
 bool lora_init() {
     if (!device_is_ready(lora_dev)) {

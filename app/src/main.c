@@ -10,12 +10,11 @@
 #include <zephyr/drivers/lora.h>
 #include <zephyr/smf.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/drivers/adc.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <core/lora.h>
+#include <core/types.h>
 
 
-#define NOFIX "NOFIX"
 
 #define TRANSMITTER_LOGIC_LEVEL 1
 #define TRANSMITTER_LED_LEVEL 0
@@ -39,12 +38,6 @@ static lora_payload_t payload;
 
 static void tx_timer_handler(struct k_timer *timer_id);
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
-
-// ******************************************** //
-// *                LoRa                      * //
-// ******************************************** //
-
-
 
 // ******************************************** //
 // *                GNSS                      * //
