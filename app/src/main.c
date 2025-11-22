@@ -134,7 +134,6 @@ int main(void) {
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
 #else
-    lora_set_tx();
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 #endif
 

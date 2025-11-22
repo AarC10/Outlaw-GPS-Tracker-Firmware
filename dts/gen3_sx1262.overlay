@@ -23,7 +23,7 @@
         busy-gpios = <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 		rx-enable-gpios = <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 
-        spi-max-frequency = <DT_FREQ_M(10)>;
+        spi-max-frequency = <DT_FREQ_M(1)>;
         status = "okay";
     };
 };
