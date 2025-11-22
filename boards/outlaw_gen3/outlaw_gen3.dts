@@ -61,6 +61,7 @@
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 		pps = &pps;
+		tdma-timer = &tdma;
 	};
 
 };
@@ -160,6 +161,15 @@
 //&dma1 {
 //	status = "okay";
 //};
+
+&timers2 {
+	status = "okay";
+	tdma: tdma {
+		compatible = "st,stm32-counter";
+		status = "okay";
+		label = "COUNTER_2";
+	};
+};
 
 &flash0 {
 	partitions {
