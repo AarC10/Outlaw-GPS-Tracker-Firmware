@@ -23,9 +23,9 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 static void tx_timer_handler(struct k_timer* timer_id) {
     if (gnss_fix_acquired()) {
-        struct gnss_data latest_gnss_data;
-        gnss_get_latest_data(&latest_gnss_data);
-        lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));
+        lora_payload_t* payload = (lora_payload_t*)k_timer_user_data_get(timer_id);
+        gnss_populate_lora_payload(payload);
+        lora_tx((uint8_t*)payload, sizeof(lora_payload_t));
     } else {
         lora_send_no_fix_payload(0);
         gpio_pin_toggle_dt(&led);
@@ -82,6 +82,9 @@ static const struct smf_state states[] = {
 };
 
 void state_machine_init() {
+    static lora_payload_t payload;
+    k_timer_user_data_set(&tx_timer, (void*)&payload);
+
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
 #else
