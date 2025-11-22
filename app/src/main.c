@@ -126,11 +126,14 @@ static void tx_timer_handler(struct k_timer* timer_id) {
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
+    static struct gpio_dt_spec pps_pin = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
     if (!device_is_ready(led.port)) {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
     lora_init();
+    time_setup_pps(&pps_pin);
+
 
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);

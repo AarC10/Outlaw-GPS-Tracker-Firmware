@@ -60,6 +60,7 @@
 		led0 = &led;
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
+		pps = &pps;
 	};
 
 };
