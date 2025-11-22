@@ -15,6 +15,8 @@
 #include <core/time.h>
 #include <core/types.h>
 
+#define PPS_PIN   DT_GPIO_PIN(DT_ALIAS(pps), gpios)
+#define PPS_FLAGS DT_GPIO_FLAGS(DT_ALIAS(pps), gpios)
 
 #define TRANSMITTER_LOGIC_LEVEL 1
 #define TRANSMITTER_LED_LEVEL 0
@@ -126,13 +128,13 @@ static void tx_timer_handler(struct k_timer* timer_id) {
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
-    static struct gpio_dt_spec pps_pin = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
+    static const struct gpio_dt_spec pps_spec = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
     if (!device_is_ready(led.port)) {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
     lora_init();
-    time_setup_pps(&pps_pin);
+    time_setup_pps(&pps_spec);
 
 
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
