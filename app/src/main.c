@@ -16,17 +16,16 @@
 #include <core/defs.h>
 #include <core/tdma.h>
 
-#define PPS_PIN   DT_GPIO_PIN(DT_ALIAS(pps), gpios)
-#define PPS_FLAGS DT_GPIO_FLAGS(DT_ALIAS(pps), gpios)
-
 #define TRANSMITTER_LOGIC_LEVEL 0
 #define TRANSMITTER_LED_LEVEL 0
 
 #define RECEIVER_LOGIC_LEVEL 1
 #define RECEIVER_LED_LEVEL 1
+
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
-static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
+static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
+static const struct gpio_dt_spec dip1 = GPIO_DT_SPEC_GET(DT_ALIAS(dip1), gpios);
 
 LOG_MODULE_REGISTER(main);
 
@@ -76,7 +75,7 @@ struct s_object {
 
 static enum smf_state_result check_for_transition(void*) {
     static int last_pin_state = -1;
-    const int current_pin_state = gpio_pin_get_dt(&pin_sw);
+    const int current_pin_state = gpio_pin_get_dt(&dip0);
     LOG_DBG("Pin state: %d", current_pin_state);
     if (last_pin_state != current_pin_state) {
 
