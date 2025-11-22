@@ -102,6 +102,7 @@ bool lora_tx(uint8_t* data, uint32_t data_len) {
         LOG_ERR("LoRa send failed");
         return false;
     }
+    LOG_INF("Transmitted %u bytes over LoRa", data_len);
     return true;
 }
 
