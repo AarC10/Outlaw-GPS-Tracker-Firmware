@@ -23,8 +23,6 @@ static struct lora_modem_config lora_configuration = {
     .public_network = false,
 };
 
-static bool lora_rx_async_active = false;
-
 
 void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                            void* user_data) {
@@ -50,7 +48,6 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
         break;
     }
 
-    lora_rx_async_active = false;
 }
 
 bool lora_is_tx() {
@@ -133,16 +130,11 @@ int lora_await_rx_packet() {
         LOG_WRN("LoRa is in TX mode, cannot receive");
         return -1;
     }
-    if (lora_rx_async_active) {
-        LOG_DBG("LoRa async receive already active");
-        return 0;
-    }
 
     if (lora_recv_async(lora_dev, lora_receive_callback, NULL) != 0) {
         LOG_ERR("LoRa async receive setup failed");
         return -1;
     }
 
-    lora_rx_async_active = true;
     return 0;
 }

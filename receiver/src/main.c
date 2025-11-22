@@ -17,9 +17,9 @@ LOG_MODULE_REGISTER(main);
 int main(void) {
     lora_init();
     lora_set_rx();
+    lora_await_rx_packet();
 
     while (true) {
-        lora_await_rx_packet();
 
     }
 
