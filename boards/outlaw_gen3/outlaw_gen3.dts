@@ -75,6 +75,11 @@
 	status = "okay";
 };
 
+&clk_hse {
+	status = "okay";
+	clock-frequency = <DT_FREQ_M(16)>;
+};
+
 &pll {
 	div = <2>; // 3 for 16 or 8
 	mul = <4>; // 3 for 16 or 8
@@ -111,16 +116,17 @@
 	};
 };
 
-//zephyr_udc0: &usbotg_fs {
-//	pinctrl-0 = <&usb_otg_fs_dm_pa11 &usb_otg_fs_dp_pa12>;
-//	pinctrl-names = "default";
-//	status = "okay";
-//
-//	cdc_acm_uart0: cdc_acm_uart0 {
-//		compatible = "zephyr,cdc-acm-uart";
-//		label = "CDC_ACM_0";
-//	};
-//};
+zephyr_udc0: &usb {
+    status = "okay";
+    pinctrl-0 = <&usb_dm_pa11 &usb_dp_pa12>;
+    pinctrl-names = "default";
+    maximum-speed = "full-speed";
+
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+        label = "USB CDC-ACM";
+    };
+};
 
 &spi1 {
 	pinctrl-0 = <&spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
