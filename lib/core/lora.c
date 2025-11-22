@@ -25,7 +25,7 @@ static struct lora_modem_config lora_configuration = {
 
 
 void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
-                                  void* user_data) {
+                           void* user_data) {
     if (lora_configuration.tx) return;
 
     LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
@@ -71,18 +71,29 @@ bool lora_set_rx() {
     return true;
 }
 
+
 bool lora_init() {
     if (!device_is_ready(lora_dev)) {
-        LOG_ERR("LoRa device not ready");
+        LOG_ERR("LoRa device not ready (dev ptr %p)", lora_dev);
         return false;
     }
 
-    if (lora_config(lora_dev, &lora_configuration) != 0) {
-        LOG_ERR("LoRa configuration failed");
+    LOG_INF("LoRa device name: %s, addr: %p", lora_dev->name ? lora_dev->name : "UNKNOWN", lora_dev);
+
+    int rc = lora_config(lora_dev, &lora_configuration);
+    if (rc != 0) {
+        LOG_ERR("LoRa configuration failed, rc=%d", rc);
         return false;
     }
 
-    LOG_INF("LoRa initialized successfully");
+    LOG_INF("LoRa initialized successfully (freq=%u, sf=%d, bw=%d, cr=%d, txp=%d, public=%d)",
+            lora_configuration.frequency,
+            lora_configuration.datarate,
+            lora_configuration.bandwidth,
+            lora_configuration.coding_rate,
+            lora_configuration.tx_power,
+            lora_configuration.public_network);
+
     return true;
 }
 

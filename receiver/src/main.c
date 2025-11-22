@@ -19,10 +19,8 @@ int main(void) {
     lora_set_rx();
 
     while (true) {
-        int ret = lora_await_rx_packet();
-        if (ret != 0) {
-            LOG_INF("Error while awaiting LoRa packet: %d", ret);
-        }
+        lora_await_rx_packet();
+
     }
 
     return 0;

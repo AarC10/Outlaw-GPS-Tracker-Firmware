@@ -99,7 +99,6 @@ static enum smf_state_result receiver_run(void*) {
 
 static const struct smf_state states[] = {
     // [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
-    // TODO: V2 currently has a floating pin, making it impossible to detect the state of the pin properly
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
@@ -113,7 +112,7 @@ static void tx_timer_handler(struct k_timer* timer_id) {
         lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));
     } else {
         LOG_INF("No fix acquired! (Timer)");
-        lora_tx(NOFIX, strlen(NOFIX));
+        lora_send_no_fix_payload(0);
         gpio_pin_toggle_dt(&led);
     }
 }
