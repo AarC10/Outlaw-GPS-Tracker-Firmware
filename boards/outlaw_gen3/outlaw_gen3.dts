@@ -73,8 +73,8 @@
 };
 
 &pll {
-	div = <2>;
-	mul = <4>;
+	div = <2>; // 3 for 16 or 8
+	mul = <4>; // 3 for 16 or 8
 	clocks = <&clk_hsi>;
 	status = "okay";
 };
@@ -82,7 +82,7 @@
 &rcc {
 	clocks = <&pll>;
 	clock-frequency = <DT_FREQ_M(32)>; // TODO: Lower frequency
-	ahb-prescaler = <1>;
+	ahb-prescaler = <1>; //1 for 16 2 for 8
 	apb1-prescaler = <1>;
 	apb2-prescaler = <1>;
 };
