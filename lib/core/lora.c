@@ -116,8 +116,6 @@ bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) 
 
     payload.latitude_scaled = (int16_t)(gnss_data->nav_data.latitude / LAT_LON_SCALING_FACTOR);
     payload.longitude_scaled = (int16_t)(gnss_data->nav_data.longitude / LAT_LON_SCALING_FACTOR);
-    payload.altitude = (uint16_t)(gnss_data->nav_data.altitude);
-    payload.speed = (uint16_t)(gnss_data->nav_data.speed);
     payload.satellites_cnt = gnss_data->info.satellites_cnt;
     payload.fix_status = gnss_data->info.fix_status;
     payload.node_id = node_id;

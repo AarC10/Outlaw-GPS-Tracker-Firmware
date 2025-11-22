@@ -12,6 +12,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <core/lora.h>
+#include <core/time.h>
 #include <core/types.h>
 
 

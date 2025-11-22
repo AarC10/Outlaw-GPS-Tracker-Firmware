@@ -8,8 +8,6 @@
 typedef struct __attribute__((__packed__)) {
     int16_t latitude_scaled;
     int16_t longitude_scaled;
-    uint16_t altitude;
-    uint16_t speed;
     uint8_t satellites_cnt;
     uint8_t fix_status;
     uint8_t node_id;
