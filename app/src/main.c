@@ -77,7 +77,7 @@ struct s_object {
 static enum smf_state_result check_for_transition(void*) {
     static int last_pin_state = -1;
     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
-    LOG_INF("Pin state: %d", current_pin_state);
+    LOG_DBG("Pin state: %d", current_pin_state);
     if (last_pin_state != current_pin_state) {
 
         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
