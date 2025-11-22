@@ -4,9 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "core/defs.h"
+
 // Forward Declares
 struct device;
 struct gnss_data;
+struct lora_payload_t;
 
 void gnss_data_callback(const struct device* dev, const struct gnss_data* data);
 
@@ -18,8 +21,7 @@ int16_t gnss_get_latitude_scaled();
 
 int16_t gnss_get_longitude_scaled();
 
-uint8_t gnss_get_satellites_cnt();
+void gnss_populate_lora_payload(lora_payload_t* payload);
 
-uint8_t gnss_get_fix_status();
 
 #endif //CORE_GNSS_H

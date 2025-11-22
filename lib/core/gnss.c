@@ -1,4 +1,3 @@
-#include "core/defs.h"
 #include "core/gnss.h"
 #include "core/lora.h"
 
@@ -40,10 +39,9 @@ int16_t gnss_get_longitude_scaled() {
     return (int16_t)(nanodeg_to_deg(latest_gnss_data.nav_data.longitude) / LAT_LON_SCALING_FACTOR);
 }
 
-uint8_t gnss_get_satellites_cnt() {
-    return latest_gnss_data.info.satellites_cnt;
-}
-
-uint8_t gnss_get_fix_status() {
-    return latest_gnss_data.info.fix_status;
+void gnss_populate_lora_payload(lora_payload_t* payload) {
+    payload->latitude_scaled = gnss_get_latitude_scaled();
+    payload->longitude_scaled = gnss_get_longitude_scaled();
+    payload->satellites_cnt = latest_gnss_data.info.satellites_cnt;
+    payload->fix_status = latest_gnss_data.info.fix_status;
 }
