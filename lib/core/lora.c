@@ -40,6 +40,16 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
         LOG_INF("\tAltitude: %d", gnss_data_local.nav_data.altitude);
         break;
     }
+    case sizeof(lora_payload_t): {
+        lora_payload_t payload;
+        memcpy(&payload, data, sizeof(payload));
+        LOG_INF("\tNode ID: %u", payload.node_id);
+        LOG_INF("\tLatitude (scaled): %d", payload.latitude_scaled * LAT_LON_SCALING_FACTOR);
+        LOG_INF("\tLongitude (scaled): %d", payload.longitude_scaled * LAT_LON_SCALING_FACTOR);
+        LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
+        LOG_INF("\tFix status: %u", payload.fix_status);
+        break;
+    }
     case strlen(NOFIX):
         LOG_INF("\tNo fix acquired!");
         break;
@@ -47,7 +57,6 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
         LOG_INF("\tReceived data: %s", data);
         break;
     }
-
 }
 
 bool lora_is_tx() {
