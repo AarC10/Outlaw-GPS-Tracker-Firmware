@@ -80,9 +80,9 @@ bool lora_init() {
 
     LOG_INF("LoRa device name: %s, addr: %p", lora_dev->name ? lora_dev->name : "UNKNOWN", lora_dev);
 
-    int rc = lora_config(lora_dev, &lora_configuration);
-    if (rc != 0) {
-        LOG_ERR("LoRa configuration failed, rc=%d", rc);
+    int ret = lora_config(lora_dev, &lora_configuration);
+    if (ret != 0) {
+        LOG_ERR("LoRa configuration failed, rc=%d", ret);
         return false;
     }
 

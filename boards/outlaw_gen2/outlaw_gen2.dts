@@ -53,28 +53,7 @@
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 	};
-
-	zephyr,user {
-        io-channels = <&adc1 0>;
-    };
 };
-
-&adc1 {
-    pinctrl-0 = <&adc1_in0_pa0>;
-    pinctrl-names = "default";
-    status = "okay";
-    #address-cells = <1>;
-    #size-cells = <0>;
-
-    channel@0 {
-        reg = <0>;
-        zephyr,gain = "ADC_GAIN_1";
-        zephyr,reference = "ADC_REF_INTERNAL";
-        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-        zephyr,resolution = <12>;
-    };
-};
-
 
 &clk_lsi {
 	status = "okay";
@@ -97,7 +76,6 @@
 	ahb-prescaler = <1>;
 	apb1-prescaler = <2>;
 	apb2-prescaler = <1>;
-	adc-prescaler = <2>;
 };
 
 // DEBUG UART
