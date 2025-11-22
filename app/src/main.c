@@ -13,7 +13,7 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <core/lora.h>
 #include <core/time.h>
-#include <core/types.h>
+#include <core/defs.h>
 #include <core/tdma.h>
 
 #define PPS_PIN   DT_GPIO_PIN(DT_ALIAS(pps), gpios)

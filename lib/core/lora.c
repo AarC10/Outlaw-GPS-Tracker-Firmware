@@ -1,5 +1,5 @@
 #include "core/lora.h"
-#include "core/types.h"
+#include "core/defs.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
