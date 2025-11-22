@@ -19,17 +19,14 @@ LOG_MODULE_REGISTER(state_machine);
 
 
 static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
-static const struct gpio_dt_spec dip1 = GPIO_DT_SPEC_GET(DT_ALIAS(dip1), gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 static void tx_timer_handler(struct k_timer* timer_id) {
     if (gnss_fix_acquired()) {
-        LOG_INF("Fix acquired!");
         struct gnss_data latest_gnss_data;
         gnss_get_latest_data(&latest_gnss_data);
         lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));
     } else {
-        LOG_INF("No fix acquired!");
         lora_send_no_fix_payload(0);
         gpio_pin_toggle_dt(&led);
     }

@@ -13,10 +13,8 @@ static bool fix_acquired = false;
 void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
     memcpy(&latest_gnss_data, data, sizeof(latest_gnss_data));
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX && !fix_acquired) {
-        LOG_INF("Fix acquired!");
         fix_acquired = true;
     } else if (data->info.fix_status == GNSS_FIX_STATUS_NO_FIX && fix_acquired) {
-        LOG_INF("No fix acquired!");
         fix_acquired = false;
     }
 }

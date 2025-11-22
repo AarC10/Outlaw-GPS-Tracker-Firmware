@@ -18,18 +18,9 @@
 
 #include "state_machine.h"
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
-
-
 LOG_MODULE_REGISTER(main);
-
-
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 
-
-// ******************************************** //
-// *                  Main                    * //
-// ******************************************** //
 int main(void) {
     static const struct gpio_dt_spec pps_spec = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
     if (!device_is_ready(led.port)) {
