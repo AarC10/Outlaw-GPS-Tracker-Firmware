@@ -11,12 +11,18 @@
 
 #include <core/lora.h>
 
+
+LOG_MODULE_REGISTER(main);
+
 int main(void) {
     lora_init();
     lora_set_rx();
 
     while (true) {
-        lora_await_rx_packet();
+        int ret = lora_await_rx_packet();
+        if (ret != 0) {
+            LOG_INF("Error while awaiting LoRa packet: %d", ret);
+        }
     }
 
     return 0;

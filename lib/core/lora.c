@@ -29,7 +29,6 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
     if (lora_configuration.tx) return;
 
     LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
-
     switch (size) {
     case sizeof(struct gnss_data): {
         struct gnss_data gnss_data_local;
@@ -108,7 +107,7 @@ bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) 
     payload.speed = (uint16_t)(gnss_data->nav_data.speed);
     payload.satellites_cnt = gnss_data->info.satellites_cnt;
     payload.fix_status = gnss_data->info.fix_status;
-    payload.node_id = (uint8_t)node_id;
+    payload.node_id = node_id;
 
     return lora_tx((uint8_t*)&payload, sizeof(payload));
 }
