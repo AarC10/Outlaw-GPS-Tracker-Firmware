@@ -31,18 +31,19 @@ K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 // ******************************************** //
 // *                GNSS                      * //
 // ******************************************** //
+// GNSS data storage for transmission
+static struct gnss_data latest_gnss_data;
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
 #pragma GCC diagnostic pop
     if (!lora_is_tx()) return;
 
+    memcpy(&latest_gnss_data, data, sizeof(latest_gnss_data));
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired!");
-        lora_tx((uint8_t*)data, sizeof(*data));
     } else {
         LOG_INF("No fix acquired!");
-        lora_tx(NOFIX, strlen(NOFIX));
         gpio_pin_toggle_dt(&led);
     }
 }
@@ -103,8 +104,7 @@ static const struct smf_state states[] = {
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
 
-// GNSS data storage for transmission
-static struct gnss_data latest_gnss_data;
+
 
 
 static void tx_timer_handler(struct k_timer* timer_id) {
@@ -122,10 +122,14 @@ static void tx_timer_handler(struct k_timer* timer_id) {
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
+    if (!device_is_ready(led.port)) {
+        LOG_ERR("LED GPIO device not ready\n");
+    }
 
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
 #else
+    lora_set_tx();
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 #endif
 
