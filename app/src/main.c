@@ -19,12 +19,14 @@
 #define PPS_PIN   DT_GPIO_PIN(DT_ALIAS(pps), gpios)
 #define PPS_FLAGS DT_GPIO_FLAGS(DT_ALIAS(pps), gpios)
 
-#define TRANSMITTER_LOGIC_LEVEL 1
-#define TRANSMITTER_LED_LEVEL 0
+#define TRANSMITTER_LOGIC_LEVEL 0
+#define TRANSMITTER_LED_LEVEL 1
 
 #define RECEIVER_LOGIC_LEVEL 0
 #define RECEIVER_LED_LEVEL 1
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+
+static const struct gpio_dt_spec pin_sw = GPIO_DT_SPEC_GET(DT_ALIAS(pin_sw), gpios);
 
 LOG_MODULE_REGISTER(main);
 
@@ -72,20 +74,22 @@ struct s_object {
     struct smf_ctx ctx;
 } smf_obj;
 
-// static void check_for_transition(void*) {
-//     static int last_pin_state = -1;
-//     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
-//     LOG_INF("Pin state: %d", current_pin_state);
-//     if (last_pin_state != current_pin_state) {
-//         last_pin_state = current_pin_state;
-//
-//         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
-//             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
-//         } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
-//             smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
-//         }
-//     }
-// }
+static enum smf_state_result check_for_transition(void*) {
+    static int last_pin_state = -1;
+    const int current_pin_state = gpio_pin_get_dt(&pin_sw);
+    LOG_INF("Pin state: %d", current_pin_state);
+    if (last_pin_state != current_pin_state) {
+        last_pin_state = current_pin_state;
+
+        if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
+            smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
+        } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
+            smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
+        }
+    }
+
+    return SMF_EVENT_HANDLED;
+}
 
 static void transmitter_entry(void*) {
     lora_set_tx();
@@ -106,12 +110,10 @@ static enum smf_state_result receiver_run(void*) {
 }
 
 static const struct smf_state states[] = {
-    // [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
-    [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
+    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
+    // [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
 };
-
-
 
 
 static void tx_timer_handler(struct k_timer* timer_id) {
