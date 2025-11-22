@@ -122,25 +122,20 @@ static void tx_timer_handler(struct k_timer* timer_id) {
 // *                  Main                    * //
 // ******************************************** //
 int main(void) {
+
+#ifdef CONFIG_DEFAULT_RECEIVE_MODE
+    smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
+#else
+    smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
+#endif
+
     while (true) {
-        printk("fuck you");
-        LOG_INF("Fuck you");
-        gpio_pin_toggle_dt(&led);
+        const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
+        if (ret) {
+            LOG_INF("SMF returned non-zero status: %d", ret);
+        }
         k_msleep(1000);
     }
-// #ifdef CONFIG_DEFAULT_RECEIVE_MODE
-//     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
-// #else
-//     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
-// #endif
-//
-//     while (true) {
-//         const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
-//         if (ret) {
-//             LOG_INF("SMF returned non-zero status: %d", ret);
-//         }
-//         k_msleep(1000);
-//     }
 
     return 0;
 }
