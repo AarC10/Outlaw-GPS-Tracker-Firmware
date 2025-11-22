@@ -14,6 +14,7 @@
 #include <core/lora.h>
 #include <core/time.h>
 #include <core/types.h>
+#include <core/tdma.h>
 
 #define PPS_PIN   DT_GPIO_PIN(DT_ALIAS(pps), gpios)
 #define PPS_FLAGS DT_GPIO_FLAGS(DT_ALIAS(pps), gpios)
