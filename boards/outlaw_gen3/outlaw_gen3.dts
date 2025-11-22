@@ -46,7 +46,7 @@
 
 		pps: pps {
 			label = "GNSS PPS";
-			gpios = <&gpiob 7 GPIO_ACTIVE_LOW>;
+			gpios = <&gpiob 5 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
@@ -128,13 +128,13 @@
 	lora0: lora0@0 {
 		compatible = "semtech,sx1276";
 		reg = <0>;
-		reset-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
 		dio-gpios = <&gpiob 14 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
 					<&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
 					<&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
 					<&gpioa 8 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
 					<&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>,
-					<&gpiob 6 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+					<&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 		power-amplifier-output = "pa-boost";
 		spi-max-frequency = <DT_FREQ_M(10)>;
 		status = "okay";
@@ -171,4 +171,9 @@
 			reg = <0x0001f800 DT_SIZE_K(2)>;
 		};
 	};
+};
+
+&sram0 {
+    reg = <0x20000000 0x8000>;
+    status = "okay";
 };
