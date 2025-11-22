@@ -42,6 +42,6 @@ int16_t gnss_get_longitude_scaled() {
 void gnss_populate_lora_payload(lora_payload_t* payload) {
     payload->latitude_scaled = gnss_get_latitude_scaled();
     payload->longitude_scaled = gnss_get_longitude_scaled();
-    payload->satellites_cnt = latest_gnss_data.info.satellites_cnt;
-    payload->fix_status = latest_gnss_data.info.fix_status;
+    payload->satellites_cnt = (uint8_t) latest_gnss_data.info.satellites_cnt;
+    payload->fix_status = (uint8_t) latest_gnss_data.info.fix_status;
 }
