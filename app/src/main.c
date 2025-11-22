@@ -126,6 +126,8 @@ int main(void) {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
+    lora_init();
+
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     smf_set_initial(SMF_CTX(&smf_obj), &states[receiver]);
 #else

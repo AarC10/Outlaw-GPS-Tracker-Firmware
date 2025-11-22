@@ -5,7 +5,7 @@
  */
 
 /dts-v1/;
-#include <st/l1/stm32l151Xb.dtsi>
+#include <st/l1/stm32l151Xb-a.dtsi>
 #include <st/l1/stm32l151c(6-8-b)uxa-pinctrl.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
@@ -91,7 +91,7 @@
 &usart1 {
 	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
 	pinctrl-names = "default";
-	current-speed = <115200>;
+	current-speed = <9600>;
 	status = "okay";
 };
 
