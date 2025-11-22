@@ -46,7 +46,7 @@
 
 		pps: pps {
 			label = "GNSS PPS";
-			gpios = <&gpiob 6 GPIO_ACTIVE_LOW>;
+			gpios = <&gpiob 7 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
