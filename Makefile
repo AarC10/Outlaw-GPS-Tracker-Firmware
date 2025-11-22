@@ -4,6 +4,9 @@ all:
 gen3:
 	west build -b outlaw_gen3 app -p auto
 
+gen3_1262:
+	west build -b outlaw_gen3 app -p auto -DEXTRA_DTC_OVERLAY_FILE="../dts/gen3_sx1262.overlay"
+
 gen2:
 	west build -b outlaw_gen2 app -p auto
 
