@@ -20,9 +20,9 @@
 #define PPS_FLAGS DT_GPIO_FLAGS(DT_ALIAS(pps), gpios)
 
 #define TRANSMITTER_LOGIC_LEVEL 0
-#define TRANSMITTER_LED_LEVEL 1
+#define TRANSMITTER_LED_LEVEL 0
 
-#define RECEIVER_LOGIC_LEVEL 0
+#define RECEIVER_LOGIC_LEVEL 1
 #define RECEIVER_LED_LEVEL 1
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
@@ -79,7 +79,6 @@ static enum smf_state_result check_for_transition(void*) {
     const int current_pin_state = gpio_pin_get_dt(&pin_sw);
     LOG_INF("Pin state: %d", current_pin_state);
     if (last_pin_state != current_pin_state) {
-        last_pin_state = current_pin_state;
 
         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
@@ -87,6 +86,8 @@ static enum smf_state_result check_for_transition(void*) {
             smf_set_state(SMF_CTX(&smf_obj), &states[receiver]);
         }
     }
+
+    last_pin_state = current_pin_state;
 
     return SMF_EVENT_HANDLED;
 }
@@ -101,18 +102,16 @@ static void receiver_entry(void*) {
     lora_set_rx();
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
     k_timer_stop(&tx_timer);
+    lora_await_rx_packet();
 }
 
-static enum smf_state_result receiver_run(void*) {
-    lora_await_rx_packet();
-
-    return SMF_EVENT_HANDLED;
+static void receiver_exit(void*) {
+    lora_await_cancel();
 }
 
 static const struct smf_state states[] = {
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
-    // [transmitter] = SMF_CREATE_STATE(transmitter_entry, NULL, NULL, NULL, NULL),
-    [receiver] = SMF_CREATE_STATE(receiver_entry, receiver_run, NULL, NULL, NULL),
+    [receiver] = SMF_CREATE_STATE(receiver_entry, check_for_transition, receiver_exit, NULL, NULL),
 };
 
 

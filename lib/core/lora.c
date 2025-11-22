@@ -56,8 +56,9 @@ bool lora_is_tx() {
 
 bool lora_set_tx() {
     lora_configuration.tx = true;
-    if (lora_config(lora_dev, &lora_configuration) != 0) {
-        LOG_ERR("LoRa configuration failed");
+    int ret = lora_config(lora_dev, &lora_configuration);
+    if (ret != 0) {
+        LOG_ERR("LoRa configuration failed %d", ret);
         return false;
     }
     return true;
@@ -65,8 +66,9 @@ bool lora_set_tx() {
 
 bool lora_set_rx() {
     lora_configuration.tx = false;
-    if (lora_config(lora_dev, &lora_configuration) != 0) {
-        LOG_ERR("LoRa configuration failed");
+    int ret = lora_config(lora_dev, &lora_configuration);
+    if (ret != 0) {
+        LOG_ERR("LoRa configuration failed %d", ret);
         return false;
     }
     return true;
@@ -133,6 +135,15 @@ int lora_await_rx_packet() {
         LOG_ERR("LoRa async receive setup failed");
         return -1;
     }
+
+    return 0;
+}
+
+int lora_await_cancel() {
+    if (lora_recv_async(lora_dev, NULL, NULL) != 0) {
+        LOG_ERR("LoRa async cancel setup failed");
+    }
+
 
     return 0;
 }

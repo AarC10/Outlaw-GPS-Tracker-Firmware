@@ -23,3 +23,5 @@ bool lora_send_no_fix_payload(uint8_t node_id);
 bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data);
 
 int lora_await_rx_packet();
+
+int lora_await_cancel();
