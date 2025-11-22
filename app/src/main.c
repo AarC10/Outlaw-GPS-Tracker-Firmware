@@ -14,6 +14,7 @@
 #include <core/time.h>
 #include <core/defs.h>
 #include <core/tdma.h>
+#include <core/gnss.h>
 
 #include "state_machine.h"
 
@@ -21,13 +22,6 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 
 LOG_MODULE_REGISTER(main);
-
-
-// ******************************************** //
-// *                GNSS                      * //
-// ******************************************** //
-// GNSS data storage for transmission
-
 
 
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);

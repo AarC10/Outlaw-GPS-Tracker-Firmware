@@ -1,5 +1,5 @@
-#include "gnss.h"
-#include "lora.h"
+#include "core/gnss.h"
+#include "core/lora.h"
 
 #include <stdbool.h>
 #include <zephyr/drivers/gnss.h>
@@ -11,8 +11,6 @@ static struct gnss_data latest_gnss_data;
 static bool fix_acquired = false;
 
 void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
-    if (!lora_is_tx()) return;
-
     memcpy(&latest_gnss_data, data, sizeof(latest_gnss_data));
     if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX && !fix_acquired) {
         LOG_INF("Fix acquired!");

@@ -1,6 +1,7 @@
 #include "state_machine.h"
 
 #include <core/lora.h>
+#include <core/gnss.h>
 
 #include <zephyr/drivers/gnss.h>
 #include <zephyr/drivers/gpio.h>
@@ -21,17 +22,19 @@ static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
 static const struct gpio_dt_spec dip1 = GPIO_DT_SPEC_GET(DT_ALIAS(dip1), gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
-extern struct gnss_data latest_gnss_data;
 static void tx_timer_handler(struct k_timer* timer_id) {
-    if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
-        LOG_INF("Fix acquired! (Timer)");
+    if (gnss_fix_acquired()) {
+        LOG_INF("Fix acquired!");
+        struct gnss_data latest_gnss_data;
+        gnss_get_latest_data(&latest_gnss_data);
         lora_tx((uint8_t*)&latest_gnss_data, sizeof(latest_gnss_data));
     } else {
-        LOG_INF("No fix acquired! (Timer)");
+        LOG_INF("No fix acquired!");
         lora_send_no_fix_payload(0);
         gpio_pin_toggle_dt(&led);
     }
 }
+
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 
 static const struct smf_state states[];
@@ -47,7 +50,6 @@ static enum smf_state_result check_for_transition(void*) {
     const int current_pin_state = gpio_pin_get_dt(&dip0);
     LOG_DBG("Pin state: %d", current_pin_state);
     if (last_pin_state != current_pin_state) {
-
         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
         } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
