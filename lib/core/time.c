@@ -6,8 +6,11 @@
 
 LOG_MODULE_REGISTER(time);
 
+static volatile uint32_t gps_seconds = 0;
+
 static void time_pps_callback(const struct device* dev, struct gpio_callback* cb, uint32_t pins) {
     LOG_INF("PPS");
+    gps_seconds++;
 }
 
 int time_setup_pps(const struct gpio_dt_spec* pps) {
@@ -44,4 +47,8 @@ int time_setup_pps(const struct gpio_dt_spec* pps) {
 
     LOG_INF("PPS callback added on pin %d", pps->pin);
     return 0;
+}
+
+uint32_t time_get_gps_seconds() {
+    return gps_seconds;
 }
