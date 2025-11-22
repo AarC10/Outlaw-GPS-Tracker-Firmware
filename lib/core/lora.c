@@ -44,10 +44,26 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
         lora_payload_t payload;
         memcpy(&payload, data, sizeof(payload));
         LOG_INF("\tNode ID: %u", payload.node_id);
-        LOG_INF("\tLatitude (scaled): %d", payload.latitude_scaled * LAT_LON_SCALING_FACTOR);
-        LOG_INF("\tLongitude (scaled): %d", payload.longitude_scaled * LAT_LON_SCALING_FACTOR);
+        LOG_INF("\tLatitude: %f", (float)((float)payload.latitude_scaled * LAT_LON_SCALING_FACTOR));
+        LOG_INF("\tLongitude: %f", (float)((float)payload.longitude_scaled * LAT_LON_SCALING_FACTOR));
         LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
-        LOG_INF("\tFix status: %u", payload.fix_status);
+        switch (payload.fix_status) {
+            case GNSS_FIX_STATUS_NO_FIX:
+                LOG_INF("\tFix status: NO FIX");
+                break;
+            case GNSS_FIX_STATUS_GNSS_FIX:
+                LOG_INF("\tFix status: FIX");
+                break;
+            case GNSS_FIX_STATUS_DGNSS_FIX:
+                LOG_INF("\tFix status: DIFF FIX");
+                break;
+            case GNSS_FIX_STATUS_ESTIMATED_FIX:
+                LOG_INF("\tFix status: EST FIX");
+                break;
+            default:
+                LOG_INF("\tFIX status: UNKNOWN");
+                break;
+        }
         break;
     }
     case strlen(NOFIX):
