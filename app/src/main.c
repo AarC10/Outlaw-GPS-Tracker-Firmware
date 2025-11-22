@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(main);
 // *                GNSS                      * //
 // ******************************************** //
 // GNSS data storage for transmission
-static struct gnss_data latest_gnss_data;
+struct gnss_data latest_gnss_data;
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {

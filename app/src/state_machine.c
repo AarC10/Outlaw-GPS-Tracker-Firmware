@@ -2,6 +2,7 @@
 
 #include <core/lora.h>
 
+#include <zephyr/drivers/gnss.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -20,6 +21,7 @@ static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
 static const struct gpio_dt_spec dip1 = GPIO_DT_SPEC_GET(DT_ALIAS(dip1), gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
+extern struct gnss_data latest_gnss_data;
 static void tx_timer_handler(struct k_timer* timer_id) {
     if (latest_gnss_data.info.fix_status != GNSS_FIX_STATUS_NO_FIX) {
         LOG_INF("Fix acquired! (Timer)");
