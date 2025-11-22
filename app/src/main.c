@@ -27,25 +27,8 @@ LOG_MODULE_REGISTER(main);
 // *                GNSS                      * //
 // ******************************************** //
 // GNSS data storage for transmission
-struct gnss_data latest_gnss_data;
 
-#pragma GCC diagnostic ignored "-Wunused-function"
-static void gnss_data_callback(const struct device* dev, const struct gnss_data* data) {
-#pragma GCC diagnostic pop
-    static bool fix_acquired = false;
 
-    if (!lora_is_tx()) return;
-
-    memcpy(&latest_gnss_data, data, sizeof(latest_gnss_data));
-    if (data->info.fix_status != GNSS_FIX_STATUS_NO_FIX && !fix_acquired) {
-        LOG_INF("Fix acquired!");
-        fix_acquired = true;
-    } else if (data->info.fix_status == GNSS_FIX_STATUS_NO_FIX && fix_acquired) {
-        LOG_INF("No fix acquired!");
-        gpio_pin_toggle_dt(&led);
-        fix_acquired = false;
-    }
-}
 
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
 
