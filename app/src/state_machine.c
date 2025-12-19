@@ -27,6 +27,7 @@ static void tx_timer_handler(struct k_timer* timer_id) {
         gnss_populate_lora_payload(payload);
         lora_tx((uint8_t*)payload, sizeof(lora_payload_t));
     } else {
+        LOG_INF("Sending NOFIX");
         lora_send_no_fix_payload(0);
         gpio_pin_toggle_dt(&led);
     }
@@ -46,6 +47,12 @@ static enum smf_state_result check_for_transition(void*) {
     static int last_pin_state = -1;
     const int current_pin_state = gpio_pin_get_dt(&dip0);
     LOG_DBG("Pin state: %d", current_pin_state);
+
+    if (current_pin_state < 0) {
+        LOG_DBG("dip0 gpio read error (%d); ignoring transition check", current_pin_state);
+        return SMF_EVENT_HANDLED;
+    }
+
     if (last_pin_state != current_pin_state) {
         if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
             smf_set_state(SMF_CTX(&smf_obj), &states[transmitter]);
@@ -60,12 +67,14 @@ static enum smf_state_result check_for_transition(void*) {
 }
 
 static void transmitter_entry(void*) {
+    LOG_INF("Entering transmitter state");
     lora_set_tx();
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
     k_timer_start(&tx_timer, K_SECONDS(5), K_SECONDS(5));
 }
 
 static void receiver_entry(void*) {
+    LOG_INF("Entering receiver state");
     lora_set_rx();
     gpio_pin_set_dt(&led, RECEIVER_LED_LEVEL);
     k_timer_stop(&tx_timer);
