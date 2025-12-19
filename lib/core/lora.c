@@ -44,8 +44,8 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
         lora_payload_t payload;
         memcpy(&payload, data, sizeof(payload));
         LOG_INF("\tNode ID: %u", payload.node_id);
-        LOG_INF("\tLatitude: %f", (float)((float)payload.latitude_scaled * LAT_LON_SCALING_FACTOR));
-        LOG_INF("\tLongitude: %f", (float)((float)payload.longitude_scaled * LAT_LON_SCALING_FACTOR));
+        LOG_INF("\tLatitude: %f", (double)(payload.latitude_scaled * LAT_LON_SCALING_FACTOR));
+        LOG_INF("\tLongitude: %f", (double)(payload.longitude_scaled * LAT_LON_SCALING_FACTOR));
         LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
         switch (payload.fix_status) {
             case GNSS_FIX_STATUS_NO_FIX:
