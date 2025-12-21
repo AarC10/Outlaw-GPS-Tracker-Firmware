@@ -24,7 +24,7 @@
 //		rx-enable-gpios = <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 //        antenna-enable-gpios = <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 //        dio2-tx-enable;
-        tcxo-power-startup-delay-ms = <5>;
+//        tcxo-power-startup-delay-ms = <5>;
 
         spi-max-frequency = <DT_FREQ_M(1)>;
         status = "okay";
