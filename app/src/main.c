@@ -38,9 +38,8 @@ int main(void) {
         if (ret != 0) {
             LOG_ERR("state_machine_run returned %d", ret);
             k_sleep(K_SECONDS(1));
-        } else {
-            LOG_INF("Executed state machine");
         }
+
         k_sleep(K_MSEC(100));
     }
 
