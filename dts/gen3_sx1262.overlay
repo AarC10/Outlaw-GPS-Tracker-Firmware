@@ -21,9 +21,9 @@
         reset-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
         dio1-gpios = <&gpiob 13 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
         busy-gpios = <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-		rx-enable-gpios = <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-        antenna-enable-gpios = <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-        dio2-tx-enable;
+//		rx-enable-gpios = <&gpiob 15 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+//        antenna-enable-gpios = <&gpiob 12 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+//        dio2-tx-enable;
         tcxo-power-startup-delay-ms = <5>;
 
         spi-max-frequency = <DT_FREQ_M(1)>;
