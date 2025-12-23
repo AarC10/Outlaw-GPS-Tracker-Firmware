@@ -2,6 +2,8 @@
 #define TYPES_H
 
 #define NOFIX "NOFIX"
+// +1 for node id
+#define NOFIX_PACKET_SIZE 6
 
 #define LAT_LON_SCALING_FACTOR 10000.0f
 

@@ -27,19 +27,12 @@ static struct lora_modem_config lora_configuration = {
 void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                            void* user_data) {
     if (lora_configuration.tx) return;
+    uint8_t node_id = data[0];
+    data++;
+    size--;
 
-    LOG_INF("Packet received (%d bytes | %d dBm | %d dB:", size, rssi, snr);
+    LOG_INF("Node %u (%d bytes | %d dBm | %d dB):", node_id, size, rssi, snr);
     switch (size) {
-    case sizeof(struct gnss_data): {
-        struct gnss_data gnss_data_local;
-        memcpy(&gnss_data_local, data, sizeof(gnss_data_local));
-        LOG_INF("\tLatitude: %lld", gnss_data_local.nav_data.latitude);
-        LOG_INF("\tLongitude: %lld", gnss_data_local.nav_data.longitude);
-        LOG_INF("\tBearing: %u", gnss_data_local.nav_data.bearing);
-        LOG_INF("\tSpeed: %u", gnss_data_local.nav_data.speed);
-        LOG_INF("\tAltitude: %d", gnss_data_local.nav_data.altitude);
-        break;
-    }
     case sizeof(lora_payload_t): {
         lora_payload_t payload;
         memcpy(&payload, data, sizeof(payload));
@@ -135,7 +128,10 @@ bool lora_tx(uint8_t* data, uint32_t data_len) {
 }
 
 bool lora_send_no_fix_payload(uint8_t node_id) {
-    return lora_tx((uint8_t*)NOFIX, strlen(NOFIX));
+    uint8_t packet[NOFIX_PACKET_SIZE] = {0};
+    packet[0] = node_id;
+    memcpy(&packet[1], NOFIX, strlen(NOFIX));
+    return lora_tx(packet, NOFIX_PACKET_SIZE);
 }
 
 bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) {
