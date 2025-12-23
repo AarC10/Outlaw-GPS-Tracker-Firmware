@@ -28,7 +28,8 @@ int main(void) {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
-    state_machine_init();
+    uint8_t node_id = 0;
+    state_machine_init(node_id);
     lora_init();
     time_setup_pps(&pps_spec);
 
