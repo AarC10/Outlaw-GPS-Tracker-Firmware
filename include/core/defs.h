@@ -8,7 +8,6 @@
 #define LAT_LON_SCALING_FACTOR 10000.0f
 
 typedef struct __attribute__((__packed__)) {
-    uint8_t node_id; // Must be first byte
     int16_t latitude_scaled;
     int16_t longitude_scaled;
     uint8_t satellites_cnt;

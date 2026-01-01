@@ -36,7 +36,7 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
     case sizeof(lora_payload_t): {
         lora_payload_t payload;
         memcpy(&payload, data, sizeof(payload));
-        LOG_INF("\tNode ID: %u", payload.node_id);
+        LOG_INF("\tNode ID: %u", node_id);
         LOG_INF("\tLatitude: %f", (double)(payload.latitude_scaled * LAT_LON_SCALING_FACTOR));
         LOG_INF("\tLongitude: %f", (double)(payload.longitude_scaled * LAT_LON_SCALING_FACTOR));
         LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
@@ -135,13 +135,15 @@ bool lora_send_no_fix_payload(uint8_t node_id) {
 }
 
 bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) {
-    lora_payload_t payload;
+    uint8_t packet[sizeof(lora_payload_t) + 1] = {0};
+    packet[0] = node_id;
 
-    payload.node_id = node_id;
-    payload.latitude_scaled = (int16_t)(gnss_data->nav_data.latitude / LAT_LON_SCALING_FACTOR);
-    payload.longitude_scaled = (int16_t)(gnss_data->nav_data.longitude / LAT_LON_SCALING_FACTOR);
-    payload.satellites_cnt = gnss_data->info.satellites_cnt;
-    payload.fix_status = gnss_data->info.fix_status;
+    lora_payload_t *payload = (lora_payload_t*)&packet[1];
+
+    payload->latitude_scaled = (int16_t)(gnss_data->nav_data.latitude / LAT_LON_SCALING_FACTOR);
+    payload->longitude_scaled = (int16_t)(gnss_data->nav_data.longitude / LAT_LON_SCALING_FACTOR);
+    payload->satellites_cnt = gnss_data->info.satellites_cnt;
+    payload->fix_status = gnss_data->info.fix_status;
 
     return lora_tx((uint8_t*)&payload, sizeof(payload));
 }
