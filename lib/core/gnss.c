@@ -31,17 +31,10 @@ static float nanodeg_to_deg(int64_t nanodeg) {
     return nanodeg / 10000000.0f;
 }
 
-int16_t gnss_get_latitude_scaled() {
-    return (int16_t)(nanodeg_to_deg(latest_gnss_data.nav_data.latitude) / LAT_LON_SCALING_FACTOR);
-}
-
-int16_t gnss_get_longitude_scaled() {
-    return (int16_t)(nanodeg_to_deg(latest_gnss_data.nav_data.longitude) / LAT_LON_SCALING_FACTOR);
-}
 
 void gnss_populate_lora_payload(lora_payload_t* payload) {
-    payload->latitude_scaled = gnss_get_latitude_scaled();
-    payload->longitude_scaled = gnss_get_longitude_scaled();
+    payload->latitude = latest_gnss_data.nav_data.latitude / 1E9f;
+    payload->longitude = latest_gnss_data.nav_data.longitude / 1E9f;
     payload->satellites_cnt = (uint8_t) latest_gnss_data.info.satellites_cnt;
     payload->fix_status = (uint8_t) latest_gnss_data.info.fix_status;
 }

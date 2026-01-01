@@ -24,12 +24,13 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static void tx_timer_handler(struct k_timer* timer_id) {
     uint8_t node_id = POINTER_TO_UINT(k_timer_user_data_get(timer_id));
 
-    static lora_payload_t payload = {0};
-    payload.node_id = node_id;
+    static uint8_t payload[sizeof(lora_payload_t) + 1] = {0};
+    payload[0] = node_id;
+    lora_payload_t* lora_payload = (lora_payload_t*)&payload[1];
 
     if (gnss_fix_acquired()) {
-        gnss_populate_lora_payload(&payload);
-        lora_tx((uint8_t*)&payload, sizeof(lora_payload_t));
+        gnss_populate_lora_payload(lora_payload);
+        lora_tx(payload, sizeof(lora_payload_t) + 1);
     } else {
         LOG_INF("Sending NOFIX");
         lora_send_no_fix_payload(node_id);

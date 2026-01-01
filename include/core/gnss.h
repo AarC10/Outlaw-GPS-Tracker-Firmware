@@ -17,10 +17,6 @@ bool gnss_fix_acquired();
 
 void gnss_get_latest_data(struct gnss_data* out_data);
 
-int16_t gnss_get_latitude_scaled();
-
-int16_t gnss_get_longitude_scaled();
-
 void gnss_populate_lora_payload(lora_payload_t* payload);
 
 

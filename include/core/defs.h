@@ -5,12 +5,6 @@
 // +1 for node id
 #define NOFIX_PACKET_SIZE 6
 
-// Zephyr GPS latitude/longitude is in nanodegrees (1E-9 degrees).
-// To fit into int16_t we need to scale it down.
-// int16_t ranges from -32768 to 32767
-// So we can represent roughly +/- 32767E-4 degrees = +/- 3.
-#define LAT_LON_SCALING_FACTOR
-
 typedef struct __attribute__((__packed__)) {
     float latitude;
     float longitude;
