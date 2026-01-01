@@ -5,11 +5,15 @@
 // +1 for node id
 #define NOFIX_PACKET_SIZE 6
 
-#define LAT_LON_SCALING_FACTOR 10000.0f
+// Zephyr GPS latitude/longitude is in nanodegrees (1E-9 degrees).
+// To fit into int16_t we need to scale it down.
+// int16_t ranges from -32768 to 32767
+// So we can represent roughly +/- 32767E-4 degrees = +/- 3.
+#define LAT_LON_SCALING_FACTOR
 
 typedef struct __attribute__((__packed__)) {
-    int16_t latitude_scaled;
-    int16_t longitude_scaled;
+    float latitude;
+    float longitude;
     uint8_t satellites_cnt;
     uint8_t fix_status;
 } lora_payload_t;

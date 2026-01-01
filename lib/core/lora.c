@@ -7,6 +7,8 @@
 #include <zephyr/drivers/gnss.h>
 #include <stdbool.h>
 
+#include "gnss/gnss_parse.h"
+
 LOG_MODULE_REGISTER(lora);
 
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
@@ -36,9 +38,13 @@ void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t siz
     case sizeof(lora_payload_t): {
         lora_payload_t payload;
         memcpy(&payload, data, sizeof(payload));
+        int64_t latitude = payload.latitude_scaled * LAT_LON_SCALING_FACTOR;
+        int64_t longitude = payload.longitude_scaled * LAT_LON_SCALING_FACTOR;
+        float lat_deg = (float)latitude / 1E9f;
+        float lon_deg = (float)longitude / 1E9f;
         LOG_INF("\tNode ID: %u", node_id);
-        LOG_INF("\tLatitude: %f", (double)(payload.latitude_scaled * LAT_LON_SCALING_FACTOR));
-        LOG_INF("\tLongitude: %f", (double)(payload.longitude_scaled * LAT_LON_SCALING_FACTOR));
+        LOG_INF("\tLatitude: %f", (double)lat_deg);
+        LOG_INF("\tLongitude: %f", (double)lon_deg);
         LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
         switch (payload.fix_status) {
             case GNSS_FIX_STATUS_NO_FIX:
@@ -140,8 +146,8 @@ bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) 
 
     lora_payload_t *payload = (lora_payload_t*)&packet[1];
 
-    payload->latitude_scaled = (int16_t)(gnss_data->nav_data.latitude / LAT_LON_SCALING_FACTOR);
-    payload->longitude_scaled = (int16_t)(gnss_data->nav_data.longitude / LAT_LON_SCALING_FACTOR);
+    payload->latitude = (float)gnss_data->nav_data.latitude / 1E9f;
+    payload->longitude = (float)gnss_data->nav_data.longitude / 1E9f;
     payload->satellites_cnt = gnss_data->info.satellites_cnt;
     payload->fix_status = gnss_data->info.fix_status;
 
