@@ -1,4 +1,1 @@
-#ifndef OUTLAW_SETTINGS_H
-#define OUTLAW_SETTINGS_H
-
-#endif //OUTLAW_SETTINGS_H
+#pragma once

@@ -1,5 +1,4 @@
-#ifndef OUTLAW_STATE_MACHINE_H
-#define OUTLAW_STATE_MACHINE_H
+#pragma once
 
 #include <stdint.h>
 #include <zephyr/kernel.h>
@@ -29,5 +28,3 @@ private:
     int lastPinSate{-1};
     State currentState{State::Transmitter};
 };
-
-#endif //OUTLAW_STATE_MACHINE_H
