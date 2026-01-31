@@ -5,7 +5,7 @@
 
 namespace core {
 
-constexpr char NOFIX[] = "NOFIX";
+constexpr uint8_t NOFIX[] = "NOFIX";
 constexpr size_t NOFIX_PACKET_SIZE = 6; // includes node_id prefix
 
 #pragma pack(push, 1)
@@ -27,7 +27,6 @@ struct LoraFrame {
 
 } // namespace core
 
-// Backwards-compatible aliases for existing C-style code
 inline constexpr auto NOFIX = core::NOFIX;
 inline constexpr size_t NOFIX_PACKET_SIZE = core::NOFIX_PACKET_SIZE;
 using lora_payload_t = core::LoraPayload;

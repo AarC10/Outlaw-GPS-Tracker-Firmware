@@ -1,6 +1,7 @@
 #include "core/LoraTransceiver.h"
 
 #include <array>
+#include <cstring>
 
 #include "core/defs.h"
 #include "zephyr/drivers/gnss.h"
@@ -8,19 +9,24 @@
 
 LOG_MODULE_REGISTER(LoraTransceiver);
 
-static void loraReceiveCallback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
-                           void* user_data) {
-    if (auto* transceiver = static_cast<LoraTransceiver*>(user_data)) {
+static void loraReceiveCallback(const device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
+                           void* userData) {
+    if (auto* transceiver = static_cast<LoraTransceiver*>(userData)) {
         transceiver->receiveCallback(data, size, rssi, snr);
     }
 }
 
-bool LoraTransceiver::txNoFixPayload() {
+LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const lora_modem_config& config) : nodeId(nodeId), config(config) {
+    init();
+}
 
+bool LoraTransceiver::txNoFixPayload() {
+    return tx(const_cast<uint8_t*>(NOFIX), NOFIX_PACKET_SIZE);
 }
 
 bool LoraTransceiver::txGnssPayload() {
-
+    // TODO: Update with GNSS class usage
+    return false;
 }
 
 int LoraTransceiver::awaitRxPacket() {
@@ -29,21 +35,25 @@ int LoraTransceiver::awaitRxPacket() {
         return -1;
     }
 
-
-
     if (lora_recv_async(dev, loraReceiveCallback, this) != 0) {
         LOG_ERR("LoRa async receive setup failed");
         return -1;
     }
 
     return 0;
-
 }
 
-int LoraTransceiver::awaitCancel();
+int LoraTransceiver::awaitCancel() {
+    if (lora_recv_async(dev, nullptr, nullptr) != 0) {
+        LOG_ERR("LoRa async cancel setup failed");
+        return -1;
+    }
+
+    return 0;
+}
 
 void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi, int8_t snr) {
-    if (lora_configuration.tx || !data || size == 0) return;
+    if (config.tx || !data || size == 0) return;
 
     const uint8_t node_id = data[0];
     data++;
@@ -77,7 +87,7 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
         }
         break;
     }
-    case strlen(NOFIX):
+    case NOFIX_PACKET_SIZE:
         LOG_INF("\tNo fix acquired!");
         break;
     default:
