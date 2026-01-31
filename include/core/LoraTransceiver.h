@@ -1,7 +1,10 @@
 #pragma once
 
+#include <array>
 #include <zephyr/drivers/lora.h>
 #include <stdint.h>
+
+#include "HamCallsign.h"
 
 class LoraTransceiver {
 public:
@@ -59,7 +62,24 @@ public:
      */
     bool setRx();
 
+    /**
+     * Set the callsign for transmission to be used for licensed bands
+     * @param callsign Set the callsign for transmission if on licensed band
+     * @return Whether setting the callsign was successful
+     */
+    bool setCallsign(const HamCallsign &callsign);
+
+    /**
+     *
+     * @param id Node ID to set for transmission
+     */
+    void setNodeId(uint8_t id);
+
 private:
+    HamCallsign *callsignPtr = nullptr;
+    std::array<uint8_t, 256> txBuffer;
+    uint8_t startIndex = 0;
+
     /**
      * Initialize the LoRa modem
      * @return Initialization success
@@ -78,8 +98,8 @@ private:
         .public_network = false,
     };
 
-    const struct device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
-    const uint8_t nodeId;
+    const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
+    uint8_t nodeId;
 
     /**
      * Transmit data
@@ -88,4 +108,13 @@ private:
      * @return Whether transmission was successful
      */
     bool tx(uint8_t* data, uint32_t data_len);
+
+
+    /**
+     * Check if frequency is in 433MHz band
+     * @return True if frequency is in 433MHz band
+     */
+    bool is433MHzBand() const {
+        return (config.frequency >= 410'000'000 && config.frequency <= 450'000'000);
+    }
 };

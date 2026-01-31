@@ -174,3 +174,12 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
     LOG_INF("Transmitted %u bytes over LoRa", data_len);
     return true;
 }
+
+bool LoraTransceiver::setCallsign(const HamCallsign &callsign) {
+    callsignPtr = const_cast<HamCallsign*>(&callsign);
+    return true;
+}
+
+void LoraTransceiver::setNodeId(uint8_t id) {
+    nodeId = id;
+}
