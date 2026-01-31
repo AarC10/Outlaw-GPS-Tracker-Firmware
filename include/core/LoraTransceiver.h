@@ -8,23 +8,62 @@ public:
     LoraTransceiver(const uint8_t nodeId);
     LoraTransceiver(const uint8_t nodeId, const lora_modem_config &config);
 
+    /**
+     * Transmit payload with no GNSS fix
+     * @return Whether transmission was successful
+     */
     bool txNoFixPayload();
 
+    /**
+     * Transmit GNSS payload
+     * @return Whether transmission was successful
+     */
     bool txGnssPayload();
 
+    /**
+     * Setup asynchronous reception
+     * @return Zephyr error code indicating if setup was successful
+     */
     int awaitRxPacket();
 
+    /**
+     * Cancel the awaitRxPacket wait
+     * @return Zephyr error code indicating if the wait was cancelled
+     */
     int awaitCancel();
 
+    /**
+     * Receive callback
+     * @param data Data received
+     * @param size Size of the data received
+     * @param rssi Received Signal Strength Indicator
+     * @param snr Signal to Noise Ratio
+     */
     void receiveCallback(uint8_t *data, uint16_t size, int16_t rssi, int8_t snr);
 
+    /**
+     * Check if the LoRa modem is in TX mode
+     * @return Whether the LoRa modem is in TX mode
+     */
     bool isTx() const { return config.tx; };
 
+    /**
+     * Set the LoRa modem to TX mode
+     * @return Whether setting to TX mode was successful
+     */
     bool setTx();
 
+    /**
+     * Set the LoRa modem to RX mode
+     * @return Whether setting to RX mode was successful
+     */
     bool setRx();
 
 private:
+    /**
+     * Initialize the LoRa modem
+     * @return Initialization success
+     */
     bool init();
 
     lora_modem_config config {
@@ -42,5 +81,11 @@ private:
     const struct device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
     const uint8_t nodeId;
 
+    /**
+     * Transmit data
+     * @param data Data to transmit
+     * @param data_len Length of data to transmit
+     * @return Whether transmission was successful
+     */
     bool tx(uint8_t* data, uint32_t data_len);
 };

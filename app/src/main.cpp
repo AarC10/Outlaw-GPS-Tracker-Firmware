@@ -28,8 +28,11 @@ int main() {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
-    uint8_t node_id = 0;
-    StateMachine sm(node_id);
+    uint8_t nodeId = 0;
+
+
+    LoraTransceiver lora(nodeId);
+    StateMachine sm(nodeId);
     time_setup_pps(&pps_spec);
 
 
