@@ -13,13 +13,13 @@
 #include <core/time.h>
 #include <core/defs.h>
 #include <core/tdma.h>
-#include <core/gnss.h>
 #include <core/LoraTransceiver.h>
 #include <core/HamCallsign.h>
 #include "state_machine.h"
+#include <core/GnssReceiver.h>
 
 LOG_MODULE_REGISTER(main);
-GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnss_data_callback);
+GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnssCallback);
 
 int main() {
     static const gpio_dt_spec pps_spec = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);

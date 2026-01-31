@@ -1,8 +1,5 @@
 #include "state_machine.h"
 
-#include <array>
-#include <core/gnss.h>
-
 #include <zephyr/drivers/gnss.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
@@ -25,7 +22,7 @@ static void txTimerCallback(struct k_timer* timer) {
     }
 }
 
-StateMachine::StateMachine(const uint8_t nodeId) : nodeId(nodeId), lora(nodeId) {
+StateMachine::StateMachine(const uint8_t nodeId) :  lora(nodeId), nodeId(nodeId) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
 
@@ -38,12 +35,12 @@ StateMachine::StateMachine(const uint8_t nodeId) : nodeId(nodeId), lora(nodeId) 
 #endif
 }
 
-int StateMachine::run() {
-    return checkForTransition();
+void StateMachine::handleTxTimer() {
+    lora.txGnssPayload();
 }
 
-void StateMachine::handleTxTimer() {
-    // TODO: Replace with LoraTransceiver class usage
+int StateMachine::run() {
+    return checkForTransition();
 }
 
 void StateMachine::enterTransmitter() {
