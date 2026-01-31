@@ -15,6 +15,7 @@
 #include <core/defs.h>
 #include <core/tdma.h>
 #include <core/gnss.h>
+#include <core/LoraTransceiver.h>
 #include <core/HamCallsign.h>
 #include "state_machine.h"
 
