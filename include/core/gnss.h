@@ -6,16 +6,14 @@
 
 #include "core/defs.h"
 
-// Forward Declares
 struct device;
 struct gnss_data;
-struct lora_payload_t;
 
-void gnss_data_callback(const struct device* dev, const struct gnss_data* data);
+void gnss_data_callback(const device* dev, const gnss_data* data);
 
 bool gnss_fix_acquired();
 
-void gnss_get_latest_data(struct gnss_data* out_data);
+void gnss_get_latest_data(gnss_data* out_data);
 
 void gnss_populate_lora_payload(lora_payload_t* payload);
 

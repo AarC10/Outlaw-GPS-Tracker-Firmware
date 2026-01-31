@@ -21,6 +21,20 @@ LOG_MODULE_REGISTER(state_machine);
 static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
+static void transmitter_entry(void*);
+static void receiver_entry(void*);
+static void receiver_exit(void*);
+static enum smf_state_result check_for_transition(void*);
+
+enum demo_state { transmitter, receiver };
+
+
+static const struct smf_state states[] = {
+    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
+    [receiver] = SMF_CREATE_STATE(receiver_entry, check_for_transition, receiver_exit, NULL, NULL),
+};
+
+
 static void tx_timer_handler(struct k_timer* timer_id) {
     uint8_t node_id = POINTER_TO_UINT(k_timer_user_data_get(timer_id));
 
@@ -40,9 +54,6 @@ static void tx_timer_handler(struct k_timer* timer_id) {
 
 K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 
-static const struct smf_state states[];
-
-enum demo_state { transmitter, receiver };
 
 struct s_object {
     struct smf_ctx ctx;
@@ -90,11 +101,6 @@ static void receiver_exit(void*) {
     lora_await_cancel();
 }
 
-static const struct smf_state states[] = {
-    [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
-    [receiver] = SMF_CREATE_STATE(receiver_entry, check_for_transition, receiver_exit, NULL, NULL),
-};
-
 void state_machine_init(const uint8_t node_id) {
     k_timer_user_data_set(&tx_timer, UINT_TO_POINTER(node_id));
 
@@ -104,6 +110,7 @@ void state_machine_init(const uint8_t node_id) {
     smf_set_initial(SMF_CTX(&smf_obj), &states[transmitter]);
 #endif
 }
+
 
 int state_machine_run() {
     const int32_t ret = smf_run_state(SMF_CTX(&smf_obj));
