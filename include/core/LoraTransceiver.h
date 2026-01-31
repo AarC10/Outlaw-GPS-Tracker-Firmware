@@ -70,15 +70,16 @@ public:
     bool setCallsign(const HamCallsign &callsign);
 
     /**
-     *
+     * Set the node ID for transmission
      * @param id Node ID to set for transmission
+     * @return Whether setting the node ID was successful
      */
-    void setNodeId(uint8_t id);
+    bool setNodeId(uint8_t id);
 
 private:
     HamCallsign *callsignPtr = nullptr;
     std::array<uint8_t, 256> txBuffer;
-    uint8_t startIndex = 0;
+    uint8_t txBuffPayloadStartIndex = 0;
 
     /**
      * Initialize the LoRa modem
@@ -117,4 +118,6 @@ private:
     bool is433MHzBand() const {
         return (config.frequency >= 410'000'000 && config.frequency <= 450'000'000);
     }
+
+    bool updateTxBufferHeader();
 };

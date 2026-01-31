@@ -177,9 +177,30 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
 
 bool LoraTransceiver::setCallsign(const HamCallsign &callsign) {
     callsignPtr = const_cast<HamCallsign*>(&callsign);
-    return true;
+    return updateTxBufferHeader();
 }
 
-void LoraTransceiver::setNodeId(uint8_t id) {
+bool LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
+    return updateTxBufferHeader();
+}
+
+bool LoraTransceiver::updateTxBufferHeader() {
+    txBuffPayloadStartIndex = 0;
+    if (is433MHzBand()) {
+        if (callsignPtr && callsignPtr->isValid()) {
+            const auto& chunks = callsignPtr->encodedChunks();
+            const size_t chunkCount = chunks.size();
+            for (txBuffPayloadStartIndex = 0; txBuffPayloadStartIndex < chunkCount; ++txBuffPayloadStartIndex) {
+                txBuffer[txBuffPayloadStartIndex] = static_cast<uint8_t>((chunks[txBuffPayloadStartIndex] >> 8) & 0xFF);
+            }
+        } else {
+            LOG_ERR("Invalid callsign for 433MHz band transmission");
+            return false;
+        }
+    }
+
+    txBuffer[txBuffPayloadStartIndex++] = nodeId;
+
+    return true;
 }
