@@ -25,18 +25,18 @@ static const gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static void transmitter_entry(void*);
 static void receiver_entry(void*);
 static void receiver_exit(void*);
-static enum smf_state_result check_for_transition(void*);
+static smf_state_result check_for_transition(void*);
 
 enum demo_state { transmitter, receiver };
 
 
-static const struct smf_state states[] = {
+static const smf_state states[] = {
     [transmitter] = SMF_CREATE_STATE(transmitter_entry, check_for_transition, NULL, NULL, NULL),
     [receiver] = SMF_CREATE_STATE(receiver_entry, check_for_transition, receiver_exit, NULL, NULL),
 };
 
 
-static void tx_timer_handler(struct k_timer* timer_id) {
+static void tx_timer_handler(k_timer* timer_id) {
     const uint8_t node_id = POINTER_TO_UINT(k_timer_user_data_get(timer_id));
 
     static std::array<uint8_t, sizeof(lora_payload_t) + 1> payload{};
@@ -57,10 +57,10 @@ K_TIMER_DEFINE(tx_timer, tx_timer_handler, NULL);
 
 
 struct s_object {
-    struct smf_ctx ctx;
+    smf_ctx ctx;
 } smf_obj;
 
-static enum smf_state_result check_for_transition(void*) {
+static smf_state_result check_for_transition(void*) {
     static int last_pin_state = -1;
     const int current_pin_state = gpio_pin_get_dt(&dip0);
     LOG_DBG("Pin state: %d", current_pin_state);

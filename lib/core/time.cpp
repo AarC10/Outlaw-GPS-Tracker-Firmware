@@ -10,7 +10,7 @@ LOG_MODULE_REGISTER(time);
 
 static std::atomic<uint32_t> gps_seconds{0};
 
-static void time_pps_callback(const struct device* dev, struct gpio_callback* cb, uint32_t pins) {
+static void time_pps_callback(const device* dev, gpio_callback* cb, uint32_t pins) {
     LOG_INF("PPS");
     gps_seconds.fetch_add(1, std::memory_order_relaxed);
 }
