@@ -1,20 +1,22 @@
 #include "core/time.h"
 
+#include <atomic>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 
 LOG_MODULE_REGISTER(time);
 
-static volatile uint32_t gps_seconds = 0;
+static std::atomic<uint32_t> gps_seconds{0};
 
 static void time_pps_callback(const struct device* dev, struct gpio_callback* cb, uint32_t pins) {
     LOG_INF("PPS");
-    gps_seconds++;
+    gps_seconds.fetch_add(1, std::memory_order_relaxed);
 }
 
-int time_setup_pps(const struct gpio_dt_spec* pps) {
-    static struct gpio_callback pps_cb;
+int time_setup_pps(const gpio_dt_spec* pps) {
+    static gpio_callback pps_cb;
 
     if (!pps || !pps->port) {
         LOG_ERR("Invalid PPS gpio_dt_spec");
@@ -50,5 +52,5 @@ int time_setup_pps(const struct gpio_dt_spec* pps) {
 }
 
 uint32_t time_get_gps_seconds() {
-    return gps_seconds;
+    return gps_seconds.load(std::memory_order_relaxed);
 }

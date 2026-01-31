@@ -1,5 +1,6 @@
 #include "state_machine.h"
 
+#include <array>
 #include <core/lora.h>
 #include <core/gnss.h>
 
@@ -9,17 +10,17 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/smf.h>
 
-#define TRANSMITTER_LOGIC_LEVEL 0
-#define TRANSMITTER_LED_LEVEL 0
+static constexpr int TRANSMITTER_LOGIC_LEVEL = 0;
+static constexpr int TRANSMITTER_LED_LEVEL = 0;
 
-#define RECEIVER_LOGIC_LEVEL 1
-#define RECEIVER_LED_LEVEL 1
+static constexpr int RECEIVER_LOGIC_LEVEL = 1;
+static constexpr int RECEIVER_LED_LEVEL = 1;
 
 LOG_MODULE_REGISTER(state_machine);
 
 
-static const struct gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+static const gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
+static const gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 static void transmitter_entry(void*);
 static void receiver_entry(void*);
@@ -36,15 +37,15 @@ static const struct smf_state states[] = {
 
 
 static void tx_timer_handler(struct k_timer* timer_id) {
-    uint8_t node_id = POINTER_TO_UINT(k_timer_user_data_get(timer_id));
+    const uint8_t node_id = POINTER_TO_UINT(k_timer_user_data_get(timer_id));
 
-    static uint8_t payload[sizeof(lora_payload_t) + 1] = {0};
+    static std::array<uint8_t, sizeof(lora_payload_t) + 1> payload{};
     payload[0] = node_id;
-    lora_payload_t* lora_payload = (lora_payload_t*)&payload[1];
+    auto* lora_payload = reinterpret_cast<lora_payload_t*>(&payload[1]);
 
     if (gnss_fix_acquired()) {
         gnss_populate_lora_payload(lora_payload);
-        lora_tx(payload, sizeof(lora_payload_t) + 1);
+        lora_tx(payload.data(), payload.size());
     } else {
         LOG_INF("Sending NOFIX");
         lora_send_no_fix_payload(node_id);

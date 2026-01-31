@@ -1,25 +1,33 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
-#define NOFIX "NOFIX"
-// +1 for node id
-#define NOFIX_PACKET_SIZE 6
+#include <stdint.h>
+#include <stddef.h>
 
-typedef struct __attribute__((__packed__)) {
-    float latitude;
-    float longitude;
-    uint8_t satellites_cnt;
-    uint8_t fix_status;
-} lora_payload_t;
+namespace core {
 
-// TODO: Increases payload size which means we go past 7 byte limit for
-// less than 1 second TX time. need to determine if this is worth
-typedef struct __attribute__((__packed__)) {
-    uint8_t  version;        // 0x01
-    uint8_t  origin_id;      // who created the GPS info (node_id)
-    uint8_t  hop_count;      // times relayed
-    // max hops?
-    lora_payload_t payload;  // 7 bytes
-} lora_frame_t;
+constexpr char NOFIX[] = "NOFIX";
+constexpr size_t NOFIX_PACKET_SIZE = 6; // includes node_id prefix
 
-#endif //TYPES_H
+#pragma pack(push, 1)
+struct LoraPayload {
+    float latitude {0.0f};
+    float longitude {0.0f};
+    uint8_t satellites_cnt {0};
+    uint8_t fix_status {0};
+};
+
+struct LoraFrame {
+    uint8_t version {0x01};
+    uint8_t origin_id {0};
+    uint8_t hop_count {0};
+    LoraPayload payload {};
+};
+#pragma pack(pop)
+
+} // namespace core
+
+// Backwards-compatible aliases for existing C-style code
+inline constexpr auto NOFIX = core::NOFIX;
+inline constexpr size_t NOFIX_PACKET_SIZE = core::NOFIX_PACKET_SIZE;
+using lora_payload_t = core::LoraPayload;
+using lora_frame_t = core::LoraFrame;

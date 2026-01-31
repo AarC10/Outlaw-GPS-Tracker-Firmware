@@ -1,11 +1,15 @@
 #include "core/lora.h"
 #include "core/defs.h"
 
+#include <array>
+#include <cstring>
+#include <stdint.h>
+#include <stddef.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/lora.h>
 #include <zephyr/drivers/gnss.h>
-#include <stdbool.h>
 
 #include "gnss/gnss_parse.h"
 
@@ -13,7 +17,7 @@ LOG_MODULE_REGISTER(lora);
 
 static const struct device* lora_dev = DEVICE_DT_GET(DT_ALIAS(lora));
 
-static struct lora_modem_config lora_configuration = {
+static lora_modem_config lora_configuration {
     .frequency = 903000000,
     .bandwidth = BW_125_KHZ,
     .datarate = SF_12,
@@ -28,19 +32,20 @@ static struct lora_modem_config lora_configuration = {
 
 void lora_receive_callback(const struct device* dev, uint8_t* data, uint16_t size, int16_t rssi, int8_t snr,
                            void* user_data) {
-    if (lora_configuration.tx) return;
-    uint8_t node_id = data[0];
+    if (lora_configuration.tx || !data || size == 0) return;
+
+    const uint8_t node_id = data[0];
     data++;
     size--;
 
     LOG_INF("Node %u (%d bytes | %d dBm | %d dB):", node_id, size, rssi, snr);
     switch (size) {
     case sizeof(lora_payload_t): {
-        lora_payload_t payload;
-        memcpy(&payload, data, sizeof(payload));
+        lora_payload_t payload{};
+        std::memcpy(&payload, data, sizeof(payload));
         LOG_INF("\tNode ID: %u", node_id);
-        LOG_INF("\tLatitude: %f", (double)payload.latitude);
-        LOG_INF("\tLongitude: %f", (double)payload.longitude);
+        LOG_INF("\tLatitude: %f", static_cast<double>(payload.latitude));
+        LOG_INF("\tLongitude: %f", static_cast<double>(payload.longitude));
         LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
         switch (payload.fix_status) {
             case GNSS_FIX_STATUS_NO_FIX:
@@ -76,7 +81,7 @@ bool lora_is_tx() {
 
 bool lora_set_tx() {
     lora_configuration.tx = true;
-    int ret = lora_config(lora_dev, &lora_configuration);
+    const int ret = lora_config(lora_dev, &lora_configuration);
     if (ret != 0) {
         LOG_ERR("LoRa configuration failed %d", ret);
         return false;
@@ -86,7 +91,7 @@ bool lora_set_tx() {
 
 bool lora_set_rx() {
     lora_configuration.tx = false;
-    int ret = lora_config(lora_dev, &lora_configuration);
+    const int ret = lora_config(lora_dev, &lora_configuration);
     if (ret != 0) {
         LOG_ERR("LoRa configuration failed %d", ret);
         return false;
@@ -103,7 +108,7 @@ bool lora_init() {
 
     LOG_INF("LoRa device name: %s, addr: %p", lora_dev->name ? lora_dev->name : "UNKNOWN", lora_dev);
 
-    int ret = lora_config(lora_dev, &lora_configuration);
+    const int ret = lora_config(lora_dev, &lora_configuration);
     if (ret != 0) {
         LOG_ERR("LoRa configuration failed, rc=%d", ret);
         return false;
@@ -121,7 +126,12 @@ bool lora_init() {
 }
 
 bool lora_tx(uint8_t* data, uint32_t data_len) {
-    if (lora_send_async(lora_dev, data, data_len, NULL) != 0) {
+    if (!data || data_len == 0) {
+        LOG_ERR("LoRa send called with empty payload");
+        return false;
+    }
+
+    if (lora_send_async(lora_dev, data, data_len, nullptr) != 0) {
         LOG_ERR("LoRa send failed");
         return false;
     }
@@ -130,24 +140,28 @@ bool lora_tx(uint8_t* data, uint32_t data_len) {
 }
 
 bool lora_send_no_fix_payload(uint8_t node_id) {
-    uint8_t packet[NOFIX_PACKET_SIZE] = {0};
+    std::array<uint8_t, NOFIX_PACKET_SIZE> packet{};
     packet[0] = node_id;
-    memcpy(&packet[1], NOFIX, strlen(NOFIX));
-    return lora_tx(packet, NOFIX_PACKET_SIZE);
+    std::memcpy(&packet[1], NOFIX, strlen(NOFIX));
+    return lora_tx(packet.data(), static_cast<uint32_t>(packet.size()));
 }
 
 bool lora_send_gnss_payload(uint8_t node_id, const struct gnss_data* gnss_data) {
-    uint8_t packet[sizeof(lora_payload_t) + 1] = {0};
+    if (!gnss_data) {
+        LOG_ERR("GNSS data null, cannot send");
+        return false;
+    }
+
+    std::array<uint8_t, sizeof(lora_payload_t) + 1> packet{};
     packet[0] = node_id;
 
-    lora_payload_t *payload = (lora_payload_t*)&packet[1];
-
-    payload->latitude = (float)gnss_data->nav_data.latitude / 1E9f;
-    payload->longitude = (float)gnss_data->nav_data.longitude / 1E9f;
+    auto* payload = reinterpret_cast<lora_payload_t*>(&packet[1]);
+    payload->latitude = static_cast<float>(gnss_data->nav_data.latitude) / 1E9f;
+    payload->longitude = static_cast<float>(gnss_data->nav_data.longitude) / 1E9f;
     payload->satellites_cnt = gnss_data->info.satellites_cnt;
     payload->fix_status = gnss_data->info.fix_status;
 
-    return lora_tx((uint8_t*)&payload, sizeof(payload));
+    return lora_tx(packet.data(), static_cast<uint32_t>(packet.size()));
 }
 
 int lora_await_rx_packet() {
@@ -156,7 +170,7 @@ int lora_await_rx_packet() {
         return -1;
     }
 
-    if (lora_recv_async(lora_dev, lora_receive_callback, NULL) != 0) {
+    if (lora_recv_async(lora_dev, lora_receive_callback, nullptr) != 0) {
         LOG_ERR("LoRa async receive setup failed");
         return -1;
     }
@@ -165,7 +179,7 @@ int lora_await_rx_packet() {
 }
 
 int lora_await_cancel() {
-    if (lora_recv_async(lora_dev, NULL, NULL) != 0) {
+    if (lora_recv_async(lora_dev, nullptr, nullptr) != 0) {
         LOG_ERR("LoRa async cancel setup failed");
     }
 
