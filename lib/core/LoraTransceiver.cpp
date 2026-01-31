@@ -16,6 +16,10 @@ static void loraReceiveCallback(const device* dev, uint8_t* data, uint16_t size,
     }
 }
 
+LoraTransceiver::LoraTransceiver(const uint8_t nodeId) : nodeId(nodeId) {
+    init();
+};
+
 LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const lora_modem_config& config) : nodeId(nodeId), config(config) {
     init();
 }
@@ -26,6 +30,21 @@ bool LoraTransceiver::txNoFixPayload() {
 
 bool LoraTransceiver::txGnssPayload() {
     // TODO: Update with GNSS class usage
+    // if (!gnss_data) {
+    //     LOG_ERR("GNSS data null, cannot send");
+    //     return false;
+    // }
+    //
+    // std::array<uint8_t, sizeof(lora_payload_t) + 1> packet{};
+    // packet[0] = node_id;
+    //
+    // auto* payload = reinterpret_cast<lora_payload_t*>(&packet[1]);
+    // payload->latitude = static_cast<float>(gnss_data->nav_data.latitude) / 1E9f;
+    // payload->longitude = static_cast<float>(gnss_data->nav_data.longitude) / 1E9f;
+    // payload->satellites_cnt = gnss_data->info.satellites_cnt;
+    // payload->fix_status = gnss_data->info.fix_status;
+    //
+    // return lora_tx(packet.data(), static_cast<uint32_t>(packet.size()));
     return false;
 }
 
@@ -119,11 +138,11 @@ bool LoraTransceiver::setRx() {
 
 bool LoraTransceiver::init() {
     if (!device_is_ready(dev)) {
-        LOG_ERR("LoRa device not ready (dev ptr %p)", lora_dev);
+        LOG_ERR("LoRa device not ready (dev ptr %p)", dev);
         return false;
     }
 
-    LOG_INF("LoRa device name: %s, addr: %p", lora_dev->name ? lora_dev->name : "UNKNOWN", lora_dev);
+    LOG_INF("LoRa device name: %s, addr: %p", dev->name ? dev->name : "UNKNOWN", dev);
 
     const int ret = lora_config(dev, &config);
     if (ret != 0) {

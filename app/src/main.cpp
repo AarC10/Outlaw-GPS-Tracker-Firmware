@@ -10,7 +10,6 @@
 #include <zephyr/drivers/lora.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <core/lora.h>
 #include <core/time.h>
 #include <core/defs.h>
 #include <core/tdma.h>
@@ -30,13 +29,12 @@ int main() {
     }
 
     uint8_t node_id = 0;
-    state_machine_init(node_id);
-    lora_init();
+    StateMachine sm(node_id);
     time_setup_pps(&pps_spec);
 
 
     while (true) {
-        const int ret = state_machine_run();
+        const int ret = sm.run();
         if (ret != 0) {
             LOG_ERR("state_machine_run returned %d", ret);
             k_sleep(K_SECONDS(1));
@@ -47,4 +45,3 @@ int main() {
 
     return 0;
 }
-

@@ -1,5 +1,4 @@
 #include "core/gnss.h"
-#include "core/lora.h"
 
 #include <atomic>
 #include <cstring>
