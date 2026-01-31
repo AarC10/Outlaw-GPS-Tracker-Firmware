@@ -10,6 +10,7 @@ constexpr size_t NOFIX_PACKET_SIZE = 6; // includes node_id prefix
 
 #pragma pack(push, 1)
 struct LoraPayload {
+
     float latitude {0.0f};
     float longitude {0.0f};
     uint8_t satellites_cnt {0};
