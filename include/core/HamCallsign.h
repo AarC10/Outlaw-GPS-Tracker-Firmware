@@ -25,6 +25,13 @@ public:
     bool set(std::string_view callsign);
 
     /**
+     * Get the raw callsign string
+     * @return Raw callsign string
+     */
+     [[nodiscard]] std::string_view getRaw() const;
+
+
+    /**
      * Check if the callsign is valid
      * @return  True if the callsign is valid, false otherwise
      */

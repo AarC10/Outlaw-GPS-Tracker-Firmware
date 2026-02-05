@@ -14,6 +14,10 @@ bool HamCallsign::set(std::string_view callsign) {
     return valid;
 }
 
+std::string_view HamCallsign::getRaw() const {
+    return raw;
+}
+
 std::uint8_t HamCallsign::encodeChar(char character) {
     if (character >= 'A' && character <= 'Z') {
         return static_cast<std::uint8_t>(1 + (character - 'A'));
