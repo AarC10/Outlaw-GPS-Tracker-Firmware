@@ -9,8 +9,12 @@ HamCallsign::HamCallsign(std::string_view callsign) {
 }
 
 bool HamCallsign::set(std::string_view callsign) {
-    raw = std::string(callsign);
     valid = validateAndEncode(callsign);
+    if (valid) {
+        raw = callsign;
+    } else {
+        raw = {};
+    }
     return valid;
 }
 
