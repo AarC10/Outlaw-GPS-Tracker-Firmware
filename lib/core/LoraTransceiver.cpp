@@ -177,7 +177,7 @@ void LoraTransceiver::setNodeId(uint8_t id) {
 void LoraTransceiver::printGnssPayload(const uint8_t* data) const {
     GnssInfo payload{};
     std::memcpy(&payload, data, sizeof(payload));
-    LOG_INF("\tNode ID: %u", node_id);
+    LOG_INF("\tNode ID: %u", nodeId);
     LOG_INF("\tLatitude: %f", static_cast<double>(payload.latitude));
     LOG_INF("\tLongitude: %f", static_cast<double>(payload.longitude));
     LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
