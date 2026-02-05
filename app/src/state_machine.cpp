@@ -36,7 +36,11 @@ StateMachine::StateMachine(const uint8_t nodeId) :  lora(nodeId), nodeId(nodeId)
 }
 
 void StateMachine::handleTxTimer() {
-    lora.txGnssPayload();
+    if (gnssReceiver.isFixAcquired()) {
+        lora.txGnssPayload(gnssReceiver.getLatestData());
+    } else {
+        lora.txNoFixPayload();
+    }
 }
 
 int StateMachine::run() {

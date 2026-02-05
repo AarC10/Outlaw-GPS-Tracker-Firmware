@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <zephyr/kernel.h>
 
+#include "core/GnssReceiver.h"
 #include "core/LoraTransceiver.h"
 
 class StateMachine {
@@ -23,6 +24,7 @@ private:
     int checkForTransition();
 
     LoraTransceiver lora;
+    GnssReceiver gnssReceiver;
     k_timer txTimer{};
     uint8_t nodeId{};
     int lastPinSate{-1};
