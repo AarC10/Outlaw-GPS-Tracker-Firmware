@@ -7,13 +7,12 @@
 #include <string_view>
 
 class HamCallsign {
-private:
+public:
     static constexpr std::size_t maxLength = 12;
     static constexpr std::size_t charsPerChunk = 3;
     static constexpr std::size_t chunkCount = 4;
     using ChunkArray = std::array<std::uint16_t, chunkCount>;
 
-public:
     HamCallsign() = default;
 
     explicit HamCallsign(std::string_view callsign);
@@ -64,6 +63,7 @@ public:
     static bool decodeChunks(const ChunkArray& chunks, std::string& out_callsign);
 
 private:
+    std::string raw{};
     std::string normalized {};
     ChunkArray chunks {};
     bool valid {false};

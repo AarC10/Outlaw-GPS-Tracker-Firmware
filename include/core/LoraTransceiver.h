@@ -77,10 +77,6 @@ public:
     bool setNodeId(uint8_t id);
 
 private:
-    HamCallsign *callsignPtr = nullptr;
-    std::array<uint8_t, 256> txBuffer;
-    uint8_t txBuffPayloadStartIndex = 0;
-
     /**
      * Initialize the LoRa modem
      * @return Initialization success
@@ -118,6 +114,4 @@ private:
     bool is433MHzBand() const {
         return (config.frequency >= 410'000'000 && config.frequency <= 450'000'000);
     }
-
-    bool updateTxBufferHeader();
 };
