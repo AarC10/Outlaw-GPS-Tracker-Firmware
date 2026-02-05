@@ -86,36 +86,25 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
 
     LOG_INF("Node %u (%d bytes | %d dBm | %d dB):", node_id, size, rssi, snr);
     switch (size) {
-    case sizeof(lora_payload_t): {
-        lora_payload_t payload{};
-        std::memcpy(&payload, data, sizeof(payload));
-        LOG_INF("\tNode ID: %u", node_id);
-        LOG_INF("\tLatitude: %f", static_cast<double>(payload.latitude));
-        LOG_INF("\tLongitude: %f", static_cast<double>(payload.longitude));
-        LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
-        switch (payload.fix_status) {
-        case GNSS_FIX_STATUS_NO_FIX:
-            LOG_INF("\tFix status: NO FIX");
-            break;
-        case GNSS_FIX_STATUS_GNSS_FIX:
-            LOG_INF("\tFix status: FIX");
-            break;
-        case GNSS_FIX_STATUS_DGNSS_FIX:
-            LOG_INF("\tFix status: DIFF FIX");
-            break;
-        case GNSS_FIX_STATUS_ESTIMATED_FIX:
-            LOG_INF("\tFix status: EST FIX");
-            break;
-        default:
-            LOG_INF("\tFIX status: UNKNOWN");
-            break;
-        }
+    case sizeof(GnssInfo): {
+        printGnssPayload(data);
         break;
     }
     case NOFIX_PACKET_SIZE:
         LOG_INF("\tNo fix acquired!");
         break;
     default:
+        if (is433MHzBand() && size == MAX_PAYLOAD_SIZE - NODE_ID_SIZE) {
+            printGnssPayload(&data[0]);
+
+            char callsignBuffer[CALLSIGN_CHAR_COUNT + 1]{};
+            std::memcpy(callsignBuffer, &data[GNSS_INFO_SIZE], CALLSIGN_CHAR_COUNT);
+            callsignBuffer[CALLSIGN_CHAR_COUNT] = '\0';
+            LOG_INF("\tCallsign: %s", callsignBuffer);
+            break;
+        }
+
+
         LOG_INF("\tReceived data: %s", data);
         break;
     }
@@ -183,4 +172,30 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
 
 void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
+}
+
+void LoraTransceiver::printGnssPayload(const uint8_t* data) const {
+    GnssInfo payload{};
+    std::memcpy(&payload, data, sizeof(payload));
+    LOG_INF("\tNode ID: %u", node_id);
+    LOG_INF("\tLatitude: %f", static_cast<double>(payload.latitude));
+    LOG_INF("\tLongitude: %f", static_cast<double>(payload.longitude));
+    LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
+    switch (payload.fix_status) {
+    case GNSS_FIX_STATUS_NO_FIX:
+        LOG_INF("\tFix status: NO FIX");
+        break;
+    case GNSS_FIX_STATUS_GNSS_FIX:
+        LOG_INF("\tFix status: FIX");
+        break;
+    case GNSS_FIX_STATUS_DGNSS_FIX:
+        LOG_INF("\tFix status: DIFF FIX");
+        break;
+    case GNSS_FIX_STATUS_ESTIMATED_FIX:
+        LOG_INF("\tFix status: EST FIX");
+        break;
+    default:
+        LOG_INF("\tFIX status: UNKNOWN");
+        break;
+    }
 }

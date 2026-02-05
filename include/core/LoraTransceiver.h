@@ -119,4 +119,10 @@ private:
     bool is433MHzBand() const {
         return (config.frequency >= 410'000'000 && config.frequency <= 450'000'000);
     }
+
+    /**
+     * Prints the GNSS payload for receiving
+     * @param data Pointer to the GNSS payload data
+     */
+    void printGnssPayload(const uint8_t* data) const;
 };
