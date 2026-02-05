@@ -3,14 +3,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-namespace core {
-
-constexpr uint8_t NOFIX[] = "NOFIX";
-constexpr size_t NOFIX_PACKET_SIZE = 6; // includes node_id prefix
-
 #pragma pack(push, 1)
-struct LoraPayload {
-
+struct GnssInfo {
     float latitude {0.0f};
     float longitude {0.0f};
     uint8_t satellites_cnt {0};
@@ -21,13 +15,14 @@ struct LoraFrame {
     uint8_t version {0x01};
     uint8_t origin_id {0};
     uint8_t hop_count {0};
-    LoraPayload payload {};
+    GnssInfo payload {};
 };
 #pragma pack(pop)
 
-} // namespace core
+inline constexpr uint8_t NOFIX[] = "NOFIX";
+inline constexpr size_t NOFIX_PACKET_SIZE = 6;
+inline constexpr size_t CALLSIGN_CHAR_COUNT = 6;
+inline constexpr size_t GNSS_INFO_SIZE = sizeof(GnssInfo);
+inline constexpr size_t NODE_ID_SIZE = 1;
+inline constexpr size_t MAX_PAYLOAD_SIZE = NODE_ID_SIZE + GNSS_INFO_SIZE + CALLSIGN_CHAR_COUNT;
 
-inline constexpr auto NOFIX = core::NOFIX;
-inline constexpr size_t NOFIX_PACKET_SIZE = core::NOFIX_PACKET_SIZE;
-using lora_payload_t = core::LoraPayload;
-using lora_frame_t = core::LoraFrame;

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "HamCallsign.h"
+#include "zephyr/drivers/gnss.h"
 
 class LoraTransceiver {
 public:
@@ -19,9 +20,10 @@ public:
 
     /**
      * Transmit GNSS payload
+     * @param gnssData GNSS data to transmit
      * @return Whether transmission was successful
      */
-    bool txGnssPayload();
+    bool txGnssPayload(const gnss_data& gnssData);
 
     /**
      * Setup asynchronous reception
@@ -72,17 +74,10 @@ public:
     /**
      * Set the node ID for transmission
      * @param id Node ID to set for transmission
-     * @return Whether setting the node ID was successful
      */
-    bool setNodeId(uint8_t id);
+    void setNodeId(uint8_t id);
 
 private:
-    /**
-     * Initialize the LoRa modem
-     * @return Initialization success
-     */
-    bool init();
-
     lora_modem_config config {
         .frequency = 903000000,
         .bandwidth = BW_125_KHZ,
@@ -94,6 +89,16 @@ private:
         .iq_inverted = false,
         .public_network = false,
     };
+
+    HamCallsign callsign;
+
+    /**
+     * Initialize the LoRa modem
+     * @return Initialization success
+     */
+    bool init();
+
+
 
     const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
     uint8_t nodeId;

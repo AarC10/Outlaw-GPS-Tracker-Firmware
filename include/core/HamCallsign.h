@@ -30,6 +30,11 @@ public:
      */
      [[nodiscard]] std::string_view getRaw() const;
 
+    /**
+     * Get the length
+     * @return Length of the raw callsign
+     */
+    [[nodiscard]] std::size_t rawLength() const { return raw.size(); }
 
     /**
      * Check if the callsign is valid
@@ -53,7 +58,7 @@ public:
      * Get the length of the normalized callsign
      * @return Length of the callsign
      */
-    [[nodiscard]] std::size_t length() const { return normalized.size(); }
+    [[nodiscard]] std::size_t encodedLength() const { return normalized.size(); }
 
     /**
      * Decode the encoded callsign back to string

@@ -28,24 +28,30 @@ bool LoraTransceiver::txNoFixPayload() {
     return tx(const_cast<uint8_t*>(NOFIX), NOFIX_PACKET_SIZE);
 }
 
-bool LoraTransceiver::txGnssPayload() {
-    // TODO: Update with GNSS class usage
-    // if (!gnss_data) {
-    //     LOG_ERR("GNSS data null, cannot send");
-    //     return false;
-    // }
-    //
-    // std::array<uint8_t, sizeof(lora_payload_t) + 1> packet{};
-    // packet[0] = node_id;
-    //
-    // auto* payload = reinterpret_cast<lora_payload_t*>(&packet[1]);
-    // payload->latitude = static_cast<float>(gnss_data->nav_data.latitude) / 1E9f;
-    // payload->longitude = static_cast<float>(gnss_data->nav_data.longitude) / 1E9f;
-    // payload->satellites_cnt = gnss_data->info.satellites_cnt;
-    // payload->fix_status = gnss_data->info.fix_status;
-    //
-    // return lora_tx(packet.data(), static_cast<uint32_t>(packet.size()));
-    return false;
+bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
+    std::array<uint8_t, MAX_PAYLOAD_SIZE> packet{};
+    packet[0] = nodeId;
+
+    auto* payload = reinterpret_cast<GnssInfo*>(&packet[1]);
+    payload->latitude = static_cast<float>(gnssData.nav_data.latitude) / 1E9f;
+    payload->longitude = static_cast<float>(gnssData.nav_data.longitude) / 1E9f;
+    payload->satellites_cnt = gnssData.info.satellites_cnt;
+    payload->fix_status = gnssData.info.fix_status;
+
+
+    if (is433MHzBand()) {
+        if (!callsign.isValid()) {
+            return false;
+        }
+
+        const size_t callsignLength = std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT);
+
+        for (size_t callsignIndex = 0; callsignIndex < callsignLength; callsignIndex++) {
+            packet[NODE_ID_SIZE + GNSS_INFO_SIZE + callsignIndex] = static_cast<uint8_t>(callsign.getRaw()[callsignIndex]);
+        }
+    }
+
+    return tx(packet.data(), NODE_ID_SIZE + GNSS_INFO_SIZE + (is433MHzBand() ? CALLSIGN_CHAR_COUNT : 0));
 }
 
 int LoraTransceiver::awaitRxPacket() {
@@ -175,32 +181,6 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
     return true;
 }
 
-bool LoraTransceiver::setCallsign(const HamCallsign &callsign) {
-    callsignPtr = const_cast<HamCallsign*>(&callsign);
-    return updateTxBufferHeader();
-}
-
-bool LoraTransceiver::setNodeId(uint8_t id) {
+void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
-    return updateTxBufferHeader();
-}
-
-bool LoraTransceiver::updateTxBufferHeader() {
-    txBuffPayloadStartIndex = 0;
-    if (is433MHzBand()) {
-        if (callsignPtr && callsignPtr->isValid()) {
-            const auto& chunks = callsignPtr->encodedChunks();
-            const size_t chunkCount = chunks.size();
-            for (txBuffPayloadStartIndex = 0; txBuffPayloadStartIndex < chunkCount; ++txBuffPayloadStartIndex) {
-                txBuffer[txBuffPayloadStartIndex] = static_cast<uint8_t>((chunks[txBuffPayloadStartIndex] >> 8) & 0xFF);
-            }
-        } else {
-            LOG_ERR("Invalid callsign for 433MHz band transmission");
-            return false;
-        }
-    }
-
-    txBuffer[txBuffPayloadStartIndex++] = nodeId;
-
-    return true;
 }
