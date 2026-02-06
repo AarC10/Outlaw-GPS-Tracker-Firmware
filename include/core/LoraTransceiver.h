@@ -91,17 +91,14 @@ private:
     };
 
     HamCallsign callsign;
+    const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
+    uint8_t nodeId;
 
     /**
      * Initialize the LoRa modem
      * @return Initialization success
      */
     bool init();
-
-
-
-    const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
-    uint8_t nodeId;
 
     /**
      * Transmit data
