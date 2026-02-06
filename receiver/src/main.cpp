@@ -6,7 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/drivers/lora.h>
 #include <zephyr/logging/log_ctrl.h>
 
 #include "core/LoraTransceiver.h"
