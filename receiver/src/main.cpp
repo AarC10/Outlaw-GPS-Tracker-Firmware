@@ -9,15 +9,14 @@
 #include <zephyr/drivers/lora.h>
 #include <zephyr/logging/log_ctrl.h>
 
-#include <core/lora.h>
+#include "core/LoraTransceiver.h"
 
 
 LOG_MODULE_REGISTER(main);
 
 int main(void) {
-    lora_init();
-    lora_set_rx();
-    lora_await_rx_packet();
+    LoraTransceiver lora(0);
+    lora.awaitRxPacket();
 
     while (true) {
 
