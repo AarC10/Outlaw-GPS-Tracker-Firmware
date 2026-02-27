@@ -81,7 +81,7 @@ private:
     lora_modem_config config {
         .frequency = 903000000,
         .bandwidth = BW_125_KHZ,
-        .datarate = SF_12,
+        .datarate = SF_10,
         .coding_rate = CR_4_5,
         .preamble_len = 8,
         .tx_power = 20,
