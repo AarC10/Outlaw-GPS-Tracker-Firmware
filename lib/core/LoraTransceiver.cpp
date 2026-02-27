@@ -78,25 +78,15 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
 
     LOG_INF("Node %u (%d bytes | %d dBm | %d dB):", node_id, size, rssi, snr);
     switch (size) {
-    case sizeof(GnssInfo): {
-        printGnssPayload(data);
+    case sizeof(LoraFrame): {
+        const auto frame = reinterpret_cast<LoraFrame*>(data);
+        parseLoraFrame(*frame);
         break;
     }
     case NOFIX_PACKET_SIZE:
         LOG_INF("\tNo fix acquired!");
         break;
     default:
-        if (is433MHzBand() && size == MAX_PAYLOAD_SIZE - NODE_ID_SIZE) {
-            printGnssPayload(&data[0]);
-
-            char callsignBuffer[CALLSIGN_CHAR_COUNT + 1]{};
-            std::memcpy(callsignBuffer, &data[GNSS_INFO_SIZE], CALLSIGN_CHAR_COUNT);
-            callsignBuffer[CALLSIGN_CHAR_COUNT] = '\0';
-            LOG_INF("\tCallsign: %s", callsignBuffer);
-            break;
-        }
-
-
         LOG_INF("\tReceived data: %s", data);
         break;
     }
