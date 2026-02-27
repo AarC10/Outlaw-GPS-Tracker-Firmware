@@ -33,6 +33,8 @@ StateMachine::StateMachine(const uint8_t nodeId) :  lora(nodeId), nodeId(nodeId)
     currentState = State::Transmitter;
     enterTransmitter();
 #endif
+
+    setGnssReciever(&gnssReceiver);
 }
 
 void StateMachine::handleTxTimer() {
