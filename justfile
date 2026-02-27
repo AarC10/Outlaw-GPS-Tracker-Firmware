@@ -3,11 +3,11 @@ default:
     @just --list
 
 # Build outlaw gen3 firmware into builds/outlaw
-build-outlaw:
+outlaw:
     west build -b outlaw_gen3 app -p auto --build-dir builds/outlaw
 
 # Build deputy receiver firmware into builds/deputy
-build-deputy:
+deputy:
     west build -b deputy receiver -p auto --build-dir builds/deputy
 
 # Flash with ST-Link
