@@ -2,3 +2,9 @@ config CORE
   bool "Core"
   help
     This option enables core functionality for tracker software
+
+config LICENSED_FREQUENCY
+  bool "Licensed Frequency"
+  depends on CORE
+  help
+    This option enables callsigns prepended to each packet.

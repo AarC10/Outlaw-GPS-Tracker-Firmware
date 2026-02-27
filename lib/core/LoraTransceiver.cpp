@@ -35,7 +35,6 @@ bool LoraTransceiver::txNoFixPayload() {
 bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
     std::array<uint8_t, MAX_PAYLOAD_SIZE> packet{};
     packet[0] = nodeId;
-
     auto* payload = reinterpret_cast<GnssInfo*>(&packet[1]);
     payload->latitude = static_cast<float>(gnssData.nav_data.latitude) / 1E9f;
     payload->longitude = static_cast<float>(gnssData.nav_data.longitude) / 1E9f;

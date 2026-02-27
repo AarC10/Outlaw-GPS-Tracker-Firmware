@@ -5,6 +5,9 @@
 
 #pragma pack(push, 1)
 struct GnssInfo {
+#ifdef CONFIG_LICENSED_FREQUENCY
+    char callsign[CALLSIGN_CHAR_COUNT]{0};
+#endif
     float latitude {0.0f};
     float longitude {0.0f};
     uint8_t satellites_cnt {0};
@@ -19,9 +22,15 @@ struct LoraFrame {
 };
 #pragma pack(pop)
 
+#ifdef CONFIG_LICENSED_FREQUENCY
+inline constexpr size_t CALLSIGN_CHAR_COUNT = 6;
+inline constexpr size_t NODE_ID_START_INDEX = CALLSIGN_CHAR_COUNT;
+#else
+inline constexpr size_t CALLSIGN_CHAR_COUNT = 0;
+inline constexpr size_t NODE_ID_START_INDEX = 0;
+#endif
 inline constexpr uint8_t NOFIX[] = "NOFIX";
 inline constexpr size_t NOFIX_PACKET_SIZE = 6;
-inline constexpr size_t CALLSIGN_CHAR_COUNT = 6;
 inline constexpr size_t GNSS_INFO_SIZE = sizeof(GnssInfo);
 inline constexpr size_t NODE_ID_SIZE = 1;
 inline constexpr size_t MAX_PAYLOAD_SIZE = NODE_ID_SIZE + GNSS_INFO_SIZE + CALLSIGN_CHAR_COUNT;
