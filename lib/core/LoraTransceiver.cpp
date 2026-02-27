@@ -20,8 +20,8 @@ static int32_t nanoToMilli(const int64_t nano) {
     return static_cast<uint32_t>(nano / 1'000'000);
 }
 
-static float milliToDeg(const uint32_t milli) {
-    return static_cast<float>(milli) / 1'000'000.0f;
+static double milliToDeg(const uint32_t milli) {
+    return static_cast<double>(milli) / 1'000'000.0f;
 }
 
 LoraTransceiver::LoraTransceiver(const uint8_t nodeId) : nodeId(nodeId) {
