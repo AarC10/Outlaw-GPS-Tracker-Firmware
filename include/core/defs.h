@@ -15,8 +15,8 @@ inline constexpr uint8_t NOFIX[] = "NOFIX";
 
 #pragma pack(push, 1)
 struct GnssInfo {
-    float latitude {0.0f};
-    float longitude {0.0f};
+    int32_t latitude {0};
+    int32_t longitude {0};
     uint8_t satellites_cnt {0};
     uint8_t fix_status {0};
 };
