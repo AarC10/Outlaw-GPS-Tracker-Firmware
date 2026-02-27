@@ -7,6 +7,8 @@
 #include "HamCallsign.h"
 #include "zephyr/drivers/gnss.h"
 
+struct LoraFrame;
+
 class LoraTransceiver {
 public:
     LoraTransceiver(const uint8_t nodeId);
@@ -121,8 +123,8 @@ private:
     }
 
     /**
-     * Prints the GNSS payload for receiving
-     * @param data Pointer to the GNSS payload data
+     * Prints the contents of a LoRa frame
+     * @param frame LoRa frame containing the data to print
      */
-    void printGnssPayload(const uint8_t* data) const;
+    void parseLoraFrame(const LoraFrame& frame) const;
 };

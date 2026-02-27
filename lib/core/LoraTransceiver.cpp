@@ -166,14 +166,15 @@ void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
 }
 
-void LoraTransceiver::printGnssPayload(const uint8_t* data) const {
-    GnssInfo payload{};
-    std::memcpy(&payload, data, sizeof(payload));
-    LOG_INF("\tNode ID: %u", nodeId);
-    LOG_INF("\tLatitude: %f", static_cast<double>(payload.latitude));
-    LOG_INF("\tLongitude: %f", static_cast<double>(payload.longitude));
-    LOG_INF("\tSatellites count: %u", payload.satellites_cnt);
-    switch (payload.fix_status) {
+void LoraTransceiver::parseLoraFrame(const LoraFrame& frame) const {
+#ifdef CONFIG_LICENSED_FREQUENCY
+    LOG_INF("\tCallsign: %.*s", CALLSIGN_CHAR_COUNT, frame.callsign);
+#endif
+    LOG_INF("\tNode ID: %u", frame.node_id);
+    LOG_INF("\tLatitude: %f", static_cast<double>(frame.gnssInfo.latitude));
+    LOG_INF("\tLongitude: %f", static_cast<double>(frame.gnssInfo.longitude));
+    LOG_INF("\tSatellites count: %u", frame.gnssInfo.satellites_cnt);
+    switch (frame.gnssInfo.fix_status) {
     case GNSS_FIX_STATUS_NO_FIX:
         LOG_INF("\tFix status: NO FIX");
         break;
