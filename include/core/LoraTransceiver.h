@@ -90,7 +90,10 @@ private:
         .public_network = false,
     };
 
+#ifdef CONFIG_LICENSED_FREQUENCY
     HamCallsign callsign;
+#endif
+
     const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
     uint8_t nodeId;
 

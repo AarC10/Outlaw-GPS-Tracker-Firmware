@@ -33,28 +33,15 @@ bool LoraTransceiver::txNoFixPayload() {
 }
 
 bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
-    std::array<uint8_t, MAX_PAYLOAD_SIZE> packet{};
-    packet[0] = nodeId;
-    auto* payload = reinterpret_cast<GnssInfo*>(&packet[1]);
-    payload->latitude = static_cast<float>(gnssData.nav_data.latitude) / 1E9f;
-    payload->longitude = static_cast<float>(gnssData.nav_data.longitude) / 1E9f;
-    payload->satellites_cnt = gnssData.info.satellites_cnt;
-    payload->fix_status = gnssData.info.fix_status;
+    LoraFrame packet{};
 
+#ifdef CONFIG_LICENSED_FREQUENCY
+    memcpy(&packet.callsign, callsign.getRaw().data(), std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT));
+#endif
+    packet.node_id = nodeId;
+    memcpy(&packet.gnssInfo, &gnssData, sizeof(gnss_info));
 
-    if (is433MHzBand()) {
-        if (!callsign.isValid()) {
-            return false;
-        }
-
-        const size_t callsignLength = std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT);
-
-        for (size_t callsignIndex = 0; callsignIndex < callsignLength; callsignIndex++) {
-            packet[NODE_ID_SIZE + GNSS_INFO_SIZE + callsignIndex] = static_cast<uint8_t>(callsign.getRaw()[callsignIndex]);
-        }
-    }
-
-    return tx(packet.data(), NODE_ID_SIZE + GNSS_INFO_SIZE + (is433MHzBand() ? CALLSIGN_CHAR_COUNT : 0));
+    return tx(reinterpret_cast<uint8_t*>(&packet), sizeof(packet));
 }
 
 int LoraTransceiver::awaitRxPacket() {

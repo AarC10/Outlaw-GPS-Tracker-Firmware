@@ -19,7 +19,7 @@ struct LoraFrame {
 #endif
     uint8_t version {0x01};
     uint8_t node_id {0};
-    GnssInfo payload {};
+    GnssInfo gnssInfo {};
 };
 #pragma pack(pop)
 
