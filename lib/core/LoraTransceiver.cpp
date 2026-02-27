@@ -25,11 +25,13 @@ LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const lora_modem_config& 
 }
 
 bool LoraTransceiver::txNoFixPayload() {
-    std::array<uint8_t, NOFIX_PACKET_SIZE> packet{};
-    packet[0] = nodeId;
-    memcpy(&packet[1], NOFIX, NOFIX_PACKET_SIZE - 1);
+    NoFixFrame packet{};
+#ifdef CONFIG_LICENSED_FREQUENCY
+    memcpy(&packet.callsign, callsign.getRaw().data(), std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT));
+#endif
+    packet.node_id = nodeId;
 
-    return tx(packet.data(), packet.size());
+    return tx(reinterpret_cast<uint8_t*>(&packet), sizeof(packet));
 }
 
 bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
