@@ -1,0 +1,50 @@
+name: Firmware Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: zephyrprojectrtos/ci:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: outlaw-firmware
+
+      - name: West Init
+        working-directory: outlaw-firmware
+        run: west init -l .
+
+      - name: West Update
+        working-directory: outlaw-firmware
+        run: west update
+
+      - name: Build outlaw_gen3
+        working-directory: outlaw-firmware
+        run: |
+          west build -b outlaw_gen3 app -p always --build-dir builds/outlaw
+          cp builds/outlaw/zephyr/zephyr.bin outlaw_gen3.bin
+          cp builds/outlaw/zephyr/zephyr.hex outlaw_gen3.hex
+
+      - name: Build deputy
+        working-directory: outlaw-firmware
+        run: |
+          west build -b deputy receiver -p always --build-dir builds/deputy
+          cp builds/deputy/zephyr/zephyr.bin deputy.bin
+          cp builds/deputy/zephyr/zephyr.hex deputy.hex
+
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            outlaw-firmware/outlaw_gen3.bin
+            outlaw-firmware/outlaw_gen3.hex
+            outlaw-firmware/deputy.bin
+            outlaw-firmware/deputy.hex
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
