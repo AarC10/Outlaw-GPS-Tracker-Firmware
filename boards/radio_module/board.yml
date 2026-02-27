@@ -1,5 +1,0 @@
-board:
-  name: radio_module
-  vendor: launch
-  socs:
-    - name: stm32f446xx
