@@ -84,21 +84,17 @@ int LoraTransceiver::awaitCancel() {
 void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi, int8_t snr) {
     if (config.tx || !data || size == 0) return;
 
-    const uint8_t node_id = data[0];
-    data++;
-    size--;
-
-    LOG_INF("Node %u (%d bytes | %d dBm | %d dB):", node_id, size, rssi, snr);
     switch (size) {
     case sizeof(LoraFrame): {
         const auto frame = reinterpret_cast<LoraFrame*>(data);
-        parseLoraFrame(*frame);
+        parseLoraFrame(*frame, size, rssi, snr);
         break;
     }
     case NOFIX_PACKET_SIZE:
         LOG_INF("\tNo fix acquired!");
         break;
     default:
+        LOG_INF("(%d bytes | %d dBm | %d dB):", size, rssi, snr);
         LOG_INF("\tReceived data: %s", data);
         break;
     }
@@ -168,11 +164,12 @@ void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
 }
 
-void LoraTransceiver::parseLoraFrame(const LoraFrame& frame) const {
+void LoraTransceiver::parseLoraFrame(const LoraFrame& frame, const size_t size, const int16_t rssi, const int8_t snr) const {
+    LOG_INF("Node %d: (%d bytes | %d dBm | %d dB):", frame.node_id, size, rssi, snr);
+
 #ifdef CONFIG_LICENSED_FREQUENCY
     LOG_INF("\tCallsign: %.*s", CALLSIGN_CHAR_COUNT, frame.callsign);
 #endif
-    LOG_INF("\tNode ID: %u", frame.node_id);
     LOG_INF("\tLatitude: %f", milliToDeg(frame.gnssInfo.latitude));
     LOG_INF("\tLongitude: %f", milliToDeg(frame.gnssInfo.longitude));
     LOG_INF("\tSatellites count: %u", frame.gnssInfo.satellites_cnt);

@@ -126,5 +126,6 @@ private:
      * Prints the contents of a LoRa frame
      * @param frame LoRa frame containing the data to print
      */
-    void parseLoraFrame(const LoraFrame& frame) const;
+    void parseLoraFrame(const LoraFrame& frame, const size_t size, const int16_t rssi, const int8_t snr) const;
+
 };
