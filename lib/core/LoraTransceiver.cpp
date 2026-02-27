@@ -20,7 +20,7 @@ static int32_t nanoToMilli(const int64_t nano) {
     return static_cast<int32_t>(nano / 1'000'000);
 }
 
-static double milliToDeg(const uint32_t milli) {
+static double milliToDeg(const int32_t milli) {
     return static_cast<double>(milli) / 1'000.0;
 }
 
