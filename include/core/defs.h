@@ -5,19 +5,20 @@
 
 #pragma pack(push, 1)
 struct GnssInfo {
-#ifdef CONFIG_LICENSED_FREQUENCY
-    char callsign[CALLSIGN_CHAR_COUNT]{0};
-#endif
     float latitude {0.0f};
     float longitude {0.0f};
     uint8_t satellites_cnt {0};
     uint8_t fix_status {0};
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 struct LoraFrame {
+#ifdef CONFIG_LICENSED_FREQUENCY
+    char callsign[CALLSIGN_CHAR_COUNT]{0};
+#endif
     uint8_t version {0x01};
-    uint8_t origin_id {0};
-    uint8_t hop_count {0};
+    uint8_t node_id {0};
     GnssInfo payload {};
 };
 #pragma pack(pop)
