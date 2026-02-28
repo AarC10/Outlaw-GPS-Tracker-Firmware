@@ -88,11 +88,20 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
         parseLoraFrame(*frame, size, rssi, snr);
         break;
     }
-    case NOFIX_PACKET_SIZE:
+    case NOFIX_PACKET_SIZE: {
+        const auto frame = reinterpret_cast<NoFixFrame*>(data);
+        LOG_INF("Node %d: (%d bytes | %d dBm | %d dB):", frame->node_id, size, rssi, snr);
+#ifdef CONFIG_LICENSED_FREQUENCY
+        LOG_INF("\tCallsign: %.*s", CALLSIGN_CHAR_COUNT, frame->callsign);
+#endif
         LOG_INF("\tNo fix acquired!");
         break;
+    }
     default:
         LOG_INF("(%d bytes | %d dBm | %d dB):", size, rssi, snr);
+#ifdef CONFIG_LICENSED_FREQUENCY
+        LOG_INF("\tCallsign: %.*s", CALLSIGN_CHAR_COUNT, data);
+#endif
         LOG_INF("\tReceived data: %s", data);
         break;
     }
@@ -159,6 +168,13 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
         LOG_ERR("LoRa send called with empty payload");
         return false;
     }
+
+#ifdef CONFIG_LICENSED_FREQUENCY
+    if (callsign.getRaw().empty()) {
+        LOG_ERR("Callsign not set, cannot transmit on licensed frequency");
+        return false;
+    }
+#endif
 
     if (lora_send_async(dev, data, data_len, nullptr) != 0) {
         LOG_ERR("LoRa send failed");

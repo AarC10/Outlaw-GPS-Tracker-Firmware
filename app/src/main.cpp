@@ -37,9 +37,11 @@ int main() {
     const char callsignBuff[Settings::CALLSIGN_LEN] = {};
     Settings::getCallsign(const_cast<char*>(callsignBuff));
     const HamCallsign callsign(callsignBuff);
+    StateMachine sm(nodeId, freqMHz, callsign);
+#else
+    StateMachine sm(nodeId, freqMHz);
 #endif
 
-    StateMachine sm(nodeId, freqMHz, callsign);
     time_setup_pps(&pps_spec);
 
     while (true) {
