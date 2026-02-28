@@ -87,12 +87,16 @@ public:
 
 private:
     lora_modem_config config {
+#ifdef CONFIG_LICENSED_FREQUENCY
+        .frequency = 435000000,
+#else
         .frequency = 903000000,
+#endif
         .bandwidth = BW_125_KHZ,
         .datarate = SF_10,
         .coding_rate = CR_4_5,
         .preamble_len = 8,
-        .tx_power = 20,
+        .tx_power = 2,
         .tx = false,
         .iq_inverted = false,
         .public_network = false,

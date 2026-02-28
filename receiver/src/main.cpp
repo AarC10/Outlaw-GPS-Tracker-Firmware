@@ -17,7 +17,11 @@ LOG_MODULE_REGISTER(main);
 int main(void) {
     Settings::load();
     // float freqMHz = static_cast<float>(OutlawSettings::getFrequency()) / 1'000'000;
-    float freqMhz = 903.0;
+#ifdef CONFIG_LICENSED_FREQUENCY
+    float freqMhz = 435.0f;
+#else
+    float freqMhz = 903.0f;
+#endif
     LoraTransceiver lora(0, freqMhz);
     lora.awaitRxPacket();
 
