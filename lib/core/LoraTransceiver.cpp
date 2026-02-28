@@ -58,6 +58,8 @@ bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
     packet.gnssInfo.longitude = nanoToMilli(gnssData.nav_data.longitude);
     packet.gnssInfo.satellites_cnt = static_cast<uint8_t>(gnssData.info.satellites_cnt);
     packet.gnssInfo.fix_status = gnssData.info.fix_status;
+
+
     return tx(reinterpret_cast<uint8_t*>(&packet), sizeof(packet));
 }
 
@@ -101,47 +103,40 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
         LOG_INF("\tReceived data: %s", data);
         break;
     }
+
 }
 
 bool LoraTransceiver::setTx() {
-    k_mutex_lock(&loraLock, K_FOREVER);
     config.tx = true;
     const int ret = lora_config(dev, &config);
-    k_mutex_unlock(&loraLock);
     if (ret != 0) {
-        LOG_ERR("LoRa setTx config failed: %d", ret);
+        LOG_ERR("LoRa configuration failed %d", ret);
         return false;
     }
     return true;
-}
+};
 
 bool LoraTransceiver::setRx() {
-    k_mutex_lock(&loraLock, K_FOREVER);
     config.tx = false;
     const int ret = lora_config(dev, &config);
-    k_mutex_unlock(&loraLock);
     if (ret != 0) {
-        LOG_ERR("LoRa setRx config failed: %d", ret);
+        LOG_ERR("LoRa configuration failed %d", ret);
         return false;
     }
     return true;
-}
+};
 
 bool LoraTransceiver::setFrequency(uint32_t frequency) {
-    k_mutex_lock(&loraLock, K_FOREVER);
     config.frequency = frequency;
     const int ret = lora_config(dev, &config);
-    k_mutex_unlock(&loraLock);
     if (ret != 0) {
-        LOG_ERR("LoRa setFrequency config failed: %d", ret);
+        LOG_ERR("LoRa configuration failed %d", ret);
         return false;
     }
     return true;
-}
+};
 
 bool LoraTransceiver::init() {
-    k_mutex_init(&loraLock);
-
     if (!device_is_ready(dev)) {
         LOG_ERR("LoRa device not ready (dev ptr %p)", dev);
         return false;
@@ -178,12 +173,8 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
         return false;
     }
 
-    k_mutex_lock(&loraLock, K_FOREVER);
-    const int ret = lora_send_async(dev, data, data_len, nullptr);
-    k_mutex_unlock(&loraLock);
-
-    if (ret != 0) {
-        LOG_ERR("LoRa send failed: %d", ret);
+    if (lora_send_async(dev, data, data_len, nullptr) != 0) {
+        LOG_ERR("LoRa send failed");
         return false;
     }
     LOG_INF("Transmitted %u bytes over LoRa", data_len);

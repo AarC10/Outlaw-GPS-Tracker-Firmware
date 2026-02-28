@@ -14,26 +14,15 @@
 
 LOG_MODULE_REGISTER(main);
 
-static LoraTransceiver *loraPtr = nullptr;
-
 int main(void) {
     OutlawSettings::load();
 
-    static LoraTransceiver lora(0, OutlawSettings::getFrequency());
-    loraPtr = &lora;
-
-    OutlawSettings::setFrequencyChangedCallback([](uint32_t f) {
-        if (loraPtr) {
-            loraPtr->awaitCancel();
-            loraPtr->setFrequency(f);
-            loraPtr->awaitRxPacket();
-        }
-    });
-
+    LoraTransceiver lora(0);
+    lora.setFrequency(OutlawSettings::getFrequency());
     lora.awaitRxPacket();
 
     while (true) {
-        k_sleep(K_FOREVER);
+
     }
 
     return 0;

@@ -2,7 +2,6 @@
 
 #include <array>
 #include <zephyr/drivers/lora.h>
-#include <zephyr/kernel.h>
 #include <stdint.h>
 
 #include "HamCallsign.h"
@@ -107,7 +106,6 @@ private:
 #endif
 
     const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));
-    k_mutex loraLock{};
     uint8_t nodeId;
 
     /**
