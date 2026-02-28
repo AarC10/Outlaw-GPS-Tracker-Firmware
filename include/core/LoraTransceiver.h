@@ -12,7 +12,7 @@ struct LoraFrame;
 class LoraTransceiver {
 public:
     LoraTransceiver(const uint8_t nodeId);
-    LoraTransceiver(const uint8_t nodeId, const float frequencyMHz);
+    LoraTransceiver(const uint8_t nodeId, const uint32_t frequencyHz);
     LoraTransceiver(const uint8_t nodeId, const lora_modem_config &config);
 
     /**
@@ -74,12 +74,13 @@ public:
      */
     bool setFrequency(uint32_t frequency);
 
+#ifdef CONFIG_LICENSED_FREQUENCY
     /**
      * Set the callsign for transmission to be used for licensed bands
      * @param callsign Set the callsign for transmission if on licensed band
-     * @return Whether setting the callsign was successful
      */
-    bool setCallsign(const HamCallsign &callsign);
+    void setCallsign(const HamCallsign &callsign);
+#endif
 
     /**
      * Set the node ID for transmission

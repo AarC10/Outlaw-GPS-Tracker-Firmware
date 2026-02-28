@@ -22,6 +22,8 @@
 LOG_MODULE_REGISTER(main);
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnssCallback);
 
+static StateMachine* smPtr = nullptr;
+
 int main() {
     static const gpio_dt_spec pps_spec = GPIO_DT_SPEC_GET(DT_ALIAS(pps), gpios);
     static const gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
@@ -29,10 +31,15 @@ int main() {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
-    uint8_t nodeId = 0;
-
     OutlawSettings::load();
-    StateMachine sm(nodeId, OutlawSettings::getFrequency());
+
+    static StateMachine sm(OutlawSettings::getNodeId(), OutlawSettings::getFrequency());
+    smPtr = &sm;
+
+    OutlawSettings::setFrequencyChangedCallback([](uint32_t f) { smPtr->applyFrequency(f); });
+    OutlawSettings::setCallsignChangedCallback([](const char* cs, int len) { smPtr->applyCallsign(cs, len); });
+    OutlawSettings::setNodeIdChangedCallback([](uint8_t id) { smPtr->applyNodeId(id); });
+
     time_setup_pps(&pps_spec);
 
     while (true) {

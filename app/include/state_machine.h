@@ -8,14 +8,14 @@
 
 class StateMachine {
 public:
-#ifdef CONFIG_LICENSED_FREQUENCY
-    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0, const HamCallsign& callsign = HamCallsign());
-#else
-    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0);
-#endif
+    explicit StateMachine(uint8_t nodeId, uint32_t frequencyHz = 903000000U);
     void handleTxTimer();
 
     int run();
+
+    void applyFrequency(uint32_t frequencyHz);
+    void applyCallsign(const char* cs, int len);
+    void applyNodeId(uint8_t id);
 
 private:
     enum class State { Transmitter, Receiver };
