@@ -90,9 +90,10 @@ void LoraTransceiver::receiveCallback(uint8_t *data, uint16_t size, int16_t rssi
     }
     case NOFIX_PACKET_SIZE: {
         const auto frame = reinterpret_cast<NoFixFrame*>(data);
-        LOG_INF("Node %d: (%d bytes | %d dBm | %d dB):", frame->node_id, size, rssi, snr);
 #ifdef CONFIG_LICENSED_FREQUENCY
-        LOG_INF("\tCallsign: %.*s", CALLSIGN_CHAR_COUNT, frame->callsign);
+        LOG_INF("%.6s-%d: (%d bytes | %d dBm | %d dB):", frame->callsign, frame->node_id, size, rssi, snr);
+#else
+        LOG_INF("Node %d: (%d bytes | %d dBm | %d dB):", frame->node_id, size, rssi, snr);
 #endif
         LOG_INF("\tNo fix acquired!");
         break;
