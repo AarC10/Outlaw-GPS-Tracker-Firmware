@@ -97,7 +97,7 @@ private:
         .datarate = SF_10,
         .coding_rate = CR_4_5,
         .preamble_len = 8,
-        .tx_power = 2,
+        .tx_power = 20,
         .tx = false,
         .iq_inverted = false,
         .public_network = false,

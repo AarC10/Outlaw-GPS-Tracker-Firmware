@@ -144,7 +144,14 @@ static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
 
 static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     const size_t len = strlen(argv[1]);
-    if (len == 0 || len > (size_t)Settings::CALLSIGN_LEN) {
+    if (len < 4) {
+        shell_warn(sh, "Callsigns must be at least 4 characters. Assuming no callsign and suspending transmission upon reboot.");
+        const int ret = Settings::saveCallsign("");
+        if (ret != 0) {
+            shell_error(sh, "Save failed: %d", ret);
+        }
+        return ret;
+    } else if (len > (size_t)Settings::CALLSIGN_LEN) {
         shell_error(sh, "Callsign must be 1-%d characters", Settings::CALLSIGN_LEN);
         return -EINVAL;
     }
