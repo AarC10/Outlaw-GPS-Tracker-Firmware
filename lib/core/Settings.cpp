@@ -19,7 +19,9 @@
 LOG_MODULE_REGISTER(Settings);
 
 static uint32_t CONFIGURED_FREQUENCY = Settings::DEFAULT_FREQUENCY;
+#ifdef CONFIG_LICENSED_FREQUENCY
 static char CONFIGURED_CALLSIGN[Settings::CALLSIGN_LEN] = {};
+#endif
 static uint8_t CONFIGURED_NODE_ID = Settings::DEFAULT_NODE_ID;
 
 static int settings_set_handler(const char *name, size_t len,
