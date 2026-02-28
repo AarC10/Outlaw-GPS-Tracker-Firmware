@@ -22,7 +22,8 @@ static void txTimerCallback(struct k_timer* timer) {
     }
 }
 
-StateMachine::StateMachine(const uint8_t nodeId) :  lora(nodeId), nodeId(nodeId) {
+#ifdef CONFIG_LICENSED_FREQUENCY
+StateMachine(uint8_t nodeId, const float frequencyMHz, const HamCallsign& callsign = HamCallsign()) :  lora(nodeId), nodeId(nodeId), callsign(callsign) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
 
@@ -36,6 +37,26 @@ StateMachine::StateMachine(const uint8_t nodeId) :  lora(nodeId), nodeId(nodeId)
 
     setGnssReciever(&gnssReceiver);
 }
+
+#else
+
+StateMachine::StateMachine(const uint8_t nodeId, const float frequencyMhz) :  lora(nodeId, frequencyMhz), nodeId(nodeId) {
+    k_timer_init(&txTimer, txTimerCallback, nullptr);
+    k_timer_user_data_set(&txTimer, this);
+
+#ifdef CONFIG_DEFAULT_RECEIVE_MODE
+    currentState = State::Receiver;
+    enterReceiver();
+#else
+    currentState = State::Transmitter;
+    enterTransmitter();
+#endif
+
+    setGnssReciever(&gnssReceiver);
+}
+
+#endif
+
 
 void StateMachine::handleTxTimer() {
     if (gnssReceiver.isFixAcquired()) {

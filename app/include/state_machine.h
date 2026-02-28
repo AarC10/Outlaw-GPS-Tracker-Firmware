@@ -8,8 +8,11 @@
 
 class StateMachine {
 public:
-    explicit StateMachine(uint8_t nodeId);
-
+#ifdef CONFIG_LICENSED_FREQUENCY
+    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0, const HamCallsign& callsign = HamCallsign());
+#else
+    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0);
+#endif
     void handleTxTimer();
 
     int run();

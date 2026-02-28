@@ -34,9 +34,6 @@ int main() {
 
     OutlawSettings::load();
 
-    LoraTransceiver lora(nodeId);
-    lora.setFrequency(OutlawSettings::getFrequency());
-
     StateMachine sm(nodeId);
     time_setup_pps(&pps_spec);
 

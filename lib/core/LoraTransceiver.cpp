@@ -28,6 +28,11 @@ LoraTransceiver::LoraTransceiver(const uint8_t nodeId) : nodeId(nodeId) {
     init();
 };
 
+LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const float frequencyMHz) : nodeId(nodeId) {
+    config.frequency = static_cast<uint32_t>(frequencyMHz * 1'000'000);
+    init();
+}
+
 LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const lora_modem_config& config) : config(config), nodeId(nodeId) {
     init();
 }

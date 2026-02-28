@@ -12,6 +12,7 @@ struct LoraFrame;
 class LoraTransceiver {
 public:
     LoraTransceiver(const uint8_t nodeId);
+    LoraTransceiver(const uint8_t nodeId, const float frequencyMHz);
     LoraTransceiver(const uint8_t nodeId, const lora_modem_config &config);
 
     /**
