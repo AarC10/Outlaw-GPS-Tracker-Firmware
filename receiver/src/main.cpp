@@ -16,8 +16,9 @@ LOG_MODULE_REGISTER(main);
 
 int main(void) {
     Settings::load();
-    float freqMHz = static_cast<float>(Settings::getFrequency()) / 1'000'000;
-    LoraTransceiver lora(0, freqMHz);
+    // float freqMHz = static_cast<float>(OutlawSettings::getFrequency()) / 1'000'000;
+    float freqMhz = 903.0;
+    LoraTransceiver lora(0, freqMhz);
     lora.awaitRxPacket();
 
     while (true) {
