@@ -20,6 +20,8 @@ public:
 private:
     enum class State { Transmitter, Receiver };
 
+    static void txWorkHandler(struct k_work* work);
+
     void enterTransmitter();
     void enterReceiver();
     void exitReceiver();
@@ -29,6 +31,7 @@ private:
     LoraTransceiver lora;
     GnssReceiver gnssReceiver;
     k_timer txTimer{};
+    k_work txWork{};
     uint8_t nodeId{};
     int lastPinSate{-1};
     State currentState{State::Transmitter};

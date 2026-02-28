@@ -20,15 +20,19 @@ static const gpio_dt_spec dip0 = GPIO_DT_SPEC_GET(DT_ALIAS(dip0), gpios);
 static const gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 static void txTimerCallback(struct k_timer* timer) {
-    if (auto* sm = static_cast<StateMachine*>(k_timer_user_data_get(timer))) {
-        sm->handleTxTimer();
-    }
+    StateMachine* sm = static_cast<StateMachine*>(k_timer_user_data_get(timer));
+    if (sm) k_work_submit(&sm->txWork);
+}
+
+void StateMachine::txWorkHandler(struct k_work* work) {
+    CONTAINER_OF(work, StateMachine, txWork)->handleTxTimer();
 }
 
 StateMachine::StateMachine(const uint8_t nodeId, const uint32_t frequencyHz)
     : lora(nodeId, frequencyHz), nodeId(nodeId) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
+    k_work_init(&txWork, txWorkHandler);
 
 #ifdef CONFIG_LICENSED_FREQUENCY
     char cs[OutlawSettings::CALLSIGN_LEN] = {};
