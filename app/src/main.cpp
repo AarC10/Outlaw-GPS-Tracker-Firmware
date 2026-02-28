@@ -14,7 +14,6 @@
 #include <core/defs.h>
 #include <core/tdma.h>
 #include <core/LoraTransceiver.h>
-#include <core/HamCallsign.h>
 #include "state_machine.h"
 #include <core/GnssReceiver.h>
 #include <core/Settings.h>
@@ -34,9 +33,9 @@ int main() {
     const uint32_t freqHz = Settings::getFrequency();
     const float freqMHz = static_cast<float>(freqHz) / 1'000'000;
 #ifdef CONFIG_LICENSED_FREQUENCY
-    const char callsignBuff[Settings::CALLSIGN_LEN] = {};
-    Settings::getCallsign(const_cast<char*>(callsignBuff));
-    const HamCallsign callsign(callsignBuff);
+    const char callsign[Settings::CALLSIGN_LEN] = {};
+    Settings::getCallsign(const_cast<char*>(callsign));
+    LOG_INF("Callsign: %.6s", callsign);
     StateMachine sm(nodeId, freqMHz, callsign);
 #else
     StateMachine sm(nodeId, freqMHz);

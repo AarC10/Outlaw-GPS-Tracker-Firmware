@@ -4,7 +4,6 @@
 #include <zephyr/drivers/lora.h>
 #include <stdint.h>
 
-#include "HamCallsign.h"
 #include "zephyr/drivers/gnss.h"
 
 struct LoraFrame;
@@ -72,12 +71,14 @@ public:
      */
     bool setFrequency(uint32_t frequency);
 
+#ifdef CONFIG_LICENSED_FREQUENCY
     /**
      * Set the callsign for transmission to be used for licensed bands
      * @param callsign Set the callsign for transmission if on licensed band
-     * @return Whether setting the callsign was successful
      */
-    bool setCallsign(const HamCallsign &callsign);
+    void setCallsign(const char *callsign);
+
+#endif
 
     /**
      * Set the node ID for transmission
@@ -103,7 +104,7 @@ private:
     };
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-    HamCallsign callsign;
+    const char* callsign;
 #endif
 
     const device* dev = DEVICE_DT_GET(DT_ALIAS(lora));

@@ -33,7 +33,7 @@ LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const float frequencyMHz)
 bool LoraTransceiver::txNoFixPayload() {
     NoFixFrame packet{};
 #ifdef CONFIG_LICENSED_FREQUENCY
-    memcpy(&packet.callsign, callsign.getRaw().data(), std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT));
+    memcpy(&packet.callsign, callsign, std::min(strlen(callsign), CALLSIGN_CHAR_COUNT));
 #endif
     packet.node_id = nodeId;
 
@@ -44,7 +44,7 @@ bool LoraTransceiver::txGnssPayload(const gnss_data& gnssData) {
     LoraFrame packet{};
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-    memcpy(&packet.callsign, callsign.getRaw().data(), std::min(callsign.rawLength(), CALLSIGN_CHAR_COUNT));
+    memcpy(&packet.callsign, callsign, std::min(strlen(callsign), CALLSIGN_CHAR_COUNT));
 #endif
     packet.node_id = nodeId;
     packet.gnssInfo.latitude = nanoToMilli(gnssData.nav_data.latitude);
@@ -170,7 +170,7 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
     }
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-    if (callsign.getRaw().empty()) {
+    if (strnlen(callsign, CALLSIGN_CHAR_COUNT) == 0) {
         LOG_ERR("Callsign not set, cannot transmit on licensed frequency");
         return false;
     }
@@ -182,6 +182,10 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
     }
     LOG_INF("Transmitted %u bytes over LoRa", data_len);
     return true;
+}
+
+void LoraTransceiver::setCallsign(const char* callsign) {
+    this->callsign = callsign;
 }
 
 void LoraTransceiver::setNodeId(uint8_t id) {

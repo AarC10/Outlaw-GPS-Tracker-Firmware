@@ -23,9 +23,10 @@ static void txTimerCallback(struct k_timer* timer) {
 }
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-StateMachine::StateMachine(uint8_t nodeId, const float frequencyMHz, const HamCallsign& callsign) :  callsign(callsign), lora(nodeId, frequencyMHz), nodeId(nodeId) {
+StateMachine::StateMachine(uint8_t nodeId, const float frequencyMHz, const char* callsign) :  callsign(callsign), lora(nodeId, frequencyMHz), nodeId(nodeId) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
+    lora.setCallsign(callsign);
 
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     currentState = State::Receiver;

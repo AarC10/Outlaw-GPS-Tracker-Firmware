@@ -9,7 +9,7 @@
 class StateMachine {
 public:
 #ifdef CONFIG_LICENSED_FREQUENCY
-    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0, const HamCallsign& callsign = HamCallsign());
+    explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0, const char callsign[6] = "");
 #else
     explicit StateMachine(uint8_t nodeId, const float frequencyMHz = 903.0);
 #endif
@@ -27,7 +27,7 @@ private:
     int checkForTransition();
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-    HamCallsign callsign;
+    const char* callsign;
 #endif
     LoraTransceiver lora;
     GnssReceiver gnssReceiver;
