@@ -30,7 +30,6 @@ int main() {
     }
 
     uint8_t nodeId = 0;
-
     OutlawSettings::load();
     StateMachine sm(nodeId, OutlawSettings::getFrequency());
     time_setup_pps(&pps_spec);
