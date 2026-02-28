@@ -54,7 +54,7 @@ int load() {
         LOG_ERR("settings_subsys_init failed: %d", ret);
         return ret;
     }
-    ret = settings_load_subtree("outlaw");
+    ret = settings_load_subtree("config");
     if (ret != 0) {
         LOG_ERR("settings_load_subtree failed: %d", ret);
     }
@@ -62,7 +62,7 @@ int load() {
 }
 
 uint32_t getFrequency() {
-    LOG_INF("Loaded frequency: %u Hz", CONFIGURED_FREQUENCY);
+    LOG_INF("Loaded frequency: %f MHz", static_cast<double>(CONFIGURED_FREQUENCY) / 1'000'000);
     return CONFIGURED_FREQUENCY;
 }
 
@@ -72,18 +72,18 @@ void getCallsign(char out[CALLSIGN_LEN]) {
 
 int saveFrequency(uint32_t frequency) {
     CONFIGURED_FREQUENCY = frequency;
-    const int ret = settings_save_one("outlaw/freq", &frequency, sizeof(frequency));
+    const int ret = settings_save_one("config/freq", &frequency, sizeof(frequency));
     if (ret != 0) {
-        LOG_ERR("settings_save_one(outlaw/freq) failed: %d", ret);
+        LOG_ERR("settings_save_one(config/freq) failed: %d", ret);
     }
     return ret;
 }
 
 int saveCallsign(const char callsign[CALLSIGN_LEN]) {
     memcpy(CONFIGURED_CALLSIGN, callsign, CALLSIGN_LEN);
-    const int ret = settings_save_one("outlaw/cs", callsign, CALLSIGN_LEN);
+    const int ret = settings_save_one("config/cs", callsign, CALLSIGN_LEN);
     if (ret != 0) {
-        LOG_ERR("settings_save_one(outlaw/cs) failed: %d", ret);
+        LOG_ERR("settings_save_one(config/cs) failed: %d", ret);
     }
     return ret;
 }
@@ -95,9 +95,9 @@ uint8_t getNodeId() {
 int saveNodeId(uint8_t nodeId) {
     if (nodeId < 1 || nodeId > 10) return -EINVAL;
     CONFIGURED_NODE_ID = nodeId;
-    const int ret = settings_save_one("outlaw/nid", &nodeId, sizeof(nodeId));
+    const int ret = settings_save_one("config/nid", &nodeId, sizeof(nodeId));
     if (ret != 0) {
-        LOG_ERR("settings_save_one(outlaw/nid) failed: %d", ret);
+        LOG_ERR("settings_save_one(config/nid) failed: %d", ret);
     }
     return ret;
 }
@@ -108,15 +108,15 @@ int saveNodeId(uint8_t nodeId) {
 
 static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
     char *end;
-    const unsigned long freq = strtoul(argv[1], &end, 10);
-    if (*end != '\0' || freq < 100000000UL || freq > 1100000000UL) {
-        shell_error(sh, "Invalid frequency '%s' (expected Hz, e.g. 903000000)", argv[1]);
+    const float freq = strtof(argv[1], &end);
+    if (*end != '\0' || freq < 902.0f || freq > 928.0f) {
+        shell_error(sh, "Invalid frequency '%s' (902.0 - 928.0)", argv[1]);
         return -EINVAL;
     }
-    const int ret = OutlawSettings::saveFrequency(static_cast<uint32_t>(freq));
+    const int ret = OutlawSettings::saveFrequency(static_cast<uint32_t>(freq * 1'000'000));
 
     if (ret == 0) {
-        shell_print(sh, "Frequency saved: %lu Hz (reboot to apply)", freq);
+        shell_print(sh, "Frequency saved: %f Mhz (reboot to apply)", static_cast<double>(freq));
     } else {
         shell_error(sh, "Save failed: %d", ret);
     }
@@ -143,8 +143,8 @@ static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
 static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
     char *end;
     const unsigned long id = strtoul(argv[1], &end, 10);
-    if (*end != '\0' || id < 1 || id > 10) {
-        shell_error(sh, "Invalid node ID '%s' (expected 1-10)", argv[1]);
+    if (*end != '\0' || id < 0 || id > 9) {
+        shell_error(sh, "Invalid node ID '%s' (expected 0-9)", argv[1]);
         return -EINVAL;
     }
     const int ret = OutlawSettings::saveNodeId(static_cast<uint8_t>(id));
@@ -156,13 +156,13 @@ static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
     return ret;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(sub_outlaw,
-    SHELL_CMD_ARG(freq, NULL, "Set LoRa frequency in Hz (e.g. 903000000)", cmd_freq, 2, 0),
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
+    SHELL_CMD_ARG(freq, NULL, "Set LoRa frequency in Mhz (e.g. 903.123456)", cmd_freq, 2, 0),
     SHELL_CMD_ARG(callsign, NULL, "Set callsign, max 6 chars (e.g. W1ABC)", cmd_callsign, 2, 0),
-    SHELL_CMD_ARG(node_id, NULL, "Set node ID (1-10)", cmd_node_id, 2, 0),
+    SHELL_CMD_ARG(node_id, NULL, "Set node ID (0-9)", cmd_node_id, 2, 0),
     SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(outlaw, &sub_outlaw, "Outlaw GPS tracker settings", NULL);
+SHELL_CMD_REGISTER(config, &sub_config, "Configure settings", NULL);
 
 #endif // CONFIG_SHELL

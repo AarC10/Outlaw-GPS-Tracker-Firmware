@@ -7,7 +7,7 @@ namespace OutlawSettings {
 #ifdef CONFIG_LICENSED_FREQUENCY
 constexpr uint32_t DEFAULT_FREQUENCY = 435000000;
 #else
-constexpr uint32_t DEFAULT_FREQUENCY = 903000000;
+constexpr uint32_t DEFAULT_FREQUENCY = 903.000000;
 #endif
 constexpr int CALLSIGN_LEN = 6;
 constexpr uint8_t DEFAULT_NODE_ID = 1;
