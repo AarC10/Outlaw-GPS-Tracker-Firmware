@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(OutlawSettings);
 
 static uint32_t CONFIGURED_FREQUENCY = OutlawSettings::DEFAULT_FREQUENCY;
 static char CONFIGURED_CALLSIGN[OutlawSettings::CALLSIGN_LEN] = {};
+static uint8_t CONFIGURED_NODE_ID = OutlawSettings::DEFAULT_NODE_ID;
 
 static int settings_set_handler(const char *name, size_t len,
                                 settings_read_cb readCallback, void *callbackArgs) {
@@ -33,6 +34,11 @@ static int settings_set_handler(const char *name, size_t len,
                                    ? len
                                    : static_cast<size_t>(OutlawSettings::CALLSIGN_LEN);
         readCallback(callbackArgs, CONFIGURED_CALLSIGN, to_read);
+        return 0;
+    }
+    if (strcmp(name, "nid") == 0) {
+        if (len != sizeof(uint8_t)) return -EINVAL;
+        readCallback(callbackArgs, &CONFIGURED_NODE_ID, sizeof(uint8_t));
         return 0;
     }
     return -ENOENT;
@@ -82,6 +88,20 @@ int saveCallsign(const char callsign[CALLSIGN_LEN]) {
     return ret;
 }
 
+uint8_t getNodeId() {
+    return CONFIGURED_NODE_ID;
+}
+
+int saveNodeId(uint8_t nodeId) {
+    if (nodeId < 1 || nodeId > 10) return -EINVAL;
+    CONFIGURED_NODE_ID = nodeId;
+    const int ret = settings_save_one("outlaw/nid", &nodeId, sizeof(nodeId));
+    if (ret != 0) {
+        LOG_ERR("settings_save_one(outlaw/nid) failed: %d", ret);
+    }
+    return ret;
+}
+
 } // namespace OutlawSettings
 
 #ifdef CONFIG_SHELL
@@ -120,9 +140,26 @@ static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     return ret;
 }
 
+static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
+    char *end;
+    const unsigned long id = strtoul(argv[1], &end, 10);
+    if (*end != '\0' || id < 1 || id > 10) {
+        shell_error(sh, "Invalid node ID '%s' (expected 1-10)", argv[1]);
+        return -EINVAL;
+    }
+    const int ret = OutlawSettings::saveNodeId(static_cast<uint8_t>(id));
+    if (ret == 0) {
+        shell_print(sh, "Node ID saved: %lu (reboot to apply)", id);
+    } else {
+        shell_error(sh, "Save failed: %d", ret);
+    }
+    return ret;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_outlaw,
     SHELL_CMD_ARG(freq, NULL, "Set LoRa frequency in Hz (e.g. 903000000)", cmd_freq, 2, 0),
     SHELL_CMD_ARG(callsign, NULL, "Set callsign, max 6 chars (e.g. W1ABC)", cmd_callsign, 2, 0),
+    SHELL_CMD_ARG(node_id, NULL, "Set node ID (1-10)", cmd_node_id, 2, 0),
     SHELL_SUBCMD_SET_END
 );
 
