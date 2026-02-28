@@ -30,10 +30,10 @@ int main() {
     }
 
     OutlawSettings::load();
+    const uint8_t nodeId = OutlawSettings::getNodeId();
+    const uint32_t freqHz = OutlawSettings::getFrequency();
+    const float freqMHz = static_cast<float>(freqHz) / 1'000'000;
 
-    uint32_t freqHz = OutlawSettings::getFrequency();
-    uint8_t nodeId = OutlawSettings::getNodeId();
-    float freqMHz = static_cast<float>(freqHz) / 1'000'000;
     StateMachine sm(nodeId, freqMHz);
     time_setup_pps(&pps_spec);
 
