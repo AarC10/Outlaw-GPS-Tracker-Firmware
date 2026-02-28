@@ -67,6 +67,13 @@ public:
     bool setRx();
 
     /**
+     * Set the LoRa frequency and reconfigure the modem
+     * @param frequency Frequency in Hz
+     * @return Whether reconfiguration was successful
+     */
+    bool setFrequency(uint32_t frequency);
+
+    /**
      * Set the callsign for transmission to be used for licensed bands
      * @param callsign Set the callsign for transmission if on licensed band
      * @return Whether setting the callsign was successful

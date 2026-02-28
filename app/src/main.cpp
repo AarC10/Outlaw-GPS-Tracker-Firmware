@@ -17,6 +17,7 @@
 #include <core/HamCallsign.h>
 #include "state_machine.h"
 #include <core/GnssReceiver.h>
+#include <core/OutlawSettings.h>
 
 LOG_MODULE_REGISTER(main);
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnssCallback);
@@ -31,7 +32,11 @@ int main() {
     uint8_t nodeId = 0;
 
 
+    OutlawSettings::load();
+
     LoraTransceiver lora(nodeId);
+    lora.setFrequency(OutlawSettings::getFrequency());
+
     StateMachine sm(nodeId);
     time_setup_pps(&pps_spec);
 

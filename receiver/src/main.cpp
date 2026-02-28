@@ -9,12 +9,16 @@
 #include <zephyr/logging/log_ctrl.h>
 
 #include "core/LoraTransceiver.h"
+#include "core/OutlawSettings.h"
 
 
 LOG_MODULE_REGISTER(main);
 
 int main(void) {
+    OutlawSettings::load();
+
     LoraTransceiver lora(0);
+    lora.setFrequency(OutlawSettings::getFrequency());
     lora.awaitRxPacket();
 
     while (true) {

@@ -121,6 +121,16 @@ bool LoraTransceiver::setRx() {
     return true;
 };
 
+bool LoraTransceiver::setFrequency(uint32_t frequency) {
+    config.frequency = frequency;
+    const int ret = lora_config(dev, &config);
+    if (ret != 0) {
+        LOG_ERR("LoRa configuration failed %d", ret);
+        return false;
+    }
+    return true;
+};
+
 bool LoraTransceiver::init() {
     if (!device_is_ready(dev)) {
         LOG_ERR("LoRa device not ready (dev ptr %p)", dev);
