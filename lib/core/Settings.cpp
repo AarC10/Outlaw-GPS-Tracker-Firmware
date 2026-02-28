@@ -108,7 +108,7 @@ uint8_t getNodeId() {
 }
 
 int saveNodeId(uint8_t nodeId) {
-    if (nodeId < 1 || nodeId > 10) return -EINVAL;
+    if (nodeId < 0 || nodeId > 9) return -EINVAL;
     CONFIGURED_NODE_ID = nodeId;
     const int ret = settings_save_one("config/nid", &nodeId, sizeof(nodeId));
     if (ret != 0) {

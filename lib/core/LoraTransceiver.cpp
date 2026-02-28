@@ -185,9 +185,11 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
     return true;
 }
 
+#ifdef CONFIG_LICENSED_FREQUENCY
 void LoraTransceiver::setCallsign(const char* callsign) {
     this->callsign = callsign;
 }
+#endif
 
 void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
