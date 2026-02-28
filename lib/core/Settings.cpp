@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "core/OutlawSettings.h"
+#include "core/Settings.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -22,6 +22,7 @@ static uint8_t CONFIGURED_NODE_ID = OutlawSettings::DEFAULT_NODE_ID;
 
 static int settings_set_handler(const char *name, size_t len,
                                 settings_read_cb readCallback, void *callbackArgs) {
+#ifdef CONFIG_SHELL_FREQUENCY
     if (strcmp(name, "freq") == 0) {
         if (len != sizeof(uint32_t)) {
             return -EINVAL;
@@ -29,6 +30,9 @@ static int settings_set_handler(const char *name, size_t len,
         readCallback(callbackArgs, &CONFIGURED_FREQUENCY, sizeof(uint32_t));
         return 0;
     }
+#endif
+
+#ifdef CONFIG_SHELL_CALLSIGN
     if (strcmp(name, "cs") == 0) {
         const size_t to_read = len < static_cast<size_t>(OutlawSettings::CALLSIGN_LEN)
                                    ? len
@@ -36,11 +40,15 @@ static int settings_set_handler(const char *name, size_t len,
         readCallback(callbackArgs, CONFIGURED_CALLSIGN, to_read);
         return 0;
     }
+#endif
+
+#ifdef CONFIG_SHELL_NODE_ID
     if (strcmp(name, "nid") == 0) {
         if (len != sizeof(uint8_t)) return -EINVAL;
         readCallback(callbackArgs, &CONFIGURED_NODE_ID, sizeof(uint8_t));
         return 0;
     }
+#endif
     return -ENOENT;
 }
 
@@ -61,13 +69,10 @@ int load() {
     return ret;
 }
 
+#ifdef CONFIG_SHELL_FREQUENCY
 uint32_t getFrequency() {
     LOG_INF("Loaded frequency: %f MHz", static_cast<double>(CONFIGURED_FREQUENCY) / 1'000'000);
     return CONFIGURED_FREQUENCY;
-}
-
-void getCallsign(char out[CALLSIGN_LEN]) {
-    memcpy(out, CONFIGURED_CALLSIGN, CALLSIGN_LEN);
 }
 
 int saveFrequency(uint32_t frequency) {
@@ -78,6 +83,14 @@ int saveFrequency(uint32_t frequency) {
     }
     return ret;
 }
+#endif
+
+#ifdef CONFIG_SHELL_CALLSIGN
+void getCallsign(char out[CALLSIGN_LEN]) {
+    memcpy(out, CONFIGURED_CALLSIGN, CALLSIGN_LEN);
+}
+
+
 
 int saveCallsign(const char callsign[CALLSIGN_LEN]) {
     memcpy(CONFIGURED_CALLSIGN, callsign, CALLSIGN_LEN);
@@ -87,7 +100,9 @@ int saveCallsign(const char callsign[CALLSIGN_LEN]) {
     }
     return ret;
 }
+#endif
 
+#ifdef CONFIG_SHELL_NODE_ID
 uint8_t getNodeId() {
     return CONFIGURED_NODE_ID;
 }
@@ -101,11 +116,12 @@ int saveNodeId(uint8_t nodeId) {
     }
     return ret;
 }
-
+#endif
 } // namespace OutlawSettings
 
 #ifdef CONFIG_SHELL
 
+#ifdef CONFIG_SHELL_FREQUENCY
 static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
     char *end;
     const float freq = strtof(argv[1], &end);
@@ -122,6 +138,9 @@ static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
     }
     return ret;
 }
+#endif
+
+#ifdef CONFIG_SHELL_CALLSIGN
 
 static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     const size_t len = strlen(argv[1]);
@@ -140,6 +159,10 @@ static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     return ret;
 }
 
+#endif
+
+#ifdef CONFIG_SHELL_NODE_ID
+
 static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
     char *end;
     const unsigned long id = strtoul(argv[1], &end, 10);
@@ -155,14 +178,26 @@ static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
     }
     return ret;
 }
+#endif
 
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
+#ifdef CONFIG_SHELL_FREQUENCY
     SHELL_CMD_ARG(freq, NULL, "Set LoRa frequency in Mhz (e.g. 903.123456)", cmd_freq, 2, 0),
+#endif
+
+#ifdef CONFIG_SHELL_CALLSIGN
     SHELL_CMD_ARG(callsign, NULL, "Set callsign, max 6 chars (e.g. W1ABC)", cmd_callsign, 2, 0),
+#endif
+
+#ifdef CONFIG_SHELL_NODE_ID
     SHELL_CMD_ARG(node_id, NULL, "Set node ID (0-9)", cmd_node_id, 2, 0),
+#endif
     SHELL_SUBCMD_SET_END
 );
 
 SHELL_CMD_REGISTER(config, &sub_config, "Configure settings", NULL);
+
+#endif
 
 #endif // CONFIG_SHELL

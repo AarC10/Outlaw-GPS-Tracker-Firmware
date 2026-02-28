@@ -17,7 +17,7 @@
 #include <core/HamCallsign.h>
 #include "state_machine.h"
 #include <core/GnssReceiver.h>
-#include <core/OutlawSettings.h>
+#include <core/Settings.h>
 
 LOG_MODULE_REGISTER(main);
 GNSS_DATA_CALLBACK_DEFINE(DEVICE_DT_GET(DT_ALIAS(gnss)), gnssCallback);

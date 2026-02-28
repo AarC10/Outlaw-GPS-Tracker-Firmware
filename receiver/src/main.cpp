@@ -9,7 +9,7 @@
 #include <zephyr/logging/log_ctrl.h>
 
 #include "core/LoraTransceiver.h"
-#include "core/OutlawSettings.h"
+#include "core/Settings.h"
 
 
 LOG_MODULE_REGISTER(main);

@@ -8,3 +8,21 @@ config LICENSED_FREQUENCY
   depends on CORE
   help
     This option enables callsigns prepended to each packet.
+
+config SHELL_FREQUENCY
+  bool "Shell Frequency"
+  depends on CORE
+  help
+    This option enables a shell command to set the frequency at runtime.
+
+config SHELL_CALLSIGN
+  bool "Shell Callsign"
+  depends on CORE
+  help
+    This option enables a shell command to set the callsign at runtime.
+
+config SHELL_NODE_ID
+  bool "Shell Node ID"
+  depends on CORE
+  help
+    This option enables a shell command to set the node ID at runtime.

@@ -12,6 +12,7 @@ constexpr uint32_t DEFAULT_FREQUENCY = 903.000000;
 constexpr int CALLSIGN_LEN = 6;
 constexpr uint8_t DEFAULT_NODE_ID = 1;
 
+
 /**
  * Initialize the settings subsystem and load persisted values from NVS.
  * Call once at startup before reading any settings.
@@ -19,19 +20,27 @@ constexpr uint8_t DEFAULT_NODE_ID = 1;
  */
 int load();
 
+#ifdef CONFIG_SHELL_FREQUENCY
 /**
  * Get the persisted LoRa frequency, or DEFAULT_FREQUENCY if not yet saved.
  */
 uint32_t getFrequency();
 
+int saveFrequency(uint32_t frequency);
+#endif
+
+#ifdef CONFIG_SHELL_CALLSIGN
 /**
  * Copy the persisted callsign into out (exactly CALLSIGN_LEN bytes, zero-padded).
  */
 void getCallsign(char out[CALLSIGN_LEN]);
-uint8_t getNodeId();
 
-int saveFrequency(uint32_t frequency);
 int saveCallsign(const char callsign[CALLSIGN_LEN]);
+#endif
+
+#ifdef CONFIG_SHELL_NODE_ID
 int saveNodeId(uint8_t nodeId);
+uint8_t getNodeId();
+#endif
 
 } // namespace OutlawSettings
