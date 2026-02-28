@@ -29,9 +29,12 @@ int main() {
         LOG_ERR("LED GPIO device not ready\n");
     }
 
-    uint8_t nodeId = 0;
     OutlawSettings::load();
-    StateMachine sm(nodeId, OutlawSettings::getFrequency());
+
+    uint32_t freqHz = OutlawSettings::getFrequency();
+    uint8_t nodeId = OutlawSettings::getNodeId();
+    float freqMHz = static_cast<float>(freqHz) / 1'000'000;
+    StateMachine sm(nodeId, freqMHz);
     time_setup_pps(&pps_spec);
 
     while (true) {
