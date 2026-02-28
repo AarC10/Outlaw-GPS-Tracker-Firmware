@@ -28,8 +28,8 @@ LoraTransceiver::LoraTransceiver(const uint8_t nodeId) : nodeId(nodeId) {
     init();
 };
 
-LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const uint32_t frequencyHz) : nodeId(nodeId) {
-    config.frequency = frequencyHz;
+LoraTransceiver::LoraTransceiver(const uint8_t nodeId, const float frequencyMHz) : nodeId(nodeId) {
+    config.frequency = static_cast<uint32_t>(frequencyMHz * 1'000'000);
     init();
 }
 
@@ -162,12 +162,6 @@ bool LoraTransceiver::init() {
 }
 
 bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
-#ifdef CONFIG_LICENSED_FREQUENCY
-    if (!callsign.isValid()) {
-        LOG_ERR("Callsign not set, blocking transmission on licensed frequency");
-        return false;
-    }
-#endif
     if (!data || data_len == 0) {
         LOG_ERR("LoRa send called with empty payload");
         return false;
@@ -184,12 +178,6 @@ bool LoraTransceiver::tx(uint8_t* data, uint32_t data_len) {
 void LoraTransceiver::setNodeId(uint8_t id) {
     nodeId = id;
 }
-
-#ifdef CONFIG_LICENSED_FREQUENCY
-void LoraTransceiver::setCallsign(const HamCallsign& cs) {
-    callsign = cs;
-}
-#endif
 
 void LoraTransceiver::parseLoraFrame(const LoraFrame& frame, const size_t size, const int16_t rssi, const int8_t snr) const {
     LOG_INF("Node %d: (%d bytes | %d dBm | %d dB):", frame.node_id, size, rssi, snr);

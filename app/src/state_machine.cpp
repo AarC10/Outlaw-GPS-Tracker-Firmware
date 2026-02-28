@@ -1,12 +1,9 @@
 #include "state_machine.h"
 
-#include <cstring>
 #include <zephyr/drivers/gnss.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-
-#include <core/OutlawSettings.h>
 
 static constexpr int TRANSMITTER_LOGIC_LEVEL = 0;
 static constexpr int TRANSMITTER_LED_LEVEL = 0;
@@ -25,17 +22,10 @@ static void txTimerCallback(struct k_timer* timer) {
     }
 }
 
-StateMachine::StateMachine(const uint8_t nodeId, const uint32_t frequencyHz)
-    : lora(nodeId, frequencyHz), nodeId(nodeId) {
+#ifdef CONFIG_LICENSED_FREQUENCY
+StateMachine(uint8_t nodeId, const float frequencyMHz, const HamCallsign& callsign = HamCallsign()) :  lora(nodeId), nodeId(nodeId), callsign(callsign) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
-
-#ifdef CONFIG_LICENSED_FREQUENCY
-    char cs[OutlawSettings::CALLSIGN_LEN] = {};
-    OutlawSettings::getCallsign(cs);
-    const size_t csLen = strnlen(cs, OutlawSettings::CALLSIGN_LEN);
-    lora.setCallsign(HamCallsign(std::string_view(cs, csLen)));
-#endif
 
 #ifdef CONFIG_DEFAULT_RECEIVE_MODE
     currentState = State::Receiver;
@@ -47,6 +37,26 @@ StateMachine::StateMachine(const uint8_t nodeId, const uint32_t frequencyHz)
 
     setGnssReciever(&gnssReceiver);
 }
+
+#else
+
+StateMachine::StateMachine(const uint8_t nodeId, const float frequencyMhz) :  lora(nodeId, frequencyMhz), nodeId(nodeId) {
+    k_timer_init(&txTimer, txTimerCallback, nullptr);
+    k_timer_user_data_set(&txTimer, this);
+
+#ifdef CONFIG_DEFAULT_RECEIVE_MODE
+    currentState = State::Receiver;
+    enterReceiver();
+#else
+    currentState = State::Transmitter;
+    enterTransmitter();
+#endif
+
+    setGnssReciever(&gnssReceiver);
+}
+
+#endif
+
 
 void StateMachine::handleTxTimer() {
     if (gnssReceiver.isFixAcquired()) {
@@ -63,6 +73,7 @@ int StateMachine::run() {
 void StateMachine::enterTransmitter() {
     LOG_INF("Entering transmitter state");
     lora.setTx();
+
     gpio_pin_set_dt(&led, TRANSMITTER_LED_LEVEL);
     k_timer_start(&txTimer, K_SECONDS(5), K_SECONDS(5));
 }
@@ -80,9 +91,16 @@ void StateMachine::exitReceiver() {
 }
 
 void StateMachine::transitionTo(State target) {
-    if (target == currentState) return;
-    if (currentState == State::Receiver) exitReceiver();
+    if (target == currentState) {
+        return;
+    }
+
+    if (currentState == State::Receiver) {
+        exitReceiver();
+    }
+
     currentState = target;
+
     if (currentState == State::Transmitter) {
         enterTransmitter();
     } else {
@@ -91,44 +109,23 @@ void StateMachine::transitionTo(State target) {
 }
 
 int StateMachine::checkForTransition() {
-    const int currentPinState = gpio_pin_get_dt(&dip0);
-    LOG_DBG("Pin state: %d", currentPinState);
+    const int current_pin_state = gpio_pin_get_dt(&dip0);
+    LOG_DBG("Pin state: %d", current_pin_state);
 
-    if (currentPinState < 0) {
-        LOG_DBG("dip0 gpio read error (%d); ignoring transition check", currentPinState);
+    if (current_pin_state < 0) {
+        LOG_DBG("dip0 gpio read error (%d); ignoring transition check", current_pin_state);
         return 0;
     }
 
-    if (lastPinSate != currentPinState) {
-        if (currentPinState == TRANSMITTER_LOGIC_LEVEL) {
+    if (lastPinSate != current_pin_state) {
+        if (current_pin_state == TRANSMITTER_LOGIC_LEVEL) {
             transitionTo(State::Transmitter);
-        } else if (currentPinState == RECEIVER_LOGIC_LEVEL) {
+        } else if (current_pin_state == RECEIVER_LOGIC_LEVEL) {
             transitionTo(State::Receiver);
         }
     }
 
-    lastPinSate = currentPinState;
+    lastPinSate = current_pin_state;
+
     return 0;
-}
-
-void StateMachine::applyFrequency(uint32_t frequencyHz) {
-    lora.setFrequency(frequencyHz);
-#ifdef CONFIG_LICENSED_FREQUENCY
-    char cs[OutlawSettings::CALLSIGN_LEN] = {};
-    OutlawSettings::getCallsign(cs);
-    const size_t csLen = strnlen(cs, OutlawSettings::CALLSIGN_LEN);
-    lora.setCallsign(HamCallsign(std::string_view(cs, csLen)));
-#endif
-}
-
-void StateMachine::applyCallsign(const char* cs, int len) {
-#ifdef CONFIG_LICENSED_FREQUENCY
-    const size_t csLen = strnlen(cs, len);
-    lora.setCallsign(HamCallsign(std::string_view(cs, csLen)));
-#endif
-}
-
-void StateMachine::applyNodeId(uint8_t id) {
-    nodeId = id;
-    lora.setNodeId(id);
 }
