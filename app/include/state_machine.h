@@ -26,6 +26,9 @@ private:
     void transitionTo(State target);
     int checkForTransition();
 
+#ifdef CONFIG_LICENSED_FREQUENCY
+    HamCallsign callsign;
+#endif
     LoraTransceiver lora;
     GnssReceiver gnssReceiver;
     k_timer txTimer{};

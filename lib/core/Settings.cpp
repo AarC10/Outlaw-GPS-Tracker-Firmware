@@ -14,7 +14,7 @@
 #include <zephyr/shell/shell.h>
 #endif
 
-#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_LICENSED_FREQUENCY) || defined(CONFIG_SHELL_NODE_ID)
 
 LOG_MODULE_REGISTER(Settings);
 
@@ -34,7 +34,7 @@ static int settings_set_handler(const char *name, size_t len,
     }
 #endif
 
-#ifdef CONFIG_SHELL_CALLSIGN
+#ifdef CONFIG_LICENSED_FREQUENCY
     if (strcmp(name, "cs") == 0) {
         const size_t to_read = len < static_cast<size_t>(Settings::CALLSIGN_LEN)
                                    ? len
@@ -87,12 +87,10 @@ int saveFrequency(uint32_t frequency) {
 }
 #endif
 
-#ifdef CONFIG_SHELL_CALLSIGN
+#ifdef CONFIG_LICENSED_FREQUENCY
 void getCallsign(char out[CALLSIGN_LEN]) {
     memcpy(out, CONFIGURED_CALLSIGN, CALLSIGN_LEN);
 }
-
-
 
 int saveCallsign(const char callsign[CALLSIGN_LEN]) {
     memcpy(CONFIGURED_CALLSIGN, callsign, CALLSIGN_LEN);
@@ -142,7 +140,7 @@ static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
 }
 #endif
 
-#ifdef CONFIG_SHELL_CALLSIGN
+#ifdef CONFIG_LICENSED_FREQUENCY
 
 static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     const size_t len = strlen(argv[1]);
@@ -182,13 +180,13 @@ static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
 }
 #endif
 
-#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_LICENSED_FREQUENCY) || defined(CONFIG_SHELL_NODE_ID)
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 #ifdef CONFIG_SHELL_FREQUENCY
     SHELL_CMD_ARG(freq, NULL, "Set LoRa frequency in Mhz (e.g. 903.123456)", cmd_freq, 2, 0),
 #endif
 
-#ifdef CONFIG_SHELL_CALLSIGN
+#ifdef CONFIG_LICENSED_FREQUENCY
     SHELL_CMD_ARG(callsign, NULL, "Set callsign, max 6 chars (e.g. W1ABC)", cmd_callsign, 2, 0),
 #endif
 

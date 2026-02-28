@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_LICENSED_FREQUENCY) || defined(CONFIG_SHELL_NODE_ID)
 
 #include <stdint.h>
 
@@ -31,7 +31,7 @@ uint32_t getFrequency();
 int saveFrequency(uint32_t frequency);
 #endif
 
-#ifdef CONFIG_SHELL_CALLSIGN
+#ifdef CONFIG_LICENSED_FREQUENCY
 /**
  * Copy the persisted callsign into out (exactly CALLSIGN_LEN bytes, zero-padded).
  */

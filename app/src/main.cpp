@@ -33,8 +33,13 @@ int main() {
     const uint8_t nodeId = Settings::getNodeId();
     const uint32_t freqHz = Settings::getFrequency();
     const float freqMHz = static_cast<float>(freqHz) / 1'000'000;
+#ifdef CONFIG_LICENSED_FREQUENCY
+    const char callsignBuff[Settings::CALLSIGN_LEN] = {};
+    Settings::getCallsign(const_cast<char*>(callsignBuff));
+    const HamCallsign callsign(callsignBuff);
+#endif
 
-    StateMachine sm(nodeId, freqMHz);
+    StateMachine sm(nodeId, freqMHz, callsign);
     time_setup_pps(&pps_spec);
 
     while (true) {

@@ -23,7 +23,7 @@ static void txTimerCallback(struct k_timer* timer) {
 }
 
 #ifdef CONFIG_LICENSED_FREQUENCY
-StateMachine(uint8_t nodeId, const float frequencyMHz, const HamCallsign& callsign = HamCallsign()) :  lora(nodeId), nodeId(nodeId), callsign(callsign) {
+StateMachine::StateMachine(uint8_t nodeId, const float frequencyMHz, const HamCallsign& callsign) :  callsign(callsign), lora(nodeId, frequencyMHz), nodeId(nodeId) {
     k_timer_init(&txTimer, txTimerCallback, nullptr);
     k_timer_user_data_set(&txTimer, this);
 
