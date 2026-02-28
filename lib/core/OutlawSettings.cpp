@@ -44,7 +44,7 @@ static int settings_set_handler(const char *name, size_t len,
     return -ENOENT;
 }
 
-SETTINGS_STATIC_HANDLER_DEFINE(outlaw, "outlaw", nullptr, settings_set_handler, nullptr, nullptr);
+SETTINGS_STATIC_HANDLER_DEFINE(config, "config", nullptr, settings_set_handler, nullptr, nullptr);
 
 namespace OutlawSettings {
 
