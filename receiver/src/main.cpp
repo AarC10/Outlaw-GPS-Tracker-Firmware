@@ -15,10 +15,10 @@
 LOG_MODULE_REGISTER(main);
 
 int main(void) {
-    OutlawSettings::load();
-
-    LoraTransceiver lora(0);
-    lora.setFrequency(OutlawSettings::getFrequency());
+    Settings::load();
+    // float freqMHz = static_cast<float>(OutlawSettings::getFrequency()) / 1'000'000;
+    float freqMhz = 903.0;
+    LoraTransceiver lora(0, freqMhz);
     lora.awaitRxPacket();
 
     while (true) {

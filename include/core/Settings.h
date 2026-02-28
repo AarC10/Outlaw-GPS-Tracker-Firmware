@@ -1,8 +1,10 @@
 #pragma once
 
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
+
 #include <stdint.h>
 
-namespace OutlawSettings {
+namespace Settings {
 
 #ifdef CONFIG_LICENSED_FREQUENCY
 constexpr uint32_t DEFAULT_FREQUENCY = 435000000;
@@ -44,3 +46,5 @@ uint8_t getNodeId();
 #endif
 
 } // namespace OutlawSettings
+
+#endif

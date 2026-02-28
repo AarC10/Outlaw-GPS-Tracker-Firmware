@@ -14,11 +14,13 @@
 #include <zephyr/shell/shell.h>
 #endif
 
-LOG_MODULE_REGISTER(OutlawSettings);
+#if defined(CONFIG_SHELL_FREQUENCY) || defined(CONFIG_SHELL_CALLSIGN) || defined(CONFIG_SHELL_NODE_ID)
 
-static uint32_t CONFIGURED_FREQUENCY = OutlawSettings::DEFAULT_FREQUENCY;
-static char CONFIGURED_CALLSIGN[OutlawSettings::CALLSIGN_LEN] = {};
-static uint8_t CONFIGURED_NODE_ID = OutlawSettings::DEFAULT_NODE_ID;
+LOG_MODULE_REGISTER(Settings);
+
+static uint32_t CONFIGURED_FREQUENCY = Settings::DEFAULT_FREQUENCY;
+static char CONFIGURED_CALLSIGN[Settings::CALLSIGN_LEN] = {};
+static uint8_t CONFIGURED_NODE_ID = Settings::DEFAULT_NODE_ID;
 
 static int settings_set_handler(const char *name, size_t len,
                                 settings_read_cb readCallback, void *callbackArgs) {
@@ -34,9 +36,9 @@ static int settings_set_handler(const char *name, size_t len,
 
 #ifdef CONFIG_SHELL_CALLSIGN
     if (strcmp(name, "cs") == 0) {
-        const size_t to_read = len < static_cast<size_t>(OutlawSettings::CALLSIGN_LEN)
+        const size_t to_read = len < static_cast<size_t>(Settings::CALLSIGN_LEN)
                                    ? len
-                                   : static_cast<size_t>(OutlawSettings::CALLSIGN_LEN);
+                                   : static_cast<size_t>(Settings::CALLSIGN_LEN);
         readCallback(callbackArgs, CONFIGURED_CALLSIGN, to_read);
         return 0;
     }
@@ -54,7 +56,7 @@ static int settings_set_handler(const char *name, size_t len,
 
 SETTINGS_STATIC_HANDLER_DEFINE(config, "config", nullptr, settings_set_handler, nullptr, nullptr);
 
-namespace OutlawSettings {
+namespace Settings {
 
 int load() {
     int ret = settings_subsys_init();
@@ -129,7 +131,7 @@ static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
         shell_error(sh, "Invalid frequency '%s' (902.0 - 928.0)", argv[1]);
         return -EINVAL;
     }
-    const int ret = OutlawSettings::saveFrequency(static_cast<uint32_t>(freq * 1'000'000));
+    const int ret = Settings::saveFrequency(static_cast<uint32_t>(freq * 1'000'000));
 
     if (ret == 0) {
         shell_print(sh, "Frequency saved: %f Mhz (reboot to apply)", static_cast<double>(freq));
@@ -144,15 +146,15 @@ static int cmd_freq(const struct shell *sh, size_t argc, char **argv) {
 
 static int cmd_callsign(const struct shell *sh, size_t argc, char **argv) {
     const size_t len = strlen(argv[1]);
-    if (len == 0 || len > (size_t)OutlawSettings::CALLSIGN_LEN) {
-        shell_error(sh, "Callsign must be 1-%d characters", OutlawSettings::CALLSIGN_LEN);
+    if (len == 0 || len > (size_t)Settings::CALLSIGN_LEN) {
+        shell_error(sh, "Callsign must be 1-%d characters", Settings::CALLSIGN_LEN);
         return -EINVAL;
     }
-    char cs[OutlawSettings::CALLSIGN_LEN] = {};
+    char cs[Settings::CALLSIGN_LEN] = {};
     memcpy(cs, argv[1], len);
-    const int ret = OutlawSettings::saveCallsign(cs);
+    const int ret = Settings::saveCallsign(cs);
     if (ret == 0) {
-        shell_print(sh, "Callsign saved: %.*s (reboot to apply)", OutlawSettings::CALLSIGN_LEN, cs);
+        shell_print(sh, "Callsign saved: %.*s (reboot to apply)", Settings::CALLSIGN_LEN, cs);
     } else {
         shell_error(sh, "Save failed: %d", ret);
     }
@@ -170,7 +172,7 @@ static int cmd_node_id(const struct shell *sh, size_t argc, char **argv) {
         shell_error(sh, "Invalid node ID '%s' (expected 0-9)", argv[1]);
         return -EINVAL;
     }
-    const int ret = OutlawSettings::saveNodeId(static_cast<uint8_t>(id));
+    const int ret = Settings::saveNodeId(static_cast<uint8_t>(id));
     if (ret == 0) {
         shell_print(sh, "Node ID saved: %lu (reboot to apply)", id);
     } else {
@@ -201,3 +203,5 @@ SHELL_CMD_REGISTER(config, &sub_config, "Configure settings", NULL);
 #endif
 
 #endif // CONFIG_SHELL
+
+#endif
