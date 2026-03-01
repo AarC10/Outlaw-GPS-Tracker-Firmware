@@ -10,11 +10,10 @@
 4. [Frequency Variants](#frequency-variants)
 5. [Charging](#charging)
 6. [Pre-Flight Checklist](#pre-flight-checklist)
-7. [Troubleshooting](#troubleshooting)
-8. [Safety](#safety)
-9. [Transmissions Without a GPS Fix](#transmissions-without-a-gps-fix)
-10. [What the Tracker Sends](#what-the-tracker-sends)
-11. [Configuring with the UART Shell](#configuring-with-the-uart-shell)
+7. [Transmissions Without a GPS Fix](#transmissions-without-a-gps-fix)
+8. [What the Tracker Sends](#what-the-tracker-sends)
+9. [Configuring with the UART Shell](#configuring-with-the-uart-shell)
+10. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -78,19 +77,6 @@ Before mounting the Outlaw to your flight vehicle, confirm the following:
 3. **Power LED on** — Red LED confirms the board is live. You may unbridge the PWR LED jumper if you prefer to run without the power LED active.
 4. **GPS fix acquired** — Allow several minutes outdoors before flight
 5. **Dispatch receiving** — Confirm packets are being received on a Hunter receiver either through UART or the Dispatch application
-
----
-
-## Troubleshooting
-
-**Packets not being received**
-- Confirm the antenna is attached to the Outlaw.
-- Confirm the Hunter receiver antenna is also attached.
-- Ensure both the Outlaw and Hunter are the same frequency variant (both Standard or both Licensed).
-
-**Red power LED is off**
-- Check battery connection and charge level. Connect USB-C to power the board directly while troubleshooting.
-- Confirm the PWR LED jumper is bridged if you want the power LED active. The board will function without the power LED, but it won't light up.
 
 ---
 
@@ -172,13 +158,32 @@ uart:~$ config freq 903.125000
 Set your callsign *(Licensed builds only, 4–6 uppercase characters)*:
 
 ```
-uart:~$ config callsign W1ABC
+uart:~$ config callsign KD2YIE
 ```
 
-**All settings are saved to the device automatically** and will persist through power cycles. Changes take effect after a reboot:
+**All settings are saved to the device automatically** and will persist through power cycles. 
+Changes take effect after a reboot. This can be done either by power cycling the board, or by bridging and then unbridging the reset pins.
 
-```
-uart:~$ kernel reboot cold
-```
 
 > **Note:** If you enter a callsign shorter than 4 characters, the device will suspend all transmissions after reboot until a valid callsign is set. This is a regulatory safeguard.
+
+---
+
+## Configuring with Dispatch
+Dispatch is a GUI application that interfaces with Outlaw over serial to configure settings.
+You can reference the [Dispatch user guide](https://github.com/AarC10/Dispatch-GSW/blob/main/docs/GUIDE.md) for more information on using Dispatch.
+
+---
+
+## Troubleshooting
+
+**Packets not being received**
+- Confirm the antenna is attached to the Outlaw.
+- Confirm the Hunter receiver antenna is also attached.
+- Ensure both the Outlaw and Hunter are the same frequency variant (both Standard or both Licensed).
+
+**Red power LED is off**
+- Check battery connection and charge level. Connect USB-C to power the board directly while troubleshooting.
+- Confirm the PWR LED jumper is bridged if you want the power LED active. The board will function without the power LED, but it won't light up.
+
+---
