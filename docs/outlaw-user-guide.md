@@ -69,7 +69,7 @@ Outlaws are pre-configured for a specific frequency band. There are two variants
 | Standard | 903.000 MHz | Anyone — no licence required |
 | Licensed | 435.000 MHz | Licensed amateur radio operators only |
 
-Your Deputy receiver must be on the same variant.
+Your Hunter receiver must be on the same variant.
 
 > **Licensed tracker users:** The tracker will not transmit until a valid amateur radio callsign has been programmed into the device.
 
