@@ -4,16 +4,31 @@
 
 ## Contents
 
-1. [Before You Power On](#before-you-power-on)
-2. [Indicators](#indicators)
-3. [Getting a GPS Fix](#getting-a-gps-fix)
-4. [Frequency Variants](#frequency-variants)
-5. [Charging](#charging)
-6. [Pre-Flight Checklist](#pre-flight-checklist)
-7. [Transmissions Without a GPS Fix](#transmissions-without-a-gps-fix)
-8. [What the Tracker Sends](#what-the-tracker-sends)
-9. [Configuring with the UART Shell](#configuring-with-the-uart-shell)
-10. [Troubleshooting](#troubleshooting)
+1. [Device Breakdown](#device-breakdown)
+2. [Before You Power On](#before-you-power-on)
+3. [Indicators](#indicators)
+4. [Getting a GPS Fix](#getting-a-gps-fix)
+5. [Frequency Variants](#frequency-variants)
+6. [Charging](#charging)
+7. [Pre-Flight Checklist](#pre-flight-checklist)
+8. [Transmissions Without a GPS Fix](#transmissions-without-a-gps-fix)
+9. [What the Tracker Sends](#what-the-tracker-sends)
+10. [Configuring with the UART Shell](#configuring-with-the-uart-shell)
+11. [Troubleshooting](#troubleshooting)
+
+---
+
+## Device Breakdown
+<img src="images/OutlawBreakdown.png">
+
+
+| Number | Name   | Purpose                                                                                                                                                     |
+|---|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | USER UART INTERFACE | 2 pins for connecting to a serial terminal for debugging and raw data output                                                                                |
+| 2 | PWR LED BRIDGE | Jumper to enable the red power LED. Bridging this jumper will reduce battery life by a small amount.                                                        |
+| 3 | RESET BRIDGE | Jumper to enable the reset button. Bridging and then unbridging this jumper will reset the device.                                                          |
+| 4 | GPS UART | Internal UART connection to the GPS module. Allows you to monitor the raw NMEA stream from the GPS module for debugging.                                    |
+| 5 | BATTERY CONNECTOR | Connector for powering the device from a LiPo battery. Plugging in a USB-C cable will power the device from USB and charge the battery if one is connected. |
 
 ---
 

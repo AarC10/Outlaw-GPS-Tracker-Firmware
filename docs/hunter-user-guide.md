@@ -101,6 +101,7 @@ You can reference the [Dispatch user guide](https://github.com/AarC10/Dispatch-G
 ## Troubleshooting
 
 **No packets appearing, Outlaw is powered on**
+- Confirm you can see UART output from Hunter in a terminal application. You can press the reset button on Hunter to see the boot messages.
 - Check that the antenna is firmly attached to Hunter.
 - Check that the Outlaw's antenna is also attached.
 - Confirm both units are the same frequency variant (Standard or Licensed).
