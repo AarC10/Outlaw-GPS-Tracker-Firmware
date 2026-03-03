@@ -4,24 +4,24 @@ default:
 
 # Build outlaw gen3 firmware into builds/outlaw
 outlaw:
-    west build -b outlaw_gen3 app -p auto --build-dir builds/outlaw
+    west build -b outlaw_gen3 apps/outlaw -p auto --build-dir builds/outlaw
 
 outlaw-433:
-    west build -b outlaw_gen3 app -p auto --build-dir builds/outlaw-433 -- -DCONFIG_LICENSED_FREQUENCY=y
+    west build -b outlaw_gen3 apps/outlaw -p auto --build-dir builds/outlaw-433 -- -DCONFIG_LICENSED_FREQUENCY=y
 
-# Build deputy receiver firmware into builds/deputy
-deputy:
-    west build -b deputy receiver -p auto --build-dir builds/deputy
+# Build hunter receiver firmware into builds/deputy
+hunter:
+    west build -b hunter apps/hunter -p auto --build-dir builds/hunter
 
-deputy-433:
-    west build -b deputy receiver -p auto --build-dir builds/deputy-433 -- -DCONFIG_LICENSED_FREQUENCY=y
+hunter-433:
+    west build -b hunter apps/hunter -p auto --build-dir builds/hunter-433 -- -DCONFIG_LICENSED_FREQUENCY=y
 
 # Flash with ST-Link
-# Usage: just sflash outlaw | just sflash deputy
+# Usage: just sflash outlaw | just sflash hunter
 sflash target:
     west flash --build-dir builds/{{target}}
 
 # Flash with J-Link
-# Usage: just jflash outlaw | just jflash deputy
+# Usage: just jflash outlaw | just jflash hunter
 jflash target:
     west flash --build-dir builds/{{target}} --runner=jlink
