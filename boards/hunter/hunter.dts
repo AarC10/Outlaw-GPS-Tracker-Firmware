@@ -10,7 +10,7 @@
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
-	model = "Deputy Receiver";
+	model = "Hunter Receiver";
 	compatible = "st,stm32f030x8";
 
 	chosen {

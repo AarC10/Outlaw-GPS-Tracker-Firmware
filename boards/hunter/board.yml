@@ -1,6 +1,6 @@
 board:
-  name: deputy
-  full_name: Deputy Receiver
+  name: hunter
+  full_name: Hunter Receiver
   vendor: Wild West Rocketry
   revision:
     format: number
