@@ -1,0 +1,1178 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "zephyr/zephyr.elf"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"add_link_options",
+			"include",
+			"include_boilerplate",
+			"check_zephyr_package",
+			"find_package",
+			"target_link_libraries",
+			"toolchain_ld_link_elf",
+			"zephyr_library_link_libraries",
+			"target_link_libraries_ifdef",
+			"target_ld_options",
+			"zephyr_ld_options",
+			"zephyr_link_libraries",
+			"zephyr_link_libraries_ifdef",
+			"toolchain_ld_force_undefined_symbols",
+			"zephyr_link_libraries_ifndef",
+			"add_dependencies",
+			"add_custom_command"
+		],
+		"files" : 
+		[
+			"/home/aaron/Development/Outlaw/zephyr/CMakeLists.txt",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/linker/ld/gcc/linker_flags.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/linker/ld/linker_flags.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/target_toolchain_flags.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/modules/kernel.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/modules/zephyr_default.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake",
+			"/home/aaron/Development/Launch/zephyr/share/zephyr-package/cmake/zephyr_package_search.cmake",
+			"/home/aaron/Development/Launch/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake",
+			"CMakeLists.txt",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/linker/ld/target.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/cmake/modules/extensions.cmake",
+			"/home/aaron/Development/Outlaw/zephyr/arch/common/CMakeLists.txt",
+			"/home/aaron/Development/Outlaw/zephyr/lib/libc/picolibc/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 1776,
+				"parent" : 0
+			},
+			{
+				"file" : 9
+			},
+			{
+				"command" : 5,
+				"file" : 9,
+				"line" : 2,
+				"parent" : 2
+			},
+			{
+				"file" : 8,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 8,
+				"line" : 152,
+				"parent" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 7,
+				"line" : 118,
+				"parent" : 5
+			},
+			{
+				"file" : 6,
+				"parent" : 6
+			},
+			{
+				"command" : 3,
+				"file" : 6,
+				"line" : 125,
+				"parent" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 6,
+				"line" : 66,
+				"parent" : 8
+			},
+			{
+				"file" : 5,
+				"parent" : 9
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 138,
+				"parent" : 10
+			},
+			{
+				"file" : 4,
+				"parent" : 11
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 153,
+				"parent" : 12
+			},
+			{
+				"file" : 3,
+				"parent" : 13
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 43,
+				"parent" : 14
+			},
+			{
+				"file" : 2,
+				"parent" : 15
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 60,
+				"parent" : 16
+			},
+			{
+				"file" : 1,
+				"parent" : 17
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 14,
+				"parent" : 18
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 309,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 1777,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 10,
+				"line" : 120,
+				"parent" : 21
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 1821,
+				"parent" : 0
+			},
+			{
+				"file" : 12
+			},
+			{
+				"command" : 8,
+				"file" : 12,
+				"line" : 111,
+				"parent" : 24
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 544,
+				"parent" : 25
+			},
+			{
+				"command" : 11,
+				"file" : 0,
+				"line" : 479,
+				"parent" : 0
+			},
+			{
+				"command" : 10,
+				"file" : 11,
+				"line" : 164,
+				"parent" : 27
+			},
+			{
+				"command" : 9,
+				"file" : 11,
+				"line" : 2399,
+				"parent" : 28
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 2036,
+				"parent" : 29
+			},
+			{
+				"command" : 11,
+				"file" : 0,
+				"line" : 484,
+				"parent" : 0
+			},
+			{
+				"command" : 10,
+				"file" : 11,
+				"line" : 164,
+				"parent" : 31
+			},
+			{
+				"command" : 9,
+				"file" : 11,
+				"line" : 2399,
+				"parent" : 32
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 2036,
+				"parent" : 33
+			},
+			{
+				"command" : 12,
+				"file" : 0,
+				"line" : 492,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 141,
+				"parent" : 35
+			},
+			{
+				"command" : 13,
+				"file" : 0,
+				"line" : 500,
+				"parent" : 0
+			},
+			{
+				"command" : 12,
+				"file" : 11,
+				"line" : 2084,
+				"parent" : 37
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 141,
+				"parent" : 38
+			},
+			{
+				"command" : 14,
+				"file" : 0,
+				"line" : 502,
+				"parent" : 0
+			},
+			{
+				"command" : 12,
+				"file" : 10,
+				"line" : 96,
+				"parent" : 40
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 41
+			},
+			{
+				"command" : 12,
+				"file" : 10,
+				"line" : 96,
+				"parent" : 40
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 43
+			},
+			{
+				"command" : 12,
+				"file" : 0,
+				"line" : 510,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 141,
+				"parent" : 45
+			},
+			{
+				"command" : 12,
+				"file" : 0,
+				"line" : 527,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 141,
+				"parent" : 47
+			},
+			{
+				"command" : 15,
+				"file" : 0,
+				"line" : 583,
+				"parent" : 0
+			},
+			{
+				"command" : 12,
+				"file" : 11,
+				"line" : 2236,
+				"parent" : 49
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 50
+			},
+			{
+				"command" : 12,
+				"file" : 12,
+				"line" : 113,
+				"parent" : 24
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 52
+			},
+			{
+				"command" : 12,
+				"file" : 12,
+				"line" : 114,
+				"parent" : 24
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 54
+			},
+			{
+				"file" : 13
+			},
+			{
+				"command" : 12,
+				"file" : 13,
+				"line" : 27,
+				"parent" : 56
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 139,
+				"parent" : 57
+			},
+			{
+				"command" : 12,
+				"file" : 13,
+				"line" : 30,
+				"parent" : 56
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 144,
+				"parent" : 59
+			},
+			{
+				"command" : 16,
+				"file" : 0,
+				"line" : 765,
+				"parent" : 0
+			},
+			{
+				"command" : 16,
+				"file" : 0,
+				"line" : 1087,
+				"parent" : 0
+			},
+			{
+				"command" : 17,
+				"file" : 0,
+				"line" : 1541,
+				"parent" : 0
+			},
+			{
+				"command" : 16,
+				"file" : 0,
+				"line" : 1786,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-strict-aliasing"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Os"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-imacros"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver/cmake-build-outlaw-debug/zephyr/include/generated/zephyr/autoconf.h"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-common"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-g"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-gdwarf-4"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-mcpu=cortex-m0"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-mthumb"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-mabi=aapcs"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-mfp16-format=ieee"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-mtp=soft"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "--sysroot=/opt/zephyr-sdk-0.16.5-1/arm-zephyr-eabi/arm-zephyr-eabi"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-imacros"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "/home/aaron/Development/Outlaw/zephyr/include/zephyr/toolchain/zephyr_stdint.h"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wformat"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wformat-security"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wno-format-zero-length"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wdouble-promotion"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wno-pointer-sign"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wpointer-arith"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wexpansion-to-defined"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wno-unused-but-set-variable"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Werror=implicit-int"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-pic"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-pie"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-asynchronous-unwind-tables"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-ftls-model=local-exec"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-reorder-functions"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "--param=min-pagesize=0"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-defer-pop"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fmacro-prefix-map=/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver=CMAKE_SOURCE_DIR"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fmacro-prefix-map=/home/aaron/Development/Outlaw/zephyr=ZEPHYR_BASE"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fmacro-prefix-map=/home/aaron/Development/Outlaw=WEST_TOPDIR"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-ffunction-sections"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fdata-sections"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-specs=picolibc.specs"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-std=c17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 22,
+					"define" : "KERNEL"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "K_HEAP_MEM_POOL_SIZE=0"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "PICOLIBC_DOUBLE_PRINTF_SCANF"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "STM32F030x8"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "USE_FULL_LL_DRIVER"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "USE_HAL_DRIVER"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "ZVFS_OPEN_SIZE=0"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "_POSIX_THREAD_SAFE_FUNCTIONS=200809L"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "__LINUX_ERRNO_EXTENSIONS__"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "__PROGRAM_START"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "__ZEPHYR__=1"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver/cmake-build-outlaw-debug/zephyr/include/generated/zephyr"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver/cmake-build-outlaw-debug/zephyr/include/generated"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/soc/st/stm32"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/lib/libc/picolibc/include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/lib/posix/c_lib_ext/getopt"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/lib/midi2/."
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/soc/st/stm32/common/."
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/drivers"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/soc/st/stm32/stm32f0x/."
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/modules/hal/cmsis_6/CMSIS/Core/Include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/modules/cmsis_6/."
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/modules/hal/st/sensor/inc"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/modules/hal/stm32/stm32cube/stm32f0xx/soc"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/modules/hal/stm32/stm32cube/stm32f0xx/drivers/include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/aaron/Development/Outlaw/modules/hal/stm32/stm32cube/common_ll/include"
+				},
+				{
+					"backtrace" : 22,
+					"isSystem" : true,
+					"path" : "/home/aaron/Development/Outlaw/zephyr/lib/libc/common/include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 22,
+			"id" : "app::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "zephyr::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 61,
+			"id" : "app_version_h::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 62,
+			"id" : "syscall_list_h_target::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 62,
+			"id" : "driver_validation_h_target::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 62,
+			"id" : "kobj_types_h_target::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 62,
+			"id" : "device_api_ld_target::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"id" : "offsets::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 63,
+			"id" : "zephyr_pre0::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 64,
+			"id" : "linker_zephyr_final_script_target::@d36e55b69c1b90fb26b2"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "arch__common::@0b0b0cfd7a24e8ecfe11"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "isr_tables::@0b0b0cfd7a24e8ecfe11"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "arch__arm__core::@717147f9117c30afc083"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "arch__arm__core__cortex_m::@5e05c4b15b4c2575dfc6"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "lib__libc__picolibc::@c5e8934bde5423fa7ac5"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "lib__libc__common::@4887e96c8898694998ea"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "lib__posix__c_lib_ext::@d2fc6285d0d5a514404d"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__interrupt_controller::@4ccdf64818bf568667f1"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__clock_control::@03043f5596ae6e5fcffe"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__console::@39939278fdcee8c62e52"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__gnss::@6cdc61ceda7a09fb17b5"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__gpio::@f8009383a952b2e6d5b0"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "loramac-node::@f707497eae0955fa3d1c"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__pinctrl::@762029cc579c68d25071"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__reset::@1704dd2a32f33015c1a7"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__serial::@18e421c5ba74f72aaba5"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__spi::@6089661dbc642732d5e9"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "drivers__timer::@d6d9b8697bc2d7d4441f"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "..__Outlaw-GPS-Tracker-Firmware__lib__core::@99a9c233e73166e7c963"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "..__modules__hal__stm32__stm32cube::@3f1a071cd0329d738cba"
+		},
+		{
+			"backtrace" : 22,
+			"id" : "kernel::@84e783bf488a9f887759"
+		}
+	],
+	"id" : "zephyr_final::@d36e55b69c1b90fb26b2",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "-gdwarf-4",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 20,
+				"fragment" : "-Os",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/CMakeFiles/offsets.dir/./arch/arm/core/offsets/offsets.c.obj",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "-T",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/linker.cmd",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "-Wl,-Map,/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver/cmake-build-outlaw-debug/zephyr/zephyr_final.map",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "-Wl,--whole-archive",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "app/libapp.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/libzephyr.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/arch/common/libarch__common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/arch/arch/arm/core/libarch__arm__core.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/arch/arch/arm/core/cortex_m/libarch__arm__core__cortex_m.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/lib/libc/picolibc/liblib__libc__picolibc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/lib/libc/common/liblib__libc__common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/lib/posix/c_lib_ext/liblib__posix__c_lib_ext.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/interrupt_controller/libdrivers__interrupt_controller.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/clock_control/libdrivers__clock_control.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/console/libdrivers__console.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/gnss/libdrivers__gnss.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/gpio/libdrivers__gpio.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/lora/loramac_node/libloramac-node.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/pinctrl/libdrivers__pinctrl.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/reset/libdrivers__reset.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/serial/libdrivers__serial.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/spi/libdrivers__spi.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/drivers/timer/libdrivers__timer.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "modules/Outlaw-GPS-Tracker-Firmware/lib/core/lib..__Outlaw-GPS-Tracker-Firmware__lib__core.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "modules/hal_stm32/stm32cube/lib..__modules__hal__stm32__stm32cube.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "-Wl,--no-whole-archive",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "zephyr/kernel/libkernel.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 22,
+				"fragment" : "-L/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/receiver/cmake-build-outlaw-debug/zephyr",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "-Wl,--print-memory-usage",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 26,
+				"fragment" : "zephyr/arch/common/libisr_tables.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 30,
+				"fragment" : "-fuse-ld=bfd",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 34,
+				"fragment" : "-mcpu=cortex-m0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 34,
+				"fragment" : "-mthumb",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 34,
+				"fragment" : "-mabi=aapcs",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 34,
+				"fragment" : "-mfp16-format=ieee",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 34,
+				"fragment" : "-mtp=soft",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 36,
+				"fragment" : "-Wl,--gc-sections",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 36,
+				"fragment" : "-Wl,--build-id=none",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "-Wl,--sort-common=descending",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 39,
+				"fragment" : "-Wl,--sort-section=alignment",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 42,
+				"fragment" : "-Wl,-u,_OffsetAbsSyms",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 44,
+				"fragment" : "-Wl,-u,_ConfigAbsSyms",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 46,
+				"fragment" : "-nostdlib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 46,
+				"fragment" : "-static",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 46,
+				"fragment" : "-Wl,-X",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 46,
+				"fragment" : "-Wl,-N",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 48,
+				"fragment" : "-Wl,--orphan-handling=warn",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 51,
+				"fragment" : "-Wl,-no-pie",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 53,
+				"fragment" : "-Wl,--undefined=_sw_isr_table",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 55,
+				"fragment" : "-Wl,--undefined=_irq_vector_table",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 58,
+				"fragment" : "-specs=picolibc.specs",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 60,
+				"fragment" : "-DPICOLIBC_DOUBLE_PRINTF_SCANF",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "zephyr_final",
+	"nameOnDisk" : "zephyr.elf",
+	"paths" : 
+	{
+		"build" : "zephyr",
+		"source" : "/home/aaron/Development/Outlaw/zephyr"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/aaron/Development/Outlaw/zephyr/misc/empty_file.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-outlaw-debug/zephyr/isr_tables.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-outlaw-debug/zephyr/isr_tables.c.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "EXECUTABLE"
+}

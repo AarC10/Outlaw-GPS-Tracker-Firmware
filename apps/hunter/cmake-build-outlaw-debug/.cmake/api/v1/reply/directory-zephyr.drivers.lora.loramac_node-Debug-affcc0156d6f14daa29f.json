@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "zephyr/drivers/lora/loramac_node",
+		"source" : "/home/aaron/Development/Outlaw/zephyr/drivers/lora/loramac_node"
+	}
+}

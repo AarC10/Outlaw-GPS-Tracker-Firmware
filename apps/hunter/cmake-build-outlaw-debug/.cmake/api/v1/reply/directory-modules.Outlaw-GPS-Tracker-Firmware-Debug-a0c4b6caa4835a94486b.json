@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "modules/Outlaw-GPS-Tracker-Firmware",
+		"source" : "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware"
+	}
+}

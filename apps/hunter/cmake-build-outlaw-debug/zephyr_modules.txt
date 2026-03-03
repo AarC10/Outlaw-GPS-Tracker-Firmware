@@ -1,0 +1,6 @@
+"Outlaw-GPS-Tracker-Firmware":"/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware":"/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware"
+"cmsis":"/home/aaron/Development/Outlaw/modules/hal/cmsis":"${ZEPHYR_CMSIS_CMAKE_DIR}"
+"cmsis_6":"/home/aaron/Development/Outlaw/modules/hal/cmsis_6":"${ZEPHYR_CMSIS_6_CMAKE_DIR}"
+"hal_st":"/home/aaron/Development/Outlaw/modules/hal/st":"/home/aaron/Development/Outlaw/modules/hal/st"
+"hal_stm32":"/home/aaron/Development/Outlaw/modules/hal/stm32":"/home/aaron/Development/Outlaw/modules/hal/stm32"
+"loramac-node":"/home/aaron/Development/Outlaw/modules/lib/loramac-node":"${ZEPHYR_LORAMAC_NODE_CMAKE_DIR}"
