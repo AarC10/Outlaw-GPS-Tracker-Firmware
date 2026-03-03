@@ -1,7 +1,0 @@
-set(kconfig_env_dirs)
-list(APPEND kconfig_env_dirs ZEPHYR_OUTLAW_GPS_TRACKER_FIRMWARE_MODULE_DIR=/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware)
-list(APPEND kconfig_env_dirs ZEPHYR_CMSIS_MODULE_DIR=/home/aaron/Development/Outlaw/modules/hal/cmsis)
-list(APPEND kconfig_env_dirs ZEPHYR_CMSIS_6_MODULE_DIR=/home/aaron/Development/Outlaw/modules/hal/cmsis_6)
-list(APPEND kconfig_env_dirs ZEPHYR_HAL_ST_MODULE_DIR=/home/aaron/Development/Outlaw/modules/hal/st)
-list(APPEND kconfig_env_dirs ZEPHYR_HAL_STM32_MODULE_DIR=/home/aaron/Development/Outlaw/modules/hal/stm32)
-list(APPEND kconfig_env_dirs ZEPHYR_LORAMAC_NODE_MODULE_DIR=/home/aaron/Development/Outlaw/modules/lib/loramac-node)

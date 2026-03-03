@@ -1,2 +1,0 @@
-# Load Zephyr board defconfig descriptions.
-osource "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/boards/deputy/Kconfig.defconfig"

@@ -1,4 +1,0 @@
-# Load Zephyr board Kconfig descriptions.
-osource "/home/aaron/Development/Outlaw/Outlaw-GPS-Tracker-Firmware/boards/deputy/Kconfig"
-config BOARD_REVISION_1
-	def_bool y
