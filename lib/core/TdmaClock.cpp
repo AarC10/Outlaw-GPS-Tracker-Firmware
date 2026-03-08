@@ -19,7 +19,38 @@ TdmaClock& TdmaClock::instance() {
 }
 
 void TdmaClock::init(const gpio_dt_spec* pps, const device* tim2Dev) {
+    ppsSpec = pps;
+    tim2 = tim2Dev;
+    ppsConfigured = false;
 
+    atomic_set(&currentSource, static_cast<atomic_val_t>(Source::FREERUN));
+    atomic_set(&epochTicksValue, 0);
+    atomic_set(&frameNumberValue, 0);
+    atomic_set(&lastHunterUptimeMs, 0);
+
+    k_timer_init(&freerunTimer, TdmaClock::freerunExpiry, nullptr);
+    k_work_init_delayable(&demoteWork, TdmaClock::demoteHandler);
+
+    if (ppsSpec != nullptr && device_is_ready(ppsSpec->port)) {
+        if (gpio_pin_configure_dt(ppsSpec, GPIO_INPUT) == 0 &&
+            gpio_pin_interrupt_configure_dt(ppsSpec, GPIO_INT_EDGE_RISING) == 0) {
+            gpio_init_callback(&ppsCallback, TdmaClock::ppsIsr, BIT(ppsSpec->pin));
+            if (gpio_add_callback(ppsSpec->port, &ppsCallback) == 0) {
+                ppsConfigured = true;
+            }
+        }
+    }
+
+    if (tim2 == nullptr || !device_is_ready(tim2)) {
+        LOG_WRN("TDMA timer device not ready, epoch ticks will remain 0");
+    }
+
+    startFreerun();
+    scheduleDemote(K_MSEC(gpsDemoteMs));
+
+    if (!ppsConfigured) {
+        LOG_WRN("PPS not configured, starting in FREERUN");
+    }
 }
 
 TdmaClock::Source TdmaClock::source() const {
@@ -35,11 +66,30 @@ uint32_t TdmaClock::frameNumber() const {
 }
 
 void TdmaClock::onHunterBeacon(uint32_t beaconFrameNumber, uint32_t timestamp) {
+    atomic_set(&frameNumberValue, static_cast<atomic_val_t>(beaconFrameNumber));
+    atomic_set(&epochTicksValue, static_cast<atomic_val_t>(timestamp));
+    atomic_set(&lastHunterUptimeMs, static_cast<atomic_val_t>(k_uptime_get_32()));
 
+    if (source() != Source::GPS_PPS) {
+        atomic_set(&currentSource, static_cast<atomic_val_t>(Source::HUNTER));
+        stopFreerun();
+        scheduleDemote(K_MSEC(hunterStaleMs));
+    }
 }
 
 void TdmaClock::ppsIsr(const device* dev, gpio_callback* cb, uint32_t pins) {
+    ARG_UNUSED(dev);
+    ARG_UNUSED(cb);
+    ARG_UNUSED(pins);
 
+    TdmaClock& clock = TdmaClock::instance();
+
+    atomic_set(&clock.epochTicksValue, static_cast<atomic_val_t>(clock.readTim2Ticks()));
+    atomic_inc(&clock.frameNumberValue);
+    atomic_set(&clock.currentSource, static_cast<atomic_val_t>(Source::GPS_PPS));
+
+    clock.stopFreerun();
+    (void)k_work_reschedule(&clock.demoteWork, K_MSEC(gpsDemoteMs));
 }
 
 void TdmaClock::freerunExpiry(k_timer* timer) {
