@@ -93,11 +93,44 @@ void TdmaClock::ppsIsr(const device* dev, gpio_callback* cb, uint32_t pins) {
 }
 
 void TdmaClock::freerunExpiry(k_timer* timer) {
+    ARG_UNUSED(timer);
 
+    TdmaClock& clock = TdmaClock::instance();
+    if (clock.source() != Source::FREERUN) {
+        return;
+    }
+
+    atomic_set(&clock.epochTicksValue, static_cast<atomic_val_t>(clock.readTim2Ticks()));
+    atomic_inc(&clock.frameNumberValue);
 }
 
 void TdmaClock::demoteHandler(k_work* work) {
+    ARG_UNUSED(work);
 
+    TdmaClock& clock = TdmaClock::instance();
+    const Source now = clock.source();
+
+    if (now == Source::GPS_PPS) {
+        const uint32_t nowMs = k_uptime_get_32();
+        const uint32_t lastHunter = static_cast<uint32_t>(atomic_get(&clock.lastHunterUptimeMs));
+        const uint32_t hunterAgeMs = nowMs - lastHunter;
+        const bool hunterFresh = (lastHunter != 0U) && (hunterAgeMs < hunterStaleMs);
+
+        if (hunterFresh) {
+            atomic_set(&clock.currentSource, std::to_underlying(Source::HUNTER));
+            clock.stopFreerun();
+            clock.scheduleDemote(K_MSEC(hunterStaleMs - hunterAgeMs));
+        } else {
+            atomic_set(&clock.currentSource, std::to_underlying(Source::FREERUN));
+            clock.startFreerun();
+        }
+        return;
+    }
+
+    if (now == Source::HUNTER) {
+        atomic_set(&clock.currentSource, std::to_underlying(Source::FREERUN));
+        clock.startFreerun();
+    }
 }
 
 void TdmaClock::startFreerun() {
